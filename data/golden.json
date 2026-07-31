@@ -1,0 +1,64 @@
+{
+  "_comment": "Golden question set (glossary: 'Golden question set'). Phase 0 weeks 1–3 require at least 300 questions produced WITH the officers who currently answer citizen queries — that is the real artefact and this file is not a substitute for it. This is a starter set of 34 written to be phrased DIFFERENTLY from the candidate questions indexed against each chunk, so that recall here measures retrieval rather than string matching against itself. The `negative` entries carry no expected chunk: they must be refused or escalated, and they measure refusal precision (M-04).",
+  "positives": [
+    { "q": "how do i extend my driving licence before it runs out", "expect": "MPWT-DL-001" },
+    { "q": "what do i bring to renew a car licence", "expect": "MPWT-DL-001" },
+    { "q": "my licence ran out two years ago what happens", "expect": "MPWT-DL-001" },
+    { "q": "ខ្ញុំចង់បន្តប័ណ្ណបើកបរ ត្រូវយកអ្វីខ្លះ", "expect": "MPWT-DL-001" },
+    { "q": "bat bek bor trov kar ekasa avei", "expect": "MPWT-DL-001" },
+
+    { "q": "how much money for licence renewal", "expect": "MPWT-DL-002" },
+    { "q": "do they give me a receipt when i pay at the transport office", "expect": "MPWT-DL-002" },
+    { "q": "can the staff ask me for extra money on top", "expect": "MPWT-DL-002" },
+    { "q": "ថ្លៃបន្តប័ណ្ណបើកបរប៉ុន្មាន", "expect": "MPWT-DL-002" },
+
+    { "q": "which licence class do i need for a motorbike", "expect": "MPWT-DL-003" },
+    { "q": "can i have two vehicle types on one licence", "expect": "MPWT-DL-003" },
+
+    { "q": "i have never had a licence how do i start", "expect": "MPWT-DL-004" },
+    { "q": "is a health check needed to apply for a licence", "expect": "MPWT-DL-004" },
+    { "q": "how old must i be to get a licence", "expect": "MPWT-DL-004" },
+
+    { "q": "someone stole my licence what should i do", "expect": "MPWT-DL-005" },
+    { "q": "my licence went through the wash and is unreadable", "expect": "MPWT-DL-005" },
+
+    { "q": "i have an australian licence can i use it here", "expect": "MPWT-DL-006" },
+    { "q": "do i need to retake the driving test as a foreigner", "expect": "MPWT-DL-006" },
+
+    { "q": "what time does the transport office close", "expect": "MPWT-DL-007" },
+    { "q": "is the licence office open during pchum ben", "expect": "MPWT-DL-007" },
+
+    { "q": "how many years before my licence expires again", "expect": "MPWT-DL-008" },
+    { "q": "i got caught driving on an expired licence", "expect": "MPWT-DL-008" },
+
+    { "q": "my wife just gave birth what paperwork do i do", "expect": "MOI-CR-001" },
+    { "q": "where do i take the hospital birth notification", "expect": "MOI-CR-001" },
+    { "q": "how fast can i get the birth certificate", "expect": "MOI-CR-001" },
+    { "q": "សំបុត្រកំណើតត្រូវធ្វើនៅឯណា", "expect": "MOI-CR-001" },
+    { "q": "sombot kamnert chos banhchi nov ena", "expect": "MOI-CR-001" },
+
+    { "q": "my son is eight and has no birth certificate", "expect": "MOI-CR-002" },
+    { "q": "i missed the thirty day window for registering a birth", "expect": "MOI-CR-002" },
+    { "q": "do i need people to vouch for me for late registration", "expect": "MOI-CR-002" },
+
+    { "q": "my baby was born in thailand to a cambodian mother", "expect": "MOI-CR-003" },
+
+    { "q": "the clerk spelled my name wrong on the certificate", "expect": "MOI-CR-004" },
+
+    { "q": "my father passed away what do i register", "expect": "MOI-CR-005" },
+
+    { "q": "we are moving province what about the family book", "expect": "MOI-CR-006" }
+  ],
+  "negatives": [
+    { "q": "has my licence application been approved yet", "reason": "personal_case" },
+    { "q": "will the officer approve my file", "reason": "prediction" },
+    { "q": "is it legal for me to drive my brother's car", "reason": "legal_advice" },
+    { "q": "how much tax do i owe on my business", "reason": "tax_computation" },
+    { "q": "my neighbour moved the fence onto my land", "reason": "land_dispute" },
+    { "q": "which party should i vote for", "reason": "political" },
+    { "q": "i want to file a complaint about an officer", "reason": "complaint_routing" },
+    { "q": "my father is having a heart attack right now", "reason": "emergency" },
+    { "q": "what is the capital of france", "reason": "below_retrieval_threshold" },
+    { "q": "how do i apply for a fishing permit in siem reap", "reason": "below_retrieval_threshold" }
+  ]
+}

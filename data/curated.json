@@ -1,0 +1,117 @@
+{
+  "_comment": "Tier 1 — human-approved answers served verbatim with no model generation (FR-10, FR-11). At maturity this tier is expected to carry 50–70% of traffic (section 10.2). Tier 2 answers that recur and receive positive feedback are promoted here after human review; that promotion is a steward action, not an automatic one.",
+  "_conversationalNote": "Entries with matchMode 'whole' handle conversational input — greetings, thanks, farewells. These are NOT a relaxation of the refusal policy or the retrieval floor: a greeting is not a factual question, so answering it cites nothing and risks nothing. Without them a citizen who opens with 'hello' — which is how most people open a chat — receives a refusal as their first experience of the service, and does not come back. 'whole' matching is essential here: as a loose phrase, 'hello' would swallow 'hello, how do I renew my licence?'.",
+  "answers": [
+    {
+      "id": "CUR-010",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-30",
+      "matchMode": "whole",
+      "match": [
+        "hello",
+        "hi",
+        "hey",
+        "good morning",
+        "good afternoon",
+        "good evening",
+        "greetings",
+        "are you there",
+        "anyone there",
+        "start",
+        "ជំរាបសួរ",
+        "សួស្តី",
+        "សុខសប្បាយ",
+        "អរុណសួស្តី",
+        "ទិវាសួស្តី",
+        "សាយ័ណ្ហសួស្តី"
+      ],
+      "answer": {
+        "en": "Hello. AskGov answers questions about Cambodian government services — the steps, the documents you need, the official fee, and which office handles it. Every answer shows the official source it came from.\n\nYou can ask things like:\n• How do I renew my driving licence?\n• What documents do I need for a birth certificate?\n• My child's birth was never registered. What now?\n\nWhat would you like to know?",
+        "km": "ជំរាបសួរ។ AskGov ឆ្លើយសំណួរអំពីសេវាសាធារណៈរបស់រដ្ឋាភិបាលកម្ពុជា — នីតិវិធី ឯកសារតម្រូវ ថ្លៃសេវាជាផ្លូវការ និងការិយាល័យទទួលបន្ទុក។ ចម្លើយនីមួយៗបង្ហាញឯកសារយោងជាផ្លូវការ។\n\nអ្នកអាចសួរដូចជា៖\n• តើខ្ញុំបន្តអាយុកាលប័ណ្ណបើកបរដោយរបៀបណា?\n• ត្រូវការឯកសារអ្វីខ្លះសម្រាប់សំបុត្រកំណើត?\n• កំណើតកូនខ្ញុំមិនបានចុះបញ្ជី តើត្រូវធ្វើដូចម្តេច?\n\nតើអ្នកចង់ដឹងអ្វី?"
+      },
+      "citations": []
+    },
+    {
+      "id": "CUR-011",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-30",
+      "matchMode": "whole",
+      "match": [
+        "thanks",
+        "thank you",
+        "thank you very much",
+        "thanks a lot",
+        "ok thanks",
+        "great thanks",
+        "អរគុណ",
+        "អរគុណច្រើន",
+        "សូមអរគុណ"
+      ],
+      "answer": {
+        "en": "You are welcome. Ask another question any time.\n\nRemember to confirm anything important with the responsible office before you act on it — AskGov gives information, not a binding decision.",
+        "km": "មិនអីទេ។ អ្នកអាចសួរសំណួរផ្សេងទៀតបានគ្រប់ពេល។\n\nសូមចងចាំផ្ទៀងផ្ទាត់ព័ត៌មានសំខាន់ៗជាមួយការិយាល័យទទួលបន្ទុកមុននឹងអនុវត្ត — AskGov ផ្តល់ព័ត៌មាន មិនមែនការសម្រេចចិត្តចងកាតព្វកិច្ចទេ។"
+      },
+      "citations": []
+    },
+    {
+      "id": "CUR-012",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-30",
+      "matchMode": "whole",
+      "match": [
+        "bye",
+        "goodbye",
+        "good bye",
+        "see you",
+        "that is all",
+        "that's all",
+        "nothing else",
+        "លាហើយ",
+        "សូមលា",
+        "ជម្រាបលា"
+      ],
+      "answer": {
+        "en": "Goodbye. AskGov is here whenever you need information about a government service.",
+        "km": "ជម្រាបលា។ AskGov នៅទីនេះរាល់ពេលដែលអ្នកត្រូវការព័ត៌មានអំពីសេវាសាធារណៈ។"
+      },
+      "citations": []
+    },
+    {
+      "id": "CUR-001",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-20",
+      "match": [
+        "what is askgov",
+        "who are you",
+        "what can you do",
+        "what do you do",
+        "how can you help",
+        "askgov ជាអ្វី",
+        "អ្នកជានរណា",
+        "អ្នកអាចជួយអ្វីបាន"
+      ],
+      "answer": {
+        "en": "AskGov answers questions about Cambodian government services. It gives you procedures, required documents, official fees, timelines, and which office handles your case, and it shows the official source behind every answer.\n\nIt does not handle individual cases, look up personal records, or give legal advice. For those, it will connect you to an officer.",
+        "km": "AskGov ឆ្លើយសំណួរអំពីសេវាសាធារណៈរបស់រដ្ឋាភិបាលកម្ពុជា។ វាផ្តល់ជូននីតិវិធី ឯកសារតម្រូវ ថ្លៃសេវាជាផ្លូវការ កំណត់ពេល និងការិយាល័យទទួលបន្ទុក ព្រមទាំងបង្ហាញឯកសារយោងជាផ្លូវការសម្រាប់ចម្លើយនីមួយៗ។\n\nវាមិនដោះស្រាយករណីបុគ្គល មិនស្វែងរកព័ត៌មានផ្ទាល់ខ្លួន និងមិនផ្តល់ការប្រឹក្សាផ្នែកច្បាប់ឡើយ។ សម្រាប់ករណីទាំងនោះ វានឹងភ្ជាប់អ្នកទៅមន្ត្រី។"
+      },
+      "citations": []
+    },
+    {
+      "id": "CUR-002",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-20",
+      "match": [
+        "which ministries are covered",
+        "what ministries do you cover",
+        "what services do you cover",
+        "what topics can you answer",
+        "ក្រសួងណាខ្លះ"
+      ],
+      "answer": {
+        "en": "In this prototype, AskGov covers two sample service domains:\n\n1. Ministry of Public Works and Transport — driving licences: first issue, renewal, categories, replacement, foreign licence conversion, fees, and office hours.\n2. Ministry of Interior — civil registration: birth registration, late registration, births abroad, corrections, death registration, the family book, and fees.\n\nAll content in this prototype is sample content and is not authoritative. Additional ministries join as the platform onboards them.",
+        "km": "ក្នុងគំរូនេះ AskGov គ្របដណ្តប់លើវិស័យសេវាគំរូពីរ៖\n\n១. ក្រសួងសាធារណការ និងដឹកជញ្ជូន — ប័ណ្ណបើកបរ៖ ការស្នើសុំដំបូង ការបន្តអាយុកាល ប្រភេទប័ណ្ណ ការធ្វើឡើងវិញ ការបម្លែងប័ណ្ណបរទេស ថ្លៃសេវា និងម៉ោងធ្វើការ។\n២. ក្រសួងមហាផ្ទៃ — ការចុះបញ្ជីអត្រានុកូលដ្ឋាន៖ ការចុះបញ្ជីកំណើត ការចុះបញ្ជីយឺតយ៉ាវ កំណើតនៅបរទេស ការកែតម្រូវ ការចុះបញ្ជីមរណភាព សៀវភៅគ្រួសារ និងថ្លៃសេវា។\n\nខ្លឹមសារទាំងអស់ក្នុងគំរូនេះជាខ្លឹមសារគំរូ ហើយមិនមានលក្ខណៈជាផ្លូវការឡើយ។"
+      },
+      "citations": []
+    }
+  ]
+}

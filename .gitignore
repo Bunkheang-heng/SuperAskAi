@@ -1,0 +1,20 @@
+node_modules/
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# Secrets — never commit. R-15 / FR-74.
+.env
+.env.local
+.env*.local
+
+# Runtime audit + feedback logs (FR-55, FR-56). Contain query text.
+var/
+*.log
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

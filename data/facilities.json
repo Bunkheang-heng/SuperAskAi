@@ -1,0 +1,45 @@
+{
+  "_comment": "Structured facility directory (FR-17). Location and wayfinding questions route here rather than to document retrieval, because a document chunk cannot answer 'which office is nearest to me' and a model asked to infer an address from prose will invent one. SAMPLE DATA — addresses and numbers are placeholders.",
+  "facilities": [
+    {
+      "id": "FAC-MPWT-PP",
+      "ministry": "Ministry of Public Works and Transport",
+      "name": "[SAMPLE] Phnom Penh Municipal Transport Office",
+      "nameKm": "[គំរូ] ការិយាល័យដឹកជញ្ជូនរាជធានីភ្នំពេញ",
+      "service": ["driving licence", "vehicle registration"],
+      "province": "Phnom Penh",
+      "address": "[SAMPLE ADDRESS — not authoritative]",
+      "hours": "Official government working hours, working days only",
+      "phone": "[SAMPLE NUMBER]",
+      "keywords": ["transport office", "phnom penh", "licence office", "ការិយាល័យដឹកជញ្ជូន", "ភ្នំពេញ"]
+    },
+    {
+      "id": "FAC-MOI-COMMUNE",
+      "ministry": "Ministry of Interior",
+      "name": "[SAMPLE] Commune / Sangkat Administration",
+      "nameKm": "[គំរូ] រដ្ឋបាលឃុំសង្កាត់",
+      "service": ["civil registration", "family book"],
+      "province": "All provinces",
+      "address": "The commune or sangkat administration of the relevant place — of birth for a birth, of death for a death, of residence for a family book",
+      "hours": "Official government working hours, working days only",
+      "phone": "[SAMPLE NUMBER]",
+      "keywords": ["commune", "sangkat", "civil registration office", "ឃុំសង្កាត់", "រដ្ឋបាលឃុំ"]
+    }
+  ],
+  "emergency": {
+    "_comment": "Guardrail 6: provide emergency numbers and terminate the interaction. These are placeholders in the prototype and must be verified before any release.",
+    "numbers": [
+      { "label": "Police", "labelKm": "នគរបាល", "number": "117" },
+      { "label": "Ambulance", "labelKm": "សង្គ្រោះបន្ទាន់", "number": "119" },
+      { "label": "Fire", "labelKm": "អគ្គិភ័យ", "number": "118" }
+    ]
+  },
+  "support": {
+    "_comment": "Responsible office contact details supplied where human handover is unavailable (FR-29).",
+    "name": "DG Support",
+    "nameKm": "DG Support",
+    "address": "Digital Government Committee, Ministry of Post and Telecommunications",
+    "hours": "Official government working hours",
+    "phone": "[SAMPLE NUMBER]"
+  }
+}

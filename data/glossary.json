@@ -1,0 +1,255 @@
+{
+  "_comment": "Official terminology, explained in plain language (section 6.1). Served verbatim as Tier 1 — human-approved text, no generation, nothing to fabricate. This is the content behind the promise the off-domain refusal makes: AskGov cannot translate or answer general knowledge, but it CAN say what a word in a government document means. Without these entries that promise pointed at a question the service then refused.",
+  "_scopeNote": "Terminology only — the words a citizen meets in a legal instrument or in AskGov's own citation block. NOT service objects. 'Birth certificate' and 'family book' are deliberately absent: those have real procedures in the corpus and belong to retrieval, and a definition served in place of a procedure is a worse answer than the one retrieval gives.",
+  "_reviewNote": "PROTOTYPE CONTENT. Definitions describe the Cambodian normative hierarchy in general terms and state no fee, deadline, or office. They still require sign-off by a ministry content steward, and the Khmer text requires review by a Khmer-speaking content officer, before any release.",
+  "terms": [
+    {
+      "id": "GLO-001",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": { "en": "Prakas", "km": "ប្រកាស" },
+      "match": ["prakas", "brakas", "ប្រកាស"],
+      "definition": {
+        "en": "A prakas (ប្រកាស) is a regulation issued by a minister to apply a law or a sub-decree within that ministry's area of responsibility.\n\nIt sits below the Constitution, laws, royal decrees and sub-decrees, and cannot contradict them. Most of the rules a citizen actually meets at a counter are set by prakas: which documents a service requires, what the application form looks like, and what the official fee is.\n\nA prakas is cited by its number and the ministry that issued it — for example \"Prakas No. 123 MPWT\", meaning a prakas of the Ministry of Public Works and Transport.",
+        "km": "«ប្រកាស» គឺជាលិខិតបទដ្ឋានដែលចេញដោយរដ្ឋមន្ត្រី ដើម្បីអនុវត្តច្បាប់ ឬអនុក្រឹត្យ ក្នុងវិស័យទទួលបន្ទុករបស់ក្រសួងនោះ។\n\nវាស្ថិតនៅក្រោមរដ្ឋធម្មនុញ្ញ ច្បាប់ ព្រះរាជក្រឹត្យ និងអនុក្រឹត្យ ហើយមិនអាចផ្ទុយពីលិខិតទាំងនោះបានឡើយ។ វិធានភាគច្រើនដែលប្រជាពលរដ្ឋជួបប្រទះនៅការិយាល័យ ត្រូវបានកំណត់ដោយប្រកាស៖ ឯកសារដែលសេវាមួយតម្រូវ ទម្រង់ពាក្យសុំ និងថ្លៃសេវាជាផ្លូវការ។\n\nប្រកាសត្រូវយោងតាមលេខ និងក្រសួងដែលចេញ — ឧទាហរណ៍ «ប្រកាសលេខ ១២៣ របស់ក្រសួងសាធារណការ និងដឹកជញ្ជូន»។"
+      }
+    },
+    {
+      "id": "GLO-002",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": { "en": "Joint prakas", "km": "ប្រកាសអន្តរក្រសួង" },
+      "match": [
+        "joint prakas",
+        "inter-ministerial prakas",
+        "ប្រកាសអន្តរក្រសួង",
+        "ប្រកាសរួម"
+      ],
+      "definition": {
+        "en": "A joint prakas is a prakas issued by two or more ministries together, because the subject falls under more than one ministry at once.\n\nService fees are the common case: the ministry that runs the service sets the procedure, and the Ministry of Economy and Finance must join in setting the amount charged. That is why a fee is often cited to a joint prakas rather than to the service ministry alone.\n\nIt is cited with both ministries — for example \"Joint Prakas No. 123 MEF-MPWT\".",
+        "km": "«ប្រកាសអន្តរក្រសួង» គឺជាប្រកាសដែលចេញដោយក្រសួងពីរ ឬច្រើនរួមគ្នា ព្រោះកម្មវត្ថុនោះស្ថិតក្រោមសមត្ថកិច្ចរបស់ក្រសួងលើសពីមួយ។\n\nថ្លៃសេវាជាករណីទូទៅបំផុត៖ ក្រសួងដែលផ្តល់សេវាកំណត់នីតិវិធី ហើយក្រសួងសេដ្ឋកិច្ច និងហិរញ្ញវត្ថុ ត្រូវចូលរួមកំណត់ចំនួនទឹកប្រាក់។ ដោយហេតុនេះ ថ្លៃសេវាច្រើនតែយោងទៅប្រកាសអន្តរក្រសួង មិនមែនយោងតែក្រសួងផ្តល់សេវាឡើយ។\n\nវាត្រូវយោងជាមួយក្រសួងទាំងពីរ — ឧទាហរណ៍ «ប្រកាសអន្តរក្រសួងលេខ ១២៣ សហវ-សធដ»។"
+      }
+    },
+    {
+      "id": "GLO-003",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": { "en": "Sub-decree", "km": "អនុក្រឹត្យ" },
+      "match": [
+        "sub-decree",
+        "sub decree",
+        "subdecree",
+        "anukret",
+        "ank-bk",
+        "ank bk",
+        "អនុក្រឹត្យ",
+        "អនក្រ"
+      ],
+      "definition": {
+        "en": "A sub-decree (អនុក្រឹត្យ, anukret) is issued by the Royal Government and signed by the Prime Minister. It puts a law into effect and fills in the detail the law leaves open.\n\nIn the hierarchy it sits below the Constitution, laws and royal decrees, and above prakas. A prakas must stay within what the sub-decree above it allows.\n\nSub-decree numbers carry a registry abbreviation identifying the instrument type — you will see it written as \"Sub-Decree No. 123 ANK-BK\" (អនក្រ.បក).",
+        "km": "«អនុក្រឹត្យ» ចេញដោយរាជរដ្ឋាភិបាល និងចុះហត្ថលេខាដោយនាយករដ្ឋមន្ត្រី។ វាដាក់ច្បាប់ឱ្យមានអានុភាពអនុវត្ត និងបំពេញសេចក្តីលម្អិតដែលច្បាប់ទុកចំហ។\n\nក្នុងឋានានុក្រម វាស្ថិតនៅក្រោមរដ្ឋធម្មនុញ្ញ ច្បាប់ និងព្រះរាជក្រឹត្យ ហើយនៅលើប្រកាស។ ប្រកាសត្រូវតែស្ថិតក្នុងព្រំដែនដែលអនុក្រឹត្យខាងលើអនុញ្ញាត។\n\nលេខអនុក្រឹត្យមានអក្សរកាត់សម្គាល់ប្រភេទលិខិត — អ្នកនឹងឃើញសរសេរថា «អនុក្រឹត្យលេខ ១២៣ អនក្រ.បក»។"
+      }
+    },
+    {
+      "id": "GLO-004",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": { "en": "Royal decree", "km": "ព្រះរាជក្រឹត្យ" },
+      "match": [
+        "royal decree",
+        "reach kret",
+        "preah reach kret",
+        "ព្រះរាជក្រឹត្យ",
+        "រាជក្រឹត្យ"
+      ],
+      "definition": {
+        "en": "A royal decree (ព្រះរាជក្រឹត្យ, reach kret) is signed by the King on a proposal from the Royal Government. It is used for matters reserved to the head of state — the organisation of institutions, and appointments to senior office.\n\nIt sits above sub-decrees and prakas. A citizen rarely deals with one directly, but a royal decree is often what created the institution a service belongs to.",
+        "km": "«ព្រះរាជក្រឹត្យ» ចុះហត្ថលេខាដោយព្រះមហាក្សត្រ តាមសំណើរបស់រាជរដ្ឋាភិបាល។ វាប្រើសម្រាប់កិច្ចការដែលស្ថិតក្នុងព្រះរាជអំណាច — ការរៀបចំស្ថាប័ន និងការតែងតាំងមុខតំណែងជាន់ខ្ពស់។\n\nវាស្ថិតនៅលើអនុក្រឹត្យ និងប្រកាស។ ប្រជាពលរដ្ឋកម្រទាក់ទងផ្ទាល់ជាមួយវា ប៉ុន្តែព្រះរាជក្រឹត្យច្រើនតែជាលិខិតដែលបង្កើតស្ថាប័នផ្តល់សេវានោះ។"
+      }
+    },
+    {
+      "id": "GLO-005",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": { "en": "Royal kram", "km": "ព្រះរាជក្រម" },
+      "match": [
+        "royal kram",
+        "preah reach kram",
+        "kram",
+        "ព្រះរាជក្រម",
+        "រាជក្រម"
+      ],
+      "definition": {
+        "en": "A royal kram (ព្រះរាជក្រម) is the instrument by which the King promulgates a law. The National Assembly adopts the law and the Senate reviews it; the royal kram is what puts the adopted text into force.\n\nSo when a document cites \"the Law on … promulgated by Royal Kram No. …\", the kram is the act of promulgation and the law is the content. Laws sit below only the Constitution, and everything else — royal decrees, sub-decrees, prakas — must conform to them.",
+        "km": "«ព្រះរាជក្រម» គឺជាលិខិតដែលព្រះមហាក្សត្រប្រកាសឱ្យប្រើច្បាប់។ រដ្ឋសភាអនុម័តច្បាប់ ហើយព្រឹទ្ធសភាពិនិត្យ។ ព្រះរាជក្រមគឺជាអ្វីដែលដាក់អត្ថបទដែលបានអនុម័តឱ្យមានអានុភាព។\n\nដូច្នេះ នៅពេលឯកសារយោងថា «ច្បាប់ស្តីពី… ដែលប្រកាសឱ្យប្រើដោយព្រះរាជក្រមលេខ…» ព្រះរាជក្រមគឺជាសកម្មភាពប្រកាសឱ្យប្រើ ហើយច្បាប់គឺជាខ្លឹមសារ។ ច្បាប់ស្ថិតនៅក្រោមតែរដ្ឋធម្មនុញ្ញ ហើយលិខិតឯទៀតទាំងអស់ — ព្រះរាជក្រឹត្យ អនុក្រឹត្យ ប្រកាស — ត្រូវតែស្របតាមវា។"
+      }
+    },
+    {
+      "id": "GLO-006",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": { "en": "Circular", "km": "សារាចរ" },
+      "match": ["circular", "sarachor", "sarachar", "សារាចរ"],
+      "definition": {
+        "en": "A circular (សារាចរ, sarachor) is an instruction explaining how an existing rule is to be applied. It guides officials; it does not create a new obligation of its own.\n\nIf a circular and the prakas or sub-decree it explains appear to disagree, the higher instrument governs.",
+        "km": "«សារាចរ» គឺជាសេចក្តីណែនាំដែលពន្យល់ពីរបៀបអនុវត្តវិធានដែលមានស្រាប់។ វាណែនាំដល់មន្ត្រី ប៉ុន្តែមិនបង្កើតកាតព្វកិច្ចថ្មីដោយខ្លួនឯងឡើយ។\n\nប្រសិនបើសារាចរ និងប្រកាស ឬអនុក្រឹត្យដែលវាពន្យល់ ហាក់ដូចជាមិនស៊ីគ្នា លិខិតដែលមានឋានៈខ្ពស់ជាងត្រូវអនុវត្ត។"
+      }
+    },
+    {
+      "id": "GLO-007",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": { "en": "Administrative notice", "km": "សេចក្តីជូនដំណឹង" },
+      "match": [
+        "administrative notice",
+        "sechkdei chun damnoeng",
+        "សេចក្តីជូនដំណឹង",
+        "សេចក្តីណែនាំ"
+      ],
+      "definition": {
+        "en": "An administrative notice or instruction is an announcement from an institution about how it is operating — a change of office hours, a new counter, a temporary arrangement.\n\nIt is the lowest-ranking document AskGov cites and it is also the one most likely to change without warning, so a notice that is past its review date should be confirmed with the office before you rely on it.",
+        "km": "«សេចក្តីជូនដំណឹង» គឺជាការប្រកាសពីស្ថាប័នអំពីរបៀបដែលខ្លួនកំពុងដំណើរការ — ការប្តូរម៉ោងធ្វើការ បញ្ជរថ្មី ឬការរៀបចំបណ្តោះអាសន្ន។\n\nវាជាឯកសារដែលមានឋានៈទាបជាងគេក្នុងចំណោមឯកសារដែល AskGov យោង ហើយក៏ជាឯកសារដែលងាយប្តូរបំផុតដែរ។ ដូច្នេះ សេចក្តីជូនដំណឹងដែលហួសកាលបរិច្ឆេទត្រួតពិនិត្យ គួរតែផ្ទៀងផ្ទាត់ជាមួយការិយាល័យជាមុនសិន។"
+      }
+    },
+    {
+      "id": "GLO-008",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": { "en": "Official Gazette", "km": "រាជកិច្ច" },
+      "match": [
+        "official gazette",
+        "royal gazette",
+        "reachkech",
+        "reach kech",
+        "រាជកិច្ច"
+      ],
+      "definition": {
+        "en": "The Official Gazette (រាជកិច្ច, Reachkech) is the official publication in which adopted legal instruments are printed. Publication is how a text becomes publicly knowable rather than an internal document.\n\nWhen AskGov links a source, the Gazette reference is what lets you check the original wording for yourself rather than taking the answer on trust.",
+        "km": "«រាជកិច្ច» គឺជាការផ្សាយជាផ្លូវការដែលបោះពុម្ពលិខិតបទដ្ឋានដែលបានអនុម័ត។ ការផ្សាយគឺជាមធ្យោបាយដែលធ្វើឱ្យអត្ថបទក្លាយជាឯកសារសាធារណៈ មិនមែនជាឯកសារផ្ទៃក្នុងទៀតឡើយ។\n\nនៅពេល AskGov ភ្ជាប់តំណឯកសារយោង សេចក្តីយោងរាជកិច្ចគឺជាអ្វីដែលអនុញ្ញាតឱ្យអ្នកពិនិត្យអត្ថបទដើមដោយខ្លួនឯង ជាជាងជឿទុកចិត្តលើចម្លើយ។"
+      }
+    },
+    {
+      "id": "GLO-009",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": { "en": "Article", "km": "មាត្រា" },
+      "match": ["article", "matra", "មាត្រា"],
+      "definition": {
+        "en": "An article (មាត្រា, matra) is one numbered provision inside a legal instrument. It is the smallest unit a rule is cited to.\n\nThis is why AskGov cites \"Article 12\" and not just the document: the instrument may run to many pages, and the article number is what lets an officer turn to the exact provision an answer rests on.",
+        "km": "«មាត្រា» គឺជាបទប្បញ្ញត្តិមួយដែលមានលេខរៀងនៅក្នុងលិខិតបទដ្ឋាន។ វាជាឯកតាតូចបំផុតដែលវិធានមួយត្រូវយោងទៅ។\n\nនេះជាមូលហេតុដែល AskGov យោង «មាត្រា ១២» មិនត្រឹមតែឈ្មោះឯកសារ៖ លិខិតមួយអាចមានច្រើនទំព័រ ហើយលេខមាត្រាគឺជាអ្វីដែលអនុញ្ញាតឱ្យមន្ត្រីបើកទៅបទប្បញ្ញត្តិជាក់លាក់ដែលចម្លើយផ្អែកលើ។"
+      }
+    },
+    {
+      "id": "GLO-010",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": { "en": "Certified copy", "km": "ច្បាប់ចម្លងមានបញ្ជាក់" },
+      "match": [
+        "certified copy",
+        "certified true copy",
+        "notarised copy",
+        "notarized copy",
+        "ច្បាប់ចម្លងមានបញ្ជាក់",
+        "ច្បាប់ចម្លងបញ្ជាក់"
+      ],
+      "definition": {
+        "en": "A certified copy is a photocopy that a competent authority has stamped and signed to confirm it matches the original document.\n\nWhen a procedure asks for a certified copy, an ordinary photocopy will be refused, and so will the original on its own if the procedure says the original must be presented for sight and a certified copy submitted. Which authority may certify depends on the document, so check with the office named in the answer.",
+        "km": "«ច្បាប់ចម្លងមានបញ្ជាក់» គឺជាច្បាប់ថតចម្លងដែលអាជ្ញាធរមានសមត្ថកិច្ចបានបោះត្រា និងចុះហត្ថលេខាបញ្ជាក់ថាត្រូវនឹងច្បាប់ដើម។\n\nនៅពេលនីតិវិធីតម្រូវឱ្យមានច្បាប់ចម្លងមានបញ្ជាក់ ច្បាប់ថតចម្លងធម្មតានឹងមិនត្រូវបានទទួលយកទេ។ អាជ្ញាធរណាដែលអាចបញ្ជាក់បាន គឺអាស្រ័យលើប្រភេទឯកសារ ដូច្នេះសូមពិនិត្យជាមួយការិយាល័យដែលមានរៀបរាប់ក្នុងចម្លើយ។"
+      }
+    },
+    {
+      "id": "GLO-011",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": {
+        "en": "Commune and sangkat",
+        "km": "ឃុំ និងសង្កាត់"
+      },
+      "match": [
+        "sangkat",
+        "khum",
+        "commune",
+        "commune council",
+        "ឃុំ",
+        "សង្កាត់"
+      ],
+      "definition": {
+        "en": "Commune (ឃុំ, khum) and sangkat (សង្កាត់) are the same level of local administration under two names: khum in rural areas, sangkat in urban ones.\n\nThis is the level most civil registration happens at, which is why an answer about birth or death registration usually sends you to the commune or sangkat office of a particular place rather than to a ministry.",
+        "km": "«ឃុំ» និង «សង្កាត់» គឺជាថ្នាក់រដ្ឋបាលមូលដ្ឋានតែមួយក្រោមឈ្មោះពីរ៖ ឃុំនៅតំបន់ជនបទ សង្កាត់នៅតំបន់ទីក្រុង។\n\nនេះជាថ្នាក់ដែលការចុះបញ្ជីអត្រានុកូលដ្ឋានភាគច្រើនធ្វើឡើង ដែលជាមូលហេតុថាចម្លើយអំពីការចុះបញ្ជីកំណើត ឬមរណភាព ជាធម្មតាណែនាំអ្នកទៅការិយាល័យឃុំ ឬសង្កាត់នៃទីកន្លែងជាក់លាក់ ជាជាងទៅក្រសួង។"
+      }
+    },
+    {
+      "id": "GLO-012",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": {
+        "en": "District, municipality, khan and province",
+        "km": "ស្រុក ក្រុង ខណ្ឌ និងខេត្ត"
+      },
+      "match": [
+        "srok",
+        "khan",
+        "krong",
+        "khet",
+        "district",
+        "municipality",
+        "province",
+        "ស្រុក",
+        "ខណ្ឌ",
+        "ក្រុង",
+        "ខេត្ត",
+        "រាជធានី"
+      ],
+      "definition": {
+        "en": "These are the administrative levels between the commune and the capital:\n\n• Srok (ស្រុក) — district, rural\n• Krong (ក្រុង) — municipality\n• Khan (ខណ្ឌ) — district within the capital, Phnom Penh\n• Khet (ខេត្ត) — province\n• Reachthani (រាជធានី) — the capital\n\nThe level matters because it decides which office holds a file. A correction to a civil status record, for example, is usually handled above commune level, so knowing whether your area is a srok or a khan tells you which office to go to.",
+        "km": "ទាំងនេះជាថ្នាក់រដ្ឋបាលរវាងឃុំសង្កាត់ និងរាជធានី៖\n\n• «ស្រុក» — ថ្នាក់ស្រុក នៅជនបទ\n• «ក្រុង» — ថ្នាក់ក្រុង\n• «ខណ្ឌ» — ថ្នាក់ខណ្ឌ ក្នុងរាជធានីភ្នំពេញ\n• «ខេត្ត» — ថ្នាក់ខេត្ត\n• «រាជធានី» — រាជធានី\n\nថ្នាក់មានសារៈសំខាន់ ព្រោះវាកំណត់ថាការិយាល័យណាកាន់កាប់ឯកសារ។ ឧទាហរណ៍ ការកែតម្រូវអត្រានុកូលដ្ឋាន ជាធម្មតាដោះស្រាយនៅថ្នាក់លើឃុំសង្កាត់ ដូច្នេះការដឹងថាតំបន់របស់អ្នកជាស្រុក ឬខណ្ឌ ប្រាប់អ្នកថាត្រូវទៅការិយាល័យណា។"
+      }
+    },
+    {
+      "id": "GLO-013",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": {
+        "en": "Ministry abbreviations in a citation",
+        "km": "អក្សរកាត់ក្រសួងក្នុងឯកសារយោង"
+      },
+      "match": [
+        "moi",
+        "mpwt",
+        "mef",
+        "mef-mpwt",
+        "mef-moi",
+        "សធដ",
+        "សហវ",
+        "មផ"
+      ],
+      "definition": {
+        "en": "The letters at the end of an instrument number are the ministry that issued it:\n\n• MOI — Ministry of Interior (ក្រសួងមហាផ្ទៃ), which covers civil registration\n• MPWT — Ministry of Public Works and Transport (ក្រសួងសាធារណការ និងដឹកជញ្ជូន), which covers driving licences\n• MEF — Ministry of Economy and Finance (ក្រសួងសេដ្ឋកិច្ច និងហិរញ្ញវត្ថុ)\n\nA hyphenated pair such as MEF-MPWT means the two ministries issued the instrument jointly. Fees are commonly set this way.",
+        "km": "អក្សរនៅចុងលេខលិខិត គឺជាក្រសួងដែលចេញលិខិតនោះ៖\n\n• MOI — ក្រសួងមហាផ្ទៃ ដែលទទួលបន្ទុកការចុះបញ្ជីអត្រានុកូលដ្ឋាន\n• MPWT — ក្រសួងសាធារណការ និងដឹកជញ្ជូន ដែលទទួលបន្ទុកប័ណ្ណបើកបរ\n• MEF — ក្រសួងសេដ្ឋកិច្ច និងហិរញ្ញវត្ថុ\n\nគូដែលមានសញ្ញាដាច់ ដូចជា MEF-MPWT មានន័យថាក្រសួងទាំងពីរចេញលិខិតរួមគ្នា។ ថ្លៃសេវាច្រើនតែកំណត់តាមរបៀបនេះ។"
+      }
+    },
+    {
+      "id": "GLO-014",
+      "approvedBy": "DGC content operations (prototype)",
+      "approvedAt": "2026-07-31",
+      "term": {
+        "en": "Effective, verified and review due",
+        "km": "ចូលជាធរមាន ផ្ទៀងផ្ទាត់ និងកំណត់ត្រួតពិនិត្យ"
+      },
+      "match": [
+        "effective date",
+        "verified date",
+        "review due",
+        "past review date",
+        "freshness",
+        "ចូលជាធរមាន",
+        "ថ្ងៃផ្ទៀងផ្ទាត់",
+        "កាលបរិច្ឆេទត្រួតពិនិត្យ"
+      ],
+      "definition": {
+        "en": "Three different dates appear on every source AskGov shows, and they mean different things:\n\n• Effective — the date the rule itself started to apply. A property of the law.\n• Verified — the date a person last checked this text against the official source. A property of AskGov's record, not of the law.\n• Review due — the date after which that check is considered out of date.\n\nSo \"Past review date\" does not mean the rule has changed. It means nobody has confirmed recently that it has not. That is why an answer carrying it also tells you to confirm with the responsible office.",
+        "km": "កាលបរិច្ឆេទបីផ្សេងគ្នាបង្ហាញនៅលើឯកសារយោងនីមួយៗ ហើយវាមានន័យខុសគ្នា៖\n\n• «ចូលជាធរមាន» — ថ្ងៃដែលវិធានចាប់ផ្តើមអនុវត្ត។ ជាលក្ខណៈរបស់ច្បាប់។\n• «ផ្ទៀងផ្ទាត់» — ថ្ងៃចុងក្រោយដែលមនុស្សបានពិនិត្យអត្ថបទនេះធៀបនឹងឯកសារដើម។ ជាលក្ខណៈរបស់កំណត់ត្រា AskGov មិនមែនរបស់ច្បាប់។\n• «កំណត់ត្រួតពិនិត្យ» — ថ្ងៃដែលបន្ទាប់ពីនោះ ការពិនិត្យត្រូវចាត់ទុកថាហួសសម័យ។\n\nដូច្នេះ «ហួសកាលបរិច្ឆេទត្រួតពិនិត្យ» មិនមានន័យថាវិធានបានផ្លាស់ប្តូរទេ។ វាមានន័យថាគ្មាននរណាបានបញ្ជាក់ថ្មីៗថាវាមិនបានផ្លាស់ប្តូរ។ ដោយហេតុនេះ ចម្លើយដែលមានស្លាកនោះ ក៏ណែនាំឱ្យអ្នកផ្ទៀងផ្ទាត់ជាមួយការិយាល័យទទួលបន្ទុកដែរ។"
+      }
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "_comment": "SAMPLE CONTENT — PROTOTYPE ONLY. Not authoritative, not steward-approved. The Ministry of Interior civil registration domain is the Phase 1 flagship (recommendation on OD-01); these chunks exist so the pipeline can be exercised against a second ministry and cross-ministry life-event bundles before onboarding begins.",
+  "ministry": "Ministry of Interior",
+  "ministryKm": "ក្រសួងមហាផ្ទៃ",
+  "chunks": [
+    {
+      "id": "MOI-CR-001",
+      "doc": "[SAMPLE] Civil Registration Procedure",
+      "instrument": "Sub-Decree No. XXX ANK-BK",
+      "article": "Article 12",
+      "url": "https://moi.gov.kh/",
+      "effective": "2024-06-01",
+      "verified": "2026-05-02",
+      "reviewDue": "2026-08-02",
+      "geoScope": "KH",
+      "sensitivity": "public",
+      "text": "Registration of a birth is made at the commune or sangkat administration of the place where the birth occurred, within thirty days of the birth. The declarant submits the hospital birth notification, the family book, and the identity documents of both parents. The commune clerk issues the birth certificate on the same working day where the file is complete.",
+      "textKm": "ការចុះបញ្ជីកំណើតត្រូវធ្វើនៅរដ្ឋបាលឃុំសង្កាត់នៃទីកន្លែងដែលកំណើតបានកើតឡើង ក្នុងរយៈពេលសាមសិបថ្ងៃ។ អ្នកប្រកាសត្រូវដាក់ជូនលិខិតជូនដំណឹងកំណើតពីមន្ទីរពេទ្យ សៀវភៅគ្រួសារ និងឯកសារអត្តសញ្ញាណរបស់មាតាបិតាទាំងសងខាង។",
+      "keywords": ["birth", "certificate", "register", "registration", "baby", "newborn", "thirty days", "commune", "សំបុត្រកំណើត", "ចុះបញ្ជី", "កំណើត", "ឃុំសង្កាត់"],
+      "questions": [
+        "How do I register a birth?",
+        "What documents do I need for a birth certificate?",
+        "Where do I register my baby's birth?",
+        "How long do I have to register a birth?",
+        "How long does it take to get a birth certificate?",
+        "តើខ្ញុំចុះបញ្ជីកំណើតដោយរបៀបណា?",
+        "ត្រូវការឯកសារអ្វីខ្លះសម្រាប់សំបុត្រកំណើត?"
+      ]
+    },
+    {
+      "id": "MOI-CR-002",
+      "doc": "[SAMPLE] Civil Registration Procedure",
+      "instrument": "Sub-Decree No. XXX ANK-BK",
+      "article": "Article 15",
+      "url": "https://moi.gov.kh/",
+      "effective": "2024-06-01",
+      "verified": "2026-05-02",
+      "reviewDue": "2026-08-02",
+      "geoScope": "KH",
+      "sensitivity": "public",
+      "text": "Where a birth was not registered within the prescribed period, late registration is permitted. The declarant submits two witness statements from persons resident in the commune, together with any available supporting documents such as a hospital record, a vaccination record, or a school record. Late registration files are reviewed by the commune chief before the certificate is issued.",
+      "textKm": "ក្នុងករណីកំណើតមិនបានចុះបញ្ជីក្នុងរយៈពេលកំណត់ ការចុះបញ្ជីយឺតយ៉ាវត្រូវបានអនុញ្ញាត។ អ្នកប្រកាសត្រូវដាក់ជូនលិខិតបញ្ជាក់ពីសាក្សីពីរនាក់ដែលរស់នៅក្នុងឃុំ ជាមួយនឹងឯកសារគាំពារដែលមាន។",
+      "keywords": ["late", "late registration", "missed", "never registered", "adult", "witness", "overdue", "យឺត", "យឺតយ៉ាវ", "ហួសកំណត់", "សាក្សី"],
+      "questions": [
+        "My child's birth was never registered. What now?",
+        "Can I still register a birth after thirty days?",
+        "What is late birth registration?",
+        "What documents do I need for late registration?",
+        "I am an adult with no birth certificate. What can I do?",
+        "តើការចុះបញ្ជីកំណើតយឺតយ៉ាវធ្វើដូចម្តេច?"
+      ]
+    },
+    {
+      "id": "MOI-CR-003",
+      "doc": "[SAMPLE] Civil Registration Procedure",
+      "instrument": "Sub-Decree No. XXX ANK-BK",
+      "article": "Article 18",
+      "url": "https://moi.gov.kh/",
+      "effective": "2024-06-01",
+      "verified": "2026-05-02",
+      "reviewDue": "2026-08-02",
+      "geoScope": "KH",
+      "sensitivity": "public",
+      "text": "A birth occurring outside the Kingdom of Cambodia to a Cambodian parent is declared at the Cambodian embassy or consulate with jurisdiction over the place of birth. The declarant submits the foreign birth record with a certified translation, the passports of the parents, and evidence of Cambodian nationality of at least one parent. The record is transmitted to the Ministry of Interior for entry in the civil register.",
+      "keywords": ["abroad", "overseas", "outside cambodia", "embassy", "consulate", "born abroad", "nationality", "translation", "បរទេស", "ស្ថានទូត"],
+      "questions": [
+        "My child was born abroad. How do I register the birth?",
+        "Where do I register a birth that happened outside Cambodia?",
+        "What documents are needed to register a birth abroad?",
+        "I live overseas. How do I get a Cambodian birth certificate for my child?"
+      ]
+    },
+    {
+      "id": "MOI-CR-004",
+      "doc": "[SAMPLE] Correction of Civil Register Entries",
+      "instrument": "Sub-Decree No. XXX ANK-BK",
+      "article": "Article 24",
+      "url": "https://moi.gov.kh/",
+      "effective": "2024-06-01",
+      "verified": "2026-03-20",
+      "reviewDue": "2026-07-20",
+      "geoScope": "KH",
+      "sensitivity": "public",
+      "text": "An error in a name, date, or place recorded in the civil register is corrected on written request to the commune administration that holds the entry. The applicant submits the certificate containing the error, documentary evidence of the correct particulars, and the family book. A correction that alters a person's identity rather than a clerical error requires a court decision.",
+      "keywords": ["correction", "correct", "wrong", "mistake", "spelling", "name change", "error", "court", "កែតម្រូវ", "ប្តូរឈ្មោះ", "កំហុស"],
+      "questions": [
+        "My name is spelled wrong on my birth certificate. How do I fix it?",
+        "How do I correct a mistake on a civil registration document?",
+        "What documents do I need to correct my birth certificate?",
+        "Do I need a court order to change my name?"
+      ]
+    },
+    {
+      "id": "MOI-CR-005",
+      "doc": "[SAMPLE] Death Registration Procedure",
+      "instrument": "Sub-Decree No. XXX ANK-BK",
+      "article": "Article 31",
+      "url": "https://moi.gov.kh/",
+      "effective": "2024-06-01",
+      "verified": "2026-05-02",
+      "reviewDue": "2026-08-02",
+      "geoScope": "KH",
+      "sensitivity": "public",
+      "text": "A death is declared at the commune or sangkat administration of the place where the death occurred, within fifteen days. The declarant submits the medical certificate of death or, where the death occurred outside a health facility, a statement certified by the local authority, together with the identity documents of the deceased and the family book. The commune clerk issues the death certificate and updates the family book.",
+      "keywords": ["death", "died", "deceased", "death certificate", "funeral", "fifteen days", "មរណភាព", "សំបុត្រមរណភាព", "ស្លាប់"],
+      "questions": [
+        "How do I register a death?",
+        "What documents do I need for a death certificate?",
+        "How long do I have to register a death?",
+        "Where do I register a death?",
+        "តើខ្ញុំចុះបញ្ជីមរណភាពដោយរបៀបណា?"
+      ]
+    },
+    {
+      "id": "MOI-CR-006",
+      "doc": "[SAMPLE] Family Book Issue and Update",
+      "instrument": "Sub-Decree No. XXX ANK-BK",
+      "article": "Article 36",
+      "url": "https://moi.gov.kh/",
+      "effective": "2024-06-01",
+      "verified": "2026-05-02",
+      "reviewDue": "2026-08-02",
+      "geoScope": "KH",
+      "sensitivity": "public",
+      "text": "The family book records the members of a household and is issued by the commune or sangkat administration of residence. The book is updated on birth, death, marriage, divorce, and change of residence. The head of household presents the existing book and the certificate evidencing the change. A household that moves to another commune surrenders the book at the former commune and is issued a new book at the commune of new residence.",
+      "keywords": ["family book", "household", "residence", "move", "moving", "relocate", "head of household", "សៀវភៅគ្រួសារ", "ផ្លាស់ទីលំនៅ"],
+      "questions": [
+        "How do I get a family book?",
+        "How do I update my family book?",
+        "I am moving to another commune. What do I do about the family book?",
+        "Who can request a family book?",
+        "តើខ្ញុំធ្វើសៀវភៅគ្រួសារដោយរបៀបណា?"
+      ]
+    },
+    {
+      "id": "MOI-CR-007",
+      "doc": "[SAMPLE] Civil Registration Fee Schedule",
+      "instrument": "Joint Prakas No. XXX MEF-MOI",
+      "article": "Annex 1",
+      "url": "https://moi.gov.kh/",
+      "effective": "2024-06-01",
+      "verified": "2026-05-02",
+      "reviewDue": "2026-08-02",
+      "geoScope": "KH",
+      "sensitivity": "public",
+      "text": "Registration of a birth within the prescribed period and issue of the first birth certificate are provided at the fee set in this annex, which in this prototype is a placeholder and must not be relied upon. Subsequent copies, late registration, and corrections carry the separate fees set in the annex. Payment is made at the commune administration against an official receipt. No payment may be required by any person other than the responsible clerk.",
+      "keywords": ["fee", "cost", "price", "how much", "free", "pay", "receipt", "copy", "ថ្លៃ", "ថ្លៃសេវា", "បង់ប្រាក់", "បង្កាន់ដៃ"],
+      "questions": [
+        "What is the fee for a birth certificate?",
+        "How much does civil registration cost?",
+        "Is birth registration free?",
+        "What does a second copy of a birth certificate cost?",
+        "Where do I pay the civil registration fee?",
+        "តើថ្លៃសំបុត្រកំណើតប៉ុន្មាន?"
+      ]
+    },
+    {
+      "id": "MOI-CR-008",
+      "doc": "[SAMPLE] Rights of Applicants at Civil Registration Offices",
+      "instrument": "Sub-Decree No. XXX ANK-BK",
+      "article": "Article 41",
+      "url": "https://moi.gov.kh/",
+      "effective": "2024-06-01",
+      "verified": "2026-05-02",
+      "reviewDue": "2026-08-02",
+      "geoScope": "KH",
+      "sensitivity": "public",
+      "text": "An applicant is entitled to be informed of the documents required, the applicable fee, and the processing time before submitting a file. Where a file is refused, the applicant is entitled to a written statement of the reason for refusal. An applicant who considers that a file has been wrongly refused, or that a payment has been required beyond the published fee, may raise the matter with the district administration and thereafter with the provincial administration.",
+      "keywords": ["rights", "refused", "refusal", "complaint", "appeal", "escalate", "overcharge", "extra payment", "recourse", "សិទ្ធិ", "បណ្តឹង", "តវ៉ា"],
+      "questions": [
+        "What are my rights at a civil registration office?",
+        "My application was refused. What can I do?",
+        "Who do I complain to if an officer asks for extra money?",
+        "Can I appeal a refusal?",
+        "Am I entitled to know the fee before I apply?"
+      ]
+    }
+  ]
+}

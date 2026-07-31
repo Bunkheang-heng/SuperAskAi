@@ -1,0 +1,220 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Brand palette. Three colours, everything else neutral or state.
+   --------------------------------------------------------------------------- */
+:root {
+  --ag-sky: #26a1da;
+  --ag-sky-deep: #1b87bb;
+  --ag-sky-wash: #eaf6fc;
+  --ag-sky-line: #bfe2f4;
+
+  --ag-deep: #025094;
+  --ag-deep-hover: #01427b;
+  --ag-deep-wash: #edf3f9;
+
+  --ag-paper: #ffffff;
+  --ag-page: #f4f8fb;
+
+  --ag-ink: #0b2237;
+  --ag-ink-soft: #4e657c;
+  --ag-ink-faint: #8399ac;
+
+  --ag-line: #dde7ef;
+  --ag-line-soft: #edf2f7;
+
+  --ag-green: #0f7b55;
+  /* Notice — replaces the former amber. --ag-notice is the brand #4295F5 for
+     borders, icons, and fills; --ag-notice-text is the same hue darkened to
+     clear 4.5:1 on white, because every label using it is below the size at
+     which WCAG AA accepts a 3:1 ratio. */
+  --ag-notice: #4295f5;
+  --ag-notice-text: #1a5fbf;
+  --ag-notice-wash: #eef5fe;
+  --ag-notice-line: #c7defb;
+  --ag-red: #a32121;
+
+  --ag-font: "Kantumruy Pro", "Inter", system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  --ag-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--ag-page);
+  color: var(--ag-ink);
+  font-family: var(--ag-font);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------------------
+   FR-61: Khmer script renders with stacked subscript consonants below the
+   baseline. At a normal line-height those subscripts are clipped by the line
+   box, which for a government service means a citizen reads a word that is
+   visibly missing part of itself. 1.95 clears the tallest stack we index.
+   Applied to every element that can contain citizen-facing Khmer, not just the
+   ones currently holding it — content changes, CSS should not have to.
+   --------------------------------------------------------------------------- */
+.km,
+.ag-answer,
+.ag-quote,
+textarea,
+input,
+button,
+p,
+li,
+h1,
+h2,
+h3 {
+  line-height: 1.95;
+}
+
+/* Headings are display-sized; the stack clearance requirement is met at a
+   tighter ratio and a 1.95 heading reads as broken spacing. */
+h1,
+h2,
+h3 {
+  line-height: 1.35;
+}
+
+.ag-mono {
+  font-family: var(--ag-mono);
+  font-variant-ligatures: none;
+}
+
+/* ---------------------------------------------------------------------------
+   FR-71: visible focus. The default outline is removed by the Tailwind reset in
+   places, so it is restored explicitly and in brand colour. `:focus-visible`
+   rather than `:focus` so a mouse click does not draw a ring.
+   --------------------------------------------------------------------------- */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--ag-sky);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* The composer draws the focus ring on its container instead, so the textarea
+   inside suppresses its own. Scoped to that one element — this must never
+   become a general "remove the outline" utility, which would undo FR-71. */
+.ag-noring:focus-visible {
+  outline: none;
+}
+
+/* Skip link — keyboard users should not have to tab the sidebar to reach the
+   composer. */
+.ag-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+}
+
+.ag-skip:focus {
+  left: 8px;
+  top: 8px;
+  padding: 8px 14px;
+  background: var(--ag-deep);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* --------------------------------------------------------------------------- */
+
+.ag-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ag-line) transparent;
+}
+
+.ag-scroll::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+.ag-scroll::-webkit-scrollbar-thumb {
+  background: var(--ag-line);
+  border-radius: 5px;
+}
+
+.ag-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* --------------------------------------------------------------------------- */
+
+.ag-fade {
+  animation: ag-fade-in 0.26s ease-out both;
+}
+
+@keyframes ag-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Tactile press feedback. Transform only — no layout property is touched, so
+   this stays on the compositor and does not cost a reflow on a low-end device
+   (NFR-15). Neutralised under prefers-reduced-motion by the block below. */
+.ag-press {
+  transition: transform 0.12s ease;
+}
+
+.ag-press:active {
+  transform: scale(0.985);
+}
+
+.ag-pulse {
+  animation: ag-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes ag-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* FR-71: respect reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Zeroing the duration still leaves the pressed state jumping straight to
+     the scaled size. The movement itself has to go, not just its timing. */
+  .ag-press:active {
+    transform: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------- */
+
+.ag-answer {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+/* NFR-15: low bandwidth. No web-font blocking, no background images, no
+   gradients that force a repaint on scroll. Fonts load `swap` so text is
+   readable before the webfont arrives. */
