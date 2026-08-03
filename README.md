@@ -234,9 +234,28 @@ Nothing outside `lib/llm/` contains model-specific logic.
 
 | Provider | `LLM_PROVIDER` | Hosting | Residency |
 |---|---|---|---|
+| OpenAI-compatible gateway | `gateway` | Third-party gateway | External, non-domestic |
 | Claude, commercial API | `anthropic` | External | Outside Cambodia |
 | Qwen via vLLM | `vllm` | DGC infrastructure | Cambodia |
 | Deterministic extraction | `extractive` | In-process | Cambodia |
+
+**Currently configured: `gateway`.** One credential fronts many model families,
+which is what §10.6 condition 4 needs for benchmarking candidates against the
+Khmer golden set — swapping the model under test is one environment variable.
+It is also a *third party* between AskGov and the model vendor, so it carries
+the same NFR-11 limits as the direct vendor API and reports its residency
+honestly. Do not present it as domestic.
+
+Two things this layer has already caught, worth knowing before you touch it:
+
+- A credential for one provider set under another provider's variable produces a
+  401 on every request, and NFR-09 then degrades to extraction *silently*. The
+  service keeps answering, from retrieved text only, and nothing looks broken.
+  Check `provider` in `/api/health` and in the audit log, not just that answers
+  appear.
+- Model families differ on the same prompt. A prompt rule that holds on one and
+  not another is not a rule; §10.6 condition 6 requires revalidation, and
+  `npx tsx scripts/scope-check.ts` is how it is done here.
 
 `lib/llm/anthropic.ts` carries a per-model parameter table, because the Messages
 API rejects parameters a model does not support: Haiku 4.5 accepts `temperature`
@@ -254,17 +273,35 @@ none are done.
 
 ## Configuration
 
-See `.env.example`. Two settings are governance decisions rather than tuning
+See `.env.example`. Three settings are governance decisions rather than tuning
 knobs:
 
 - **`RETRIEVAL_MIN_SCORE`** — the FR-16 escalation floor, default `0.20`. Derived
-  from the sweep `npm run eval` prints, not chosen by feel: at 0.20 the starter
-  set answers 91.2% of in-scope questions and refuses 100% of out-of-scope ones,
-  where 0.175 answers the same share but refuses only 90%. **Re-derive this
-  whenever the corpus, the segmenter, or the reranker changes.**
+  from the sweep `npm run eval` prints, not chosen by feel. **Re-derive this
+  whenever the corpus, the segmenter, or the reranker changes.** At 0.20 the
+  starter set answers 67.6% of in-scope questions and refuses 90% of
+  out-of-scope ones — the one that gets through is "what is the capital of
+  france", which matches a vehicle-registration passage at 0.205. The system
+  still refuses it, because the §6.1 off-domain screen runs *before* retrieval;
+  but a scope rule must not depend on a retrieval score, which is exactly why it
+  runs there.
+- **`GENERAL_FALLBACK_ENABLED`** — default on. When a question is in scope and no
+  approved source covers it, the model answers from its own knowledge, labelled
+  unverified, with no citations and the officer still offered. Off is the §13
+  behaviour: no approved source, no answer. On is a deliberate loosening while
+  the corpus is four ministries of sample content, and it should be revisited as
+  coverage grows — the wider the corpus, the more likely a question that misses
+  it is one that genuinely should not be answered.
 - **`DIAGNOSTICS_ENABLED`** — FR-72/73. When false the server omits the
   diagnostic payload entirely, so retrieval internals never cross the network.
   See gaps: this is not yet a role check.
+
+Gateway tuning: `LLM_GATEWAY_MODEL` selects the model, `LLM_GATEWAY_TIMEOUT_MS`
+the request deadline (default 30s). Khmer answers cost several times the output
+tokens of the same answer in English and the unsourced fallback writes from
+scratch rather than condensing a supplied provision; together they exceeded 30s
+on a reasoning-family model, and the abort surfaced as an ordinary refusal.
+Prefer a faster model over a longer wait — NFR-06 is a latency budget.
 
 ---
 
@@ -429,9 +466,11 @@ components/
   Sidebar.tsx               FR-68 + provider/residency card
 lib/
   khmer/                    normalize · segment · romanize
+  lang/                     detect (reply script) · content (shared content words)
+  registry/csv.ts           RFC 4180 reader/writer for the source registry
   retrieval/                bm25 · embed · rrf · rerank · orchestration
   engine/                   tiers · curated · glossary · guardrails · verify · freshness
-  llm/                      provider contract · anthropic · vllm · extractive
+  llm/                      provider contract · gateway · anthropic · vllm · extractive
   monitor/                  fetch · robots · extract · classify · store · verify · crawl
   log/audit.ts              FR-55 / FR-56
 data/
