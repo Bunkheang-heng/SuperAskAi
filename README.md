@@ -507,3 +507,45 @@ document.
 
 `OD-05` — unresolved, and it blocks the Phase 0 start. The extractive fallback
 exists so the pipeline can be built and measured while procurement is settled.
+
+---
+
+## Deployment
+
+Running at `http://206.189.88.178` on a DigitalOcean droplet (Ubuntu 24.04,
+1 vCPU, 1 GB). nginx terminates the public request; Next.js listens on loopback
+only and is never reachable from outside.
+
+```
+internet → nginx :80 → 127.0.0.1:3000 (askgov.service, user askgov)
+```
+
+| Control | Where | Why |
+|---|---|---|
+| `limit_req` 12 r/min on `/api/`, 120 r/min site | `/etc/nginx/conf.d/askgov-limits.conf` | Every `/api/ask` is a paid model call. Unlimited public access is an open tap on the gateway credit. A citizen asks a question every few seconds; a scraper does not. |
+| App bound to `127.0.0.1` | `askgov.service` | Port 3000 is unreachable publicly, so the rate limits and headers cannot be bypassed |
+| `/api/health` → localhost only | nginx `location = /api/health` | It names the provider, the model and the gateway base URL. No client calls it |
+| `DIAGNOSTICS_ENABLED=false` | `/opt/askgov/.env.local` | FR-72/73 — the answer trace is for DGC and ministry users, not citizens |
+| `.env.local` mode 600, owned by `askgov` | droplet | R-15 / FR-74 — the credential is readable only by the service account |
+| Unprivileged user + systemd sandboxing | `askgov.service` | `ProtectSystem=strict`, `NoNewPrivileges`, `PrivateDevices`; the audit log is the only writable path |
+| `X-Powered-By` stripped, `server_tokens off` | nginx + `next.config.ts` | Do not hand a scanner the stack |
+| `robots.txt` disallows `/api/` | nginx | A crawler walking the API costs a model call per hit |
+| ufw: 22, 80, 443 only · key-only SSH · fail2ban | droplet | Standard host hardening |
+
+**This deployment is HTTP, not HTTPS.** A certificate needs a domain name;
+Let's Encrypt will not issue for a bare IP. Until a domain points here, citizen
+questions — which section 5.1 notes are about births, deaths, lost documents and
+money owed — cross the network in cleartext. Point a domain at the droplet and
+run `certbot --nginx`, and treat the current address as a demo, not a pilot.
+
+Operations:
+
+```
+systemctl status askgov          # service state
+journalctl -u askgov -f          # application log
+curl -s localhost/api/health     # provider, model, corpus (localhost only)
+```
+
+Redeploy: rsync the tree to `/opt/askgov` excluding `node_modules`, `.next`,
+`var` and `.env.local`, then `npm ci && npm run build && systemctl restart
+askgov`.
