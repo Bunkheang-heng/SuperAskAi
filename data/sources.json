@@ -2,7 +2,7 @@
   "_comment": "GENERATED — do not edit by hand. Source of truth is data/registry/seed_registry.py; regenerate with `npx tsx scripts/build-sources.ts`. Monitored source registry for FR-47, organised by platform per section 10.4 with organisation identity as metadata.",
   "_gateNote": "A crawl produces a CHANGE SIGNAL and nothing else (FR-49). Detected changes land in var/review-queue.jsonl for the responsible steward. Nothing here reaches a citizen, or data/kb/, without steward approval — and fees, deadlines, required documents, eligibility and procedure steps need that approval even when the change is unambiguous (section 10.5).",
   "_verifiedNote": "verified=directory|wikipedia|search are observed domains. verified=unconfirmed were DERIVED from a naming convention and are leads, not facts: probing them is how they get confirmed, and nothing from an unconfirmed source may be ingested until its homepage returns 2xx and confirms ownership.",
-  "generatedAt": "2026-07-31",
+  "generatedAt": "2026-08-03",
   "counts": {
     "total": 130,
     "enabled": 128,

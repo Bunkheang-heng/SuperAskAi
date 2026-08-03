@@ -13,7 +13,7 @@ import { useState } from "react";
 import { AlertTriangle, Flag, Send, ShieldCheck, Terminal } from "lucide-react";
 import type { AskResponse } from "@/lib/types";
 import { T } from "@/lib/theme";
-import { UI } from "@/lib/ui-copy";
+import { UI, UNVERIFIED_NOTICE } from "@/lib/ui-copy";
 import { SUPPORT_HANDLE } from "@/lib/support";
 import { AnswerText } from "./AnswerText";
 import { SourceCard } from "./SourceCard";
@@ -36,6 +36,18 @@ export function AnswerBlock({
   const [handover, setHandover] = useState<"idle" | "sending">("idle");
   const lang = answer.lang;
   const hasSources = answer.citations.length > 0;
+
+  /*
+    The engine appends UNVERIFIED_NOTICE to the answer string so that consumers
+    which render only the text still carry the warning. This interface renders
+    it as a banner above the answer instead — earlier in the reading order,
+    where a qualification is actually read — so the trailing copy of it comes
+    off first. Both strings come from lib/ui-copy.ts, so the match is exact.
+  */
+  const body =
+    answer.unverified && answer.answer.endsWith(UNVERIFIED_NOTICE[lang])
+      ? answer.answer.slice(0, -UNVERIFIED_NOTICE[lang].length).trimEnd()
+      : answer.answer;
 
   return (
     <div className="ag-fade mb-10">
@@ -74,7 +86,44 @@ export function AnswerBlock({
         </span>
       </div>
 
-      <AnswerText text={answer.answer} />
+      {/*
+        FR-62 inverted: where there is no source to attribute, say so before the
+        answer rather than attributing nothing and letting it read as official.
+      */}
+      {answer.unverified && (
+        <div
+          className="mb-3 rounded-lg px-3 py-2.5"
+          style={{
+            background: T.noticeWash,
+            border: `1px solid ${T.noticeLine}`,
+          }}
+        >
+          <div className="flex items-start gap-2">
+            <AlertTriangle
+              size={13}
+              color={T.noticeText}
+              className="mt-0.5 shrink-0"
+              aria-hidden
+            />
+            <div>
+              <div
+                className="km"
+                style={{ fontSize: 12.5, fontWeight: 600, color: T.noticeText }}
+              >
+                {UI.unverifiedLabel[lang]}
+              </div>
+              <div
+                className="km mt-0.5"
+                style={{ fontSize: 12, lineHeight: 1.55, color: T.inkSoft }}
+              >
+                {UI.unverifiedBody[lang]}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <AnswerText text={body} />
 
       {/* FR-62: persistent, not behind a control. */}
       {hasSources && (

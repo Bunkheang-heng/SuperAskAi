@@ -1,11 +1,16 @@
 /**
- * data/registry/*.csv → data/sources.json
+ * data/registry/websites_master.csv → data/sources.json
  *
  * The registry is maintained upstream in Python (data/registry/seed_registry.py
  * → build_dataset.py, which emits CSV, XLSX, JSON and SQL). This script is the
  * one-way bridge into the shape lib/monitor/ consumes, so the Python remains
  * the single place a source is added or corrected and this file is never edited
  * by hand.
+ *
+ * The master CSV carries one row per source: the organisation record, its crawl
+ * seed under seed_*, and the last probe result under verify_* (written back by
+ * scripts/crawl.ts --mode=verify). Only the first two groups are read here — a
+ * probe result describes a source, it does not decide whether to monitor it.
  *
  * Two registry columns decide whether a source is crawled at all, and both are
  * honoured rather than flattened away:
@@ -26,73 +31,13 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { toRecords } from "../lib/registry/csv";
 
 const REGISTRY = join(process.cwd(), "data", "registry");
 
-/** RFC 4180 — fields may contain commas, quotes and newlines. */
-function parseCsv(text: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let field = "";
-  let inQuotes = false;
-
-  // Strip a UTF-8 BOM; build_dataset.py writes utf-8-sig for Excel.
-  const s = text.replace(/^﻿/, "");
-
-  for (let i = 0; i < s.length; i += 1) {
-    const c = s[i];
-
-    if (inQuotes) {
-      if (c === '"') {
-        if (s[i + 1] === '"') {
-          field += '"';
-          i += 1;
-        } else {
-          inQuotes = false;
-        }
-      } else {
-        field += c;
-      }
-      continue;
-    }
-
-    if (c === '"') inQuotes = true;
-    else if (c === ",") {
-      row.push(field);
-      field = "";
-    } else if (c === "\r") {
-      // handled by \n
-    } else if (c === "\n") {
-      row.push(field);
-      rows.push(row);
-      row = [];
-      field = "";
-    } else field += c;
-  }
-
-  if (field || row.length) {
-    row.push(field);
-    rows.push(row);
-  }
-
-  return rows.filter((r) => r.some((f) => f.trim() !== ""));
-}
-
-function toRecords(csv: string): Array<Record<string, string>> {
-  const rows = parseCsv(csv);
-  const header = rows[0];
-  return rows.slice(1).map((r) => {
-    const rec: Record<string, string> = {};
-    header.forEach((h, i) => (rec[h] = (r[i] ?? "").trim()));
-    return rec;
-  });
-}
-
 const full = toRecords(
-  readFileSync(join(REGISTRY, "government_websites.csv"), "utf8"),
+  readFileSync(join(REGISTRY, "websites_master.csv"), "utf8"),
 );
-const seeds = toRecords(readFileSync(join(REGISTRY, "crawl_seeds.csv"), "utf8"));
-const seedById = new Map(seeds.map((s) => [s.id, s]));
 
 /**
  * Page budget by crawl priority.
@@ -134,10 +79,9 @@ const ONBOARDED: Record<string, string> = {
 };
 
 const sources: OutSource[] = full.map((r) => {
-  const seed = seedById.get(r.id);
   const host = [r.subdomain, r.domain].filter(Boolean).join(".");
-  const priority = Number(r.crawl_priority || seed?.crawl_priority || "3");
-  const renderMode = seed?.render_mode ?? "static";
+  const priority = Number(r.crawl_priority || "3");
+  const renderMode = r.seed_render_mode || "static";
   const headless = renderMode === "headless";
 
   return {
@@ -148,15 +92,15 @@ const sources: OutSource[] = full.map((r) => {
     abbr: r.abbreviation || undefined,
     category: r.category,
     parentMinistry: r.parent_ministry || undefined,
-    url: r.base_url || seed?.seed_url || `https://${host}`,
+    url: r.base_url || r.seed_url || `https://${host}`,
     host,
     adapter: "web" as const,
     priority,
-    verified: r.verified || seed?.verified || "unconfirmed",
+    verified: r.verified || "unconfirmed",
     renderMode,
-    depth: Number(seed?.max_depth ?? "4"),
+    depth: Number(r.seed_max_depth || "4"),
     maxPages: PAGE_BUDGET[String(priority)] ?? 10,
-    politenessDelayMs: Number(seed?.politeness_delay_s ?? "2") * 1000,
+    politenessDelayMs: Number(r.seed_politeness_delay_s || "2") * 1000,
     enabled: !headless,
     disabledReason: headless
       ? "render_mode=headless — client-rendered SPA; a static fetch returns an empty shell. Needs a headless adapter."

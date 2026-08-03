@@ -48,6 +48,10 @@ export function createExtractiveProvider(reason?: string): LlmProvider {
   };
 
   async function generate(req: GenerationRequest): Promise<GenerationResult> {
+    // Also the general-mode answer: an extractive provider has no knowledge of
+    // its own to fall back on, so an unsourced question escalates. The general
+    // fallback is a model capability, and where there is no model there is no
+    // fallback — which is the correct degradation, not a gap.
     if (req.sources.length === 0) {
       return {
         answer: NOT_FOUND[req.lang],

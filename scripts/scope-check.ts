@@ -9,10 +9,17 @@
  *   off-domain    not a service question at all. Refused, no escalation:
  *                 sending someone to an officer because they asked for a
  *                 translation wastes the officer's time and theirs
- *   coverage gap  a service question from a ministry not yet onboarded.
- *                 Refused WITH escalation — an officer can genuinely help
+ *   coverage gap  a service question from a ministry not yet onboarded. The
+ *                 officer is ALWAYS offered and there are never citations.
+ *                 Whether the citizen also receives an unverified model answer
+ *                 depends on GENERAL_FALLBACK_ENABLED, so this route covers
+ *                 both refusal and unverified-answer, and the flag decides
+ *                 which — see the `unverified` column in the output.
+ *   entity lookup a question about a NAMED business or record rather than the
+ *                 rule (section 6.2). Refused WITH escalation, and answered
+ *                 with the addresses of the public registers.
  *
- * The fourth ending is the ordinary one: retrieval answers it.
+ * The fifth ending is the ordinary one: retrieval answers it, with citations.
  *
  * The precision cases at the bottom are the point of the file. The glossary
  * runs after the FR-16 confidence gate precisely so a term appearing inside a
@@ -37,7 +44,12 @@ process.env.DIAGNOSTICS_ENABLED = "true";
 import { ask } from "../lib/engine/tiers";
 import { detectLang } from "../lib/lang/detect";
 
-type Route = "glossary" | "off-domain" | "coverage-gap" | "answered";
+type Route =
+  | "glossary"
+  | "off-domain"
+  | "coverage-gap"
+  | "entity-lookup"
+  | "answered";
 
 interface Case {
   q: string;
@@ -46,6 +58,10 @@ interface Case {
   term?: string;
   /** Expected FR-08 language, where the case is a detection regression. */
   lang?: "en" | "km";
+  /** Prior turns, for follow-up resolution cases (FR-07). */
+  history?: Array<{ role: "user" | "assistant"; text: string }>;
+  /** Substrings the answer must NOT contain — topic-drift regressions. */
+  absent?: string[];
   why: string;
 }
 
@@ -162,13 +178,82 @@ const CASES: Case[] = [
     route: "answered",
     why: '"what is" plus a fee is a procedure question, not a definition',
   },
+
+  // ── Section 6.2: records, not rules ──────────────────────────────────────
+  {
+    q: "Is the trademark 'Baby Outlet' registered in Cambodia?",
+    route: "entity-lookup",
+    why: "a named mark is a register lookup; the name is usually quoted",
+  },
+
+  // ── FR-08 language routing ───────────────────────────────────────────────
+  // The reply follows the script the citizen typed in. Romanised Khmer is
+  // Latin script, so it is answered in English even though FR-03 still
+  // romanises the QUERY to Khmer for retrieval.
+  {
+    q: "sombot kamnaot trauv ke ekasa avei khlah",
+    route: "coverage-gap",
+    lang: "en",
+    why: "romanised Khmer is answered in English, not Khmer script",
+  },
+  {
+    q: "ត្រូវការឯកសារអ្វីខ្លះសម្រាប់សំបុត្រកំណើត?",
+    route: "answered",
+    lang: "km",
+    why: "Khmer script is answered in Khmer",
+  },
+
+  // ── FR-07 follow-up resolution, and the drift it used to cause ───────────
+  // "where in phnom penh?" names nothing, and neither does the turn before it.
+  // Resolving against only the previous turn lost the subject entirely and the
+  // query then matched the office-and-hours passages of whatever the corpus
+  // holds — a passport question answered with driving-licence locations.
+  {
+    q: "where in phnom penh?",
+    route: "coverage-gap",
+    history: [
+      {
+        role: "user",
+        text: "i dont have a passport, what do i need to bring to make my passport and where can i get it made?",
+      },
+      {
+        role: "assistant",
+        text: "You can apply at the General Department of Immigration in Phnom Penh.",
+      },
+      { role: "user", text: "can you give me the specific locations?" },
+      {
+        role: "assistant",
+        text: "The main office is on Russian Federation Boulevard.",
+      },
+    ],
+    absent: ["driving licence", "vehicle registration"],
+    why: "a subject-less follow-up must keep the subject from earlier turns",
+  },
+  {
+    q: "and the fee?",
+    route: "answered",
+    history: [
+      { role: "user", text: "How do I renew my Cambodian driving licence?" },
+      {
+        role: "assistant",
+        text: "Bring your old licence, national ID card and three photographs.",
+      },
+    ],
+    why: "an ordinary follow-up still resolves against the previous turn",
+  },
 ];
 
 function routeOf(res: Awaited<ReturnType<typeof ask>>): Route {
   const reason = res.diagnostics?.refusalReason;
   if (res.diagnostics?.provider === "glossary") return "glossary";
   if (reason === "scope:not_a_service_question") return "off-domain";
+  if (reason === "scope:entity_record_lookup") return "entity-lookup";
   if (reason?.startsWith("retrieval:")) return "coverage-gap";
+  // An unsourced answer IS the coverage-gap ending, just with the fallback on:
+  // no approved source, no citations, officer offered. Classifying it as
+  // "answered" would let a genuine leak — an off-domain question picked up by
+  // the fallback — pass as an ordinary answer, which is how it escaped once.
+  if (reason === "fallback:general_knowledge") return "coverage-gap";
   return "answered";
 }
 
@@ -179,19 +264,42 @@ async function main() {
   console.log("=".repeat(72));
 
   for (const c of CASES) {
-    const res = await ask({ question: c.q });
+    const res = await ask({ question: c.q, history: c.history });
     const route = routeOf(res);
     const problems: string[] = [];
 
     if (route !== c.route) problems.push(`route ${route}, expected ${c.route}`);
 
-    // Escalation is the operational difference between the two refusals: an
-    // officer can help with a coverage gap and cannot help with the weather.
-    const wantEscalate = c.route === "coverage-gap";
+    // Escalation is the operational difference between the refusals: an officer
+    // can help with a coverage gap or a register lookup, and cannot help with
+    // the weather.
+    const wantEscalate =
+      c.route === "coverage-gap" || c.route === "entity-lookup";
     if (c.route !== "answered" && res.escalate !== wantEscalate) {
       problems.push(
         `escalate ${res.escalate}, expected ${wantEscalate}`,
       );
+    }
+
+    // An unsourced answer must never carry a citation — one would be a
+    // fabricated government reference.
+    if (c.route === "coverage-gap" && res.citations.length > 0) {
+      problems.push(`${res.citations.length} citations on a coverage gap`);
+    }
+
+    // Conversely, an ordinary answer must actually rest on a source. Without
+    // this, the unverified fallback quietly taking over an in-corpus question
+    // would still read as a pass.
+    if (c.route === "answered") {
+      if (res.citations.length === 0) problems.push("answered with no citation");
+      if (res.unverified) problems.push("answered but marked unverified");
+    }
+
+    // Topic drift: the answer resolved against the wrong subject.
+    for (const term of c.absent ?? []) {
+      if (res.answer.toLowerCase().includes(term.toLowerCase())) {
+        problems.push(`answer mentions "${term}"`);
+      }
     }
 
     if (c.term) {

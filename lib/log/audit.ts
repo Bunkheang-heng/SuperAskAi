@@ -75,6 +75,14 @@ export interface AuditRecord {
   unsupportedClaims: string[];
   refusalReason?: string;
   escalated: boolean;
+  /**
+   * The answer came from the model's general knowledge rather than an approved
+   * source (GENERAL_FALLBACK_ENABLED). Recorded as its own field because
+   * "citedIds is empty" is also true of refusals, and a reviewer asking "what
+   * has AskGov told citizens without a source behind it" needs to be able to
+   * filter on exactly that.
+   */
+  unverified: boolean;
   latencyMs: number;
 }
 
@@ -114,6 +122,7 @@ export async function recordAnswer(
     unsupportedClaims: d?.verification.unsupported ?? [],
     refusalReason: d?.refusalReason,
     escalated: res.escalate,
+    unverified: res.unverified === true,
     latencyMs: d?.latencyMs ?? -1,
   };
 

@@ -22,8 +22,8 @@
  */
 
 import {
-  GROUNDING_PROMPT,
-  JSON_CONTRACT_INSTRUCTION,
+  systemPromptFor,
+  jsonContractFor,
   buildUserContent,
   parseGeneration,
   type GenerationRequest,
@@ -35,6 +35,19 @@ import {
 const DEFAULT_BASE_URL = "https://inference-api.nousresearch.com/v1";
 const DEFAULT_MODEL = "anthropic/claude-sonnet-5";
 const MAX_TOKENS = 1600;
+
+/**
+ * Request timeout. Configurable because 30s is not one number for all cases:
+ * a Khmer answer costs several times the output tokens of the same answer in
+ * English, and the unsourced fallback writes from scratch rather than
+ * condensing a supplied provision. Both together reliably exceeded 30s on a
+ * reasoning-family model, and the abort surfaced as an ordinary refusal — the
+ * fallback appeared not to work at all rather than to be slow.
+ *
+ * Raising this trades against NFR-06. Lowering the latency properly means a
+ * faster model (LLM_GATEWAY_MODEL), not a longer wait.
+ */
+const TIMEOUT_MS = Number(process.env.LLM_GATEWAY_TIMEOUT_MS ?? "30000");
 
 export function createGatewayProvider(): LlmProvider {
   const apiKey = process.env.LLM_GATEWAY_API_KEY?.trim();
@@ -66,7 +79,7 @@ export function createGatewayProvider(): LlmProvider {
 
   async function generate(req: GenerationRequest): Promise<GenerationResult> {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 30_000);
+    const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
     try {
       const res = await fetch(`${baseUrl}/chat/completions`, {
@@ -86,7 +99,7 @@ export function createGatewayProvider(): LlmProvider {
           messages: [
             {
               role: "system",
-              content: GROUNDING_PROMPT + "\n" + JSON_CONTRACT_INSTRUCTION,
+              content: systemPromptFor(req) + "\n" + jsonContractFor(req),
             },
             ...req.history.slice(-4).map((m) => ({
               role: m.role,
@@ -115,7 +128,7 @@ export function createGatewayProvider(): LlmProvider {
       const raw = data.choices?.[0]?.message?.content;
       if (!raw) throw new Error("Gateway returned no content");
 
-      return parseGeneration(raw);
+      return parseGeneration(raw, req.mode);
     } finally {
       clearTimeout(timeout);
     }

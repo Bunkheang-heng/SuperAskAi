@@ -147,8 +147,43 @@ full_host = df.apply(lambda r: (r["subdomain"] + "." + r["domain"]).strip("."), 
 assert full_host.duplicated().sum() == 0, "duplicate host detected"
 assert df["organization_name"].duplicated().sum() == 0, "duplicate organization detected"
 
-# ---- 1. CSV ---------------------------------------------------------------
-df.to_csv(f"{OUT}/government_websites.csv", index=False, encoding="utf-8-sig")
+# ---- 1. websites_master.csv ----------------------------------------------
+# One committed CSV per source: the organisation record, its crawl seed under
+# seed_*, and its last probe result under verify_* (written back by
+# scripts/crawl.ts --mode=verify). Prior verify_* values are carried forward by
+# id so regenerating the registry never discards probe history — set
+# ASKGOV_MASTER_IN to point at the file in the repo when OUT is elsewhere.
+
+# Hosts confirmed to be client-rendered SPAs: a static fetch returns an empty shell.
+SPA_HOSTS = {"apps.customs.gov.kh", "digitalip.cambodiaip.gov.kh"}
+
+SEED_COLUMNS = ["seed_url", "seed_render_mode", "seed_politeness_delay_s", "seed_max_depth"]
+VERIFY_COLUMNS = ["verify_" + c for c in (
+    "sourceId","outcome","httpStatus","finalUrl","redirected","offHost","https",
+    "homepageTitle","textLength","robotsExists","robotsAllowsUs","crawlDelayMs",
+    "checkedAt","error",
+)]
+
+MASTER_IN = os.environ.get("ASKGOV_MASTER_IN", f"{OUT}/websites_master.csv")
+prior = {}
+if os.path.exists(MASTER_IN):
+    with open(MASTER_IN, encoding="utf-8-sig", newline="") as f:
+        prior = {row["id"]: row for row in csv.DictReader(f)}
+
+with open(f"{OUT}/websites_master.csv", "w", newline="", encoding="utf-8-sig") as f:
+    w = csv.DictWriter(f, fieldnames=COLUMNS + SEED_COLUMNS + VERIFY_COLUMNS)
+    w.writeheader()
+    for _, r in df.iterrows():
+        host = (r["subdomain"] + "." + r["domain"]).strip(".")
+        row = {c: r[c] for c in COLUMNS}
+        row["seed_url"] = r["base_url"]
+        row["seed_render_mode"] = "headless" if host in SPA_HOSTS else "static"
+        row["seed_politeness_delay_s"] = 2
+        row["seed_max_depth"] = 4
+        p = prior.get(str(r["id"]), {})
+        for c in VERIFY_COLUMNS:
+            row[c] = p.get(c, "")
+        w.writerow(row)
 
 # ---- 3. JSON (requested compact shape + full record) ----------------------
 compact = [{
@@ -221,19 +256,9 @@ CREATE INDEX ix_gw_verified ON government_websites (verified);
 COMMIT;
 """)
 
-# ---- 5. crawl_seeds.csv ---------------------------------------------------
-with open(f"{OUT}/crawl_seeds.csv", "w", newline="", encoding="utf-8-sig") as f:
-    w = csv.writer(f)
-    w.writerow(["id","organization_name","seed_url","domain","crawl_priority",
-                "verified","render_mode","politeness_delay_s","max_depth","notes"])
-    for _, r in df.iterrows():
-        host = (r["subdomain"] + "." + r["domain"]).strip(".")
-        # Hosts confirmed to be client-rendered SPAs: a static fetch returns an empty shell.
-        SPA_HOSTS = {"apps.customs.gov.kh", "digitalip.cambodiaip.gov.kh"}
-        render = "headless" if host in SPA_HOSTS else "static"
-        w.writerow([r["id"], r["organization_name"], r["base_url"],
-                    (r["subdomain"] + "." + r["domain"]).strip("."),
-                    r["crawl_priority"], r["verified"], render, 2, 4, r["notes"]])
+# ---- 5. crawl seeds -------------------------------------------------------
+# Folded into websites_master.csv above as the seed_* columns; there is no
+# separate crawl_seeds.csv.
 
 # ---- 6 & 7. sitemap / robots index (skeleton, filled by the crawler) ------
 with open(f"{OUT}/sitemap_index.csv", "w", newline="", encoding="utf-8-sig") as f:

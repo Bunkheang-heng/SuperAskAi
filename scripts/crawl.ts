@@ -11,11 +11,12 @@
  * leads and monitor skips them by default until a probe confirms them.
  */
 
-import { writeFileSync, appendFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { crawl, loadSources } from "../lib/monitor/crawl";
 import { verifyAll } from "../lib/monitor/verify";
 import { USER_AGENT } from "../lib/monitor/fetch";
+import { parseCsv, toRecords, fromRecords } from "../lib/registry/csv";
 import type { VerificationResult } from "../lib/monitor/types";
 
 function arg(name: string): string | undefined {
@@ -25,6 +26,7 @@ function arg(name: string): string | undefined {
 const flag = (name: string) => process.argv.includes(`--${name}`);
 
 const OUT_DIR = join(process.cwd(), "data", "crawl");
+const MASTER = join(process.cwd(), "data", "registry", "websites_master.csv");
 
 async function runVerify() {
   const all = loadSources();
@@ -70,31 +72,59 @@ async function runVerify() {
     JSON.stringify(results, null, 2),
     "utf8",
   );
-  writeFileSync(join(OUT_DIR, "verification.csv"), toCsv(results), "utf8");
+  const written = writeBackToMaster(results);
 
-  summarise(results);
+  summarise(results, written);
 }
 
-function toCsv(results: VerificationResult[]): string {
+/**
+ * Probe results belong on the source's own row, not in a second file that has
+ * to be joined back by hand. Only the verify_* columns are touched, and only
+ * for the sources this run actually probed — a --priority=1 run must not blank
+ * out what the last full run learned about everything else.
+ */
+function writeBackToMaster(results: VerificationResult[]): number {
   const cols: Array<keyof VerificationResult> = [
-    "registryId", "sourceId", "org", "host", "priority", "claimed", "outcome",
-    "httpStatus", "finalUrl", "redirected", "offHost", "https", "homepageTitle",
-    "textLength", "robotsExists", "robotsAllowsUs", "crawlDelayMs", "checkedAt", "error",
+    "sourceId", "outcome", "httpStatus", "finalUrl", "redirected", "offHost",
+    "https", "homepageTitle", "textLength", "robotsExists", "robotsAllowsUs",
+    "crawlDelayMs", "checkedAt", "error",
   ];
 
-  const esc = (v: unknown) => {
-    const s = v === undefined || v === null ? "" : String(v);
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
+  const text = readFileSync(MASTER, "utf8");
+  const header = parseCsv(text)[0];
+  const records = toRecords(text);
+  const byId = new Map(records.map((r) => [r.id, r]));
 
-  return [
-    cols.join(","),
-    ...results.map((r) => cols.map((c) => esc(r[c])).join(",")),
-    "",
-  ].join("\n");
+  for (const c of cols) {
+    if (!header.includes(`verify_${c}`)) header.push(`verify_${c}`);
+  }
+
+  let written = 0;
+  const orphans: number[] = [];
+  for (const r of results) {
+    const row = byId.get(String(r.registryId));
+    if (!row) {
+      orphans.push(r.registryId);
+      continue;
+    }
+    for (const c of cols) {
+      const v = r[c];
+      row[`verify_${c}`] = v === undefined || v === null ? "" : String(v);
+    }
+    written += 1;
+  }
+
+  if (orphans.length) {
+    console.warn(
+      `\nWARNING: ${orphans.length} probe result(s) had no registry row and were dropped: ${orphans.join(", ")}`,
+    );
+  }
+
+  writeFileSync(MASTER, fromRecords(header, records), "utf8");
+  return written;
 }
 
-function summarise(results: VerificationResult[]) {
+function summarise(results: VerificationResult[], written: number) {
   const by = (k: VerificationResult["outcome"]) =>
     results.filter((r) => r.outcome === k);
 
@@ -126,7 +156,10 @@ function summarise(results: VerificationResult[]) {
     for (const r of blocked) console.log(`  ${r.host}`);
   }
 
-  console.log(`\nWritten: data/crawl/verification.{json,csv}`);
+  console.log(`\nWritten: data/crawl/verification.json`);
+  console.log(
+    `         data/registry/websites_master.csv — verify_* columns on ${written} row(s)`,
+  );
   console.log(
     `Nothing was ingested. Confirmed leads still need their registry row updated\n` +
       `in data/registry/seed_registry.py, then: npx tsx scripts/build-sources.ts\n`,

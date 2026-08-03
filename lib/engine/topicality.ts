@@ -30,23 +30,8 @@
  * addressing the question, with its source attached so the citizen can judge.
  */
 
-import { segment } from "@/lib/khmer/segment";
 import { normalizeFold } from "@/lib/khmer/normalize";
-
-/**
- * Words that carry no aboutness. A question made only of these has nothing to
- * check, so coverage is meaningless and the gate stays out of the way.
- */
-const STOPWORDS = new Set([
-  "what", "who", "how", "when", "where", "which", "why", "whose",
-  "do", "does", "did", "is", "are", "am", "was", "were", "be", "been", "being",
-  "can", "could", "will", "would", "should", "shall", "may", "might", "must",
-  "i", "you", "me", "my", "mine", "we", "our", "us", "it", "its", "they", "them",
-  "this", "that", "these", "those", "the", "a", "an", "and", "or", "but", "if",
-  "to", "for", "of", "in", "on", "at", "with", "from", "by", "about", "as",
-  "please", "tell", "know", "need", "want", "get", "have", "has", "there",
-  "s", "me", "give", "show", "explain", "any", "some", "all", "more",
-]);
+import { contentTerms, MIN_TERMS } from "@/lib/lang/content";
 
 export interface Topicality {
   /** Fraction of the question's content words present in the source. */
@@ -67,16 +52,6 @@ export interface Topicality {
  * different vocabulary for most of it, and over-refusing is its own failure.
  */
 const MIN_COVERAGE = Number(process.env.TOPICALITY_MIN_COVERAGE ?? "0.34");
-
-/** Below this many content words there is nothing meaningful to measure. */
-const MIN_TERMS = 3;
-
-function contentTerms(text: string): string[] {
-  const folded = normalizeFold(text);
-  return segment(folded).filter(
-    (t) => t.length > 1 && !STOPWORDS.has(t) && !/^\d+$/.test(t),
-  );
-}
 
 /**
  * A term counts as present if the source contains it as a substring.
@@ -126,8 +101,10 @@ const ENTITY_PHRASING: RegExp[] = [
   /\b[a-z0-9][\w.\- ]{1,40}['’]s\s+\w*\s*(trademark|mark|brand|company|business|registry|register|registration|licen[cs]e|patent)\b/i,
   // "tell me about X", "information on X", "look up X"
   /\b(tell me about|information (on|about)|look ?up|search for|details (on|about)|check)\b/i,
-  // "is X registered", "who owns X"
-  /\b(is|are)\s+[\w.\- ]{2,40}\s+(registered|trademarked|licensed)\b/i,
+  // "is X registered", "who owns X". The name is frequently quoted — "is the
+  // trademark 'Baby Outlet' registered" — so the quote characters have to be
+  // inside the class or the phrasing is missed entirely.
+  /\b(is|are)\s+[\w.\-'’"“” ]{2,40}\s+(registered|trademarked|licensed)\b/i,
   /\bwho owns\b/i,
 ];
 

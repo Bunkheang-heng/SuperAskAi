@@ -134,6 +134,11 @@ export interface Diagnostics {
    *   verification:failed  FR-15 gate suppressed a written answer
    *   moderation:<kind>    NFR-04 output moderation caught the answer
    *   provider:escalated   the model itself declined to answer
+   *   fallback:general_knowledge  NOT a refusal — no source covered the
+   *                       question and GENERAL_FALLBACK_ENABLED served an
+   *                       unverified model answer instead. Recorded here so the
+   *                       audit log can separate unsourced answers from sourced
+   *                       ones without parsing the answer text.
    *
    * "policy:" means AskGov is not allowed to answer, "scope:" means there was
    * nothing of its kind to answer. Everything else means it could not — usually
@@ -163,6 +168,16 @@ export interface AskResponse {
     hours: string;
     phone: string;
   };
+  /**
+   * The answer came from the model's general knowledge, not from an approved
+   * source, because no source in the corpus covered the question and the
+   * GENERAL_FALLBACK_ENABLED operator switch is on.
+   *
+   * `citations` is always empty when this is set, and the interface must render
+   * an unverified marker. Absent or false means every claim in the answer is
+   * backed by a cited approved source — the default contract.
+   */
+  unverified?: boolean;
   /** Emergency path: FR guardrail 6. Terminates the interaction. */
   terminal?: boolean;
   diagnostics?: Diagnostics;

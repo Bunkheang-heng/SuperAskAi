@@ -21,6 +21,7 @@ import {
   remove,
   save,
   type Conversation,
+  type StoredTurn,
 } from "@/lib/history";
 import { AnswerBlock } from "./AnswerBlock";
 import { Composer } from "./Composer";
@@ -46,7 +47,19 @@ export interface Coverage {
 export function Chat({ coverage }: { coverage: Coverage[] }) {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [input, setInput] = useState("");
-  const [busy, setBusy] = useState(false);
+  /**
+   * The conversation a request is in flight for, or null.
+   *
+   * Not a boolean, because an answer has to know where it belongs. A citizen who
+   * asks a question and switches to another conversation while it is being
+   * answered used to have the answer appended to whatever was on screen when the
+   * fetch resolved — and the persist effect then wrote that merged transcript
+   * under the OTHER conversation's id, so the wrong answer was also saved into
+   * the wrong history entry.
+   */
+  const [pendingIn, setPendingIn] = useState<string | null>(null);
+  /** A request is in flight somewhere. Submission stays single-flight. */
+  const busy = pendingIn !== null;
   const [trace, setTrace] = useState<AskResponse | null>(null);
   const [sidebar, setSidebar] = useState(true);
   const [handoverError, setHandoverError] = useState(false);
@@ -60,6 +73,21 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
    */
   const [history, setHistory] = useState<Conversation[]>([]);
   const [conversationId, setConversationId] = useState(() => newId());
+
+  /**
+   * The live conversation id, readable from an async callback.
+   *
+   * `conversationId` closed over inside ask() is the value at the time the
+   * request was made, which is the wrong thing to compare against — the whole
+   * question is whether it has changed since. A ref is the value now.
+   */
+  const conversationIdRef = useRef(conversationId);
+  useEffect(() => {
+    conversationIdRef.current = conversationId;
+  }, [conversationId]);
+
+  /** Only the conversation that asked shows the thinking indicator. */
+  const busyHere = pendingIn === conversationId;
 
   useEffect(() => {
     setHistory(loadAll());
@@ -81,7 +109,7 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [turns, busy]);
+  }, [turns, busyHere]);
 
   // An emergency guardrail terminates the interaction (section 12, rule 6).
   const terminated = turns.some(
@@ -94,9 +122,33 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
     (t) => t.role === "assistant" && t.response.escalate,
   );
 
+  /**
+   * Put a finished answer in the conversation that asked for it.
+   *
+   * On screen when it arrives: ordinary append. Somewhere else: write it
+   * straight into that conversation's stored transcript, so the citizen finds
+   * it waiting when they go back rather than losing the answer entirely. If the
+   * conversation was deleted mid-flight the answer is dropped — recreating a
+   * conversation the citizen just deleted would be worse than losing it, and on
+   * a shared handset (see lib/history.ts) it would be a disclosure.
+   */
+  function deliver(askedIn: string, turn: Turn) {
+    if (conversationIdRef.current === askedIn) {
+      setTurns((prev) => [...prev, turn]);
+      return;
+    }
+
+    const stored = loadAll().find((c) => c.id === askedIn);
+    if (!stored) return;
+    setHistory(save(askedIn, [...stored.turns, turn as StoredTurn]));
+  }
+
   async function ask(text: string) {
     const question = text.trim();
     if (!question || busy || terminated) return;
+
+    // Which conversation this answer belongs to, fixed at the moment of asking.
+    const askedIn = conversationId;
 
     setInput("");
 
@@ -109,7 +161,7 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
     );
 
     setTurns((prev) => [...prev, { role: "user", text: question }]);
-    setBusy(true);
+    setPendingIn(askedIn);
 
     try {
       const res = await fetch("/api/ask", {
@@ -119,28 +171,25 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
       });
 
       const response = (await res.json()) as AskResponse;
-      setTurns((prev) => [...prev, { role: "assistant", response }]);
+      deliver(askedIn, { role: "assistant", response });
     } catch {
       // NFR-09: degrade to escalation, not to a broken screen.
-      setTurns((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          response: {
-            id: "network-error",
-            tier: 3,
-            lang: detectLang(question),
-            answer:
-              detectLang(question) === "km"
-                ? "ការតភ្ជាប់បានបរាជ័យ។ សូមព្យាយាមម្តងទៀត ឬទាក់ទងមន្ត្រី។"
-                : "The connection failed. Try again, or contact an officer.",
-            citations: [],
-            escalate: true,
-          },
+      deliver(askedIn, {
+        role: "assistant",
+        response: {
+          id: "network-error",
+          tier: 3,
+          lang: detectLang(question),
+          answer:
+            detectLang(question) === "km"
+              ? "ការតភ្ជាប់បានបរាជ័យ។ សូមព្យាយាមម្តងទៀត ឬទាក់ទងមន្ត្រី។"
+              : "The connection failed. Try again, or contact an officer.",
+          citations: [],
+          escalate: true,
         },
-      ]);
+      });
     } finally {
-      setBusy(false);
+      setPendingIn(null);
     }
   }
 
@@ -463,7 +512,9 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
               </div>
             )}
 
-            {busy && (
+            {/* Only where the question was asked — a thinking indicator in a
+                conversation that asked nothing is a lie about what is loading. */}
+            {busyHere && (
               <div className="mb-10 flex items-center gap-2">
                 <div
                   className="flex items-center justify-center rounded-md"

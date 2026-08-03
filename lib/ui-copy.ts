@@ -13,6 +13,21 @@ import type { Lang } from "@/lib/types";
 
 type Copy = Record<Lang, string>;
 
+/**
+ * Appended to the body of an unverified answer by lib/engine/tiers.ts.
+ *
+ * It lives in the answer STRING, not only in the `unverified` flag, so that any
+ * consumer of /api/ask that renders the answer and ignores the rest of the
+ * payload still shows the citizen that nothing here is from an approved source.
+ * This interface reads the flag and renders a proper banner instead, so
+ * AnswerBlock strips this exact suffix before display — which is why it is
+ * shared from here rather than defined privately in the engine.
+ */
+export const UNVERIFIED_NOTICE: Copy = {
+  en: "⚠️ Not from an approved source. AskGov has no approved government document covering this, so the above is general guidance from the AI model — it may be incomplete, out of date, or wrong. Confirm any fee, deadline, document, or office with the responsible office before acting on it.",
+  km: "⚠️ មិនមែនមកពីឯកសារយោងដែលបានអនុម័តទេ។ AskGov គ្មានឯកសាររដ្ឋាភិបាលដែលបានអនុម័តសម្រាប់ករណីនេះទេ ដូច្នេះខ្លឹមសារខាងលើគឺជាការណែនាំទូទៅពីម៉ូដែល AI — វាអាចមិនពេញលេញ ហួសសម័យ ឬខុស។ សូមផ្ទៀងផ្ទាត់ថ្លៃសេវា កំណត់ពេល ឯកសារ ឬការិយាល័យទទួលបន្ទុក ជាមួយការិយាល័យពាក់ព័ន្ធ មុននឹងអនុវត្ត។",
+};
+
 export const UI = {
   brandSub: {
     en: "Digital Government Committee",
@@ -79,6 +94,23 @@ export const UI = {
   connectOfficer: {
     en: "Ask an officer",
     km: "សួរមន្ត្រី",
+  } satisfies Copy,
+
+  /**
+   * The unverified-answer banner (AskResponse.unverified).
+   *
+   * Sits ABOVE the answer, not below it. A citizen who reads the answer and
+   * acts on it has already left the page by the time a footnote arrives; the
+   * qualification has to reach them before the content it qualifies.
+   */
+  unverifiedLabel: {
+    en: "Not from an approved source",
+    km: "មិនមែនមកពីឯកសារយោងដែលបានអនុម័ត",
+  } satisfies Copy,
+
+  unverifiedBody: {
+    en: "AskGov has no approved government document covering this. The answer below is general guidance from the AI model — confirm any fee, deadline, document, or office before acting on it.",
+    km: "AskGov គ្មានឯកសាររដ្ឋាភិបាលដែលបានអនុម័តសម្រាប់ករណីនេះទេ។ ចម្លើយខាងក្រោមគឺជាការណែនាំទូទៅពីម៉ូដែល AI — សូមផ្ទៀងផ្ទាត់ថ្លៃសេវា កំណត់ពេល ឯកសារ ឬការិយាល័យ មុននឹងអនុវត្ត។",
   } satisfies Copy,
 
   /** The one-line reason, always shown next to the action. */

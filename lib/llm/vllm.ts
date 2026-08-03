@@ -14,8 +14,8 @@
  */
 
 import {
-  GROUNDING_PROMPT,
-  JSON_CONTRACT_INSTRUCTION,
+  systemPromptFor,
+  jsonContractFor,
   buildUserContent,
   parseGeneration,
   type GenerationRequest,
@@ -66,7 +66,7 @@ export function createVllmProvider(): LlmProvider {
             // returns a well-formed object of its own invention.
             {
               role: "system",
-              content: GROUNDING_PROMPT + "\n" + JSON_CONTRACT_INSTRUCTION,
+              content: systemPromptFor(req) + "\n" + jsonContractFor(req),
             },
             ...req.history.slice(-4).map((m) => ({
               role: m.role,
@@ -89,7 +89,7 @@ export function createVllmProvider(): LlmProvider {
       const raw = data.choices?.[0]?.message?.content;
       if (!raw) throw new Error("vLLM endpoint returned no content");
 
-      return parseGeneration(raw);
+      return parseGeneration(raw, req.mode);
     } finally {
       clearTimeout(timeout);
     }

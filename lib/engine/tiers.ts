@@ -29,9 +29,12 @@ import type {
   Tier,
 } from "@/lib/types";
 import { detectLang } from "@/lib/lang/detect";
+// Carried in the answer body, not only in the interface chrome — see the note
+// on the constant in lib/ui-copy.ts.
+import { UNVERIFIED_NOTICE } from "@/lib/ui-copy";
 import { retrieve } from "@/lib/retrieval";
 import { getKb } from "@/lib/kb/loader";
-import { generate, PROMPT_VERSION } from "@/lib/llm";
+import { generate, PROMPT_VERSION, GENERAL_PROMPT_VERSION } from "@/lib/llm";
 import { matchCurated } from "./curated";
 import { matchGlossary } from "./glossary";
 import { assess, looksLikeEntityLookup } from "./topicality";
@@ -54,6 +57,29 @@ const CURATED_THRESHOLD = Number(
  * the corpus, the segmenter, or the reranker changes.
  */
 const RETRIEVAL_MIN_SCORE = Number(process.env.RETRIEVAL_MIN_SCORE ?? "0.20");
+
+/**
+ * Unsourced fallback — the operator switch on section 13's core trade-off.
+ *
+ * OFF (`GENERAL_FALLBACK_ENABLED=false`) is the PRD behaviour: no approved
+ * source, no answer. ON lets the model answer a coverage gap from its own
+ * knowledge, labelled unverified, with the officer still offered.
+ *
+ * It is ON by default in this build because the corpus is four ministries of
+ * sample content and refusing everything outside it made the service read as
+ * broken. That reasoning expires as coverage grows: the wider the corpus, the
+ * more likely a question that misses it is one that genuinely should not be
+ * answered, and the more a citizen has learned to trust what AskGov says.
+ * Revisit this default before public release — NFR-11 and section 13 both
+ * assume the strict behaviour.
+ *
+ * What it does NOT loosen: the §12 policy guardrails, the off-domain screen,
+ * the entity-lookup boundary, and — for any answer that DOES have sources —
+ * the verification gate. Those all still run first and unchanged.
+ */
+const GENERAL_FALLBACK_ENABLED =
+  (process.env.GENERAL_FALLBACK_ENABLED ?? "true").toLowerCase() !== "false";
+
 
 /**
  * Refusal copy for a coverage gap.
@@ -281,6 +307,37 @@ export async function ask(req: AskRequest): Promise<AskResponse> {
     );
   }
 
+  // ── Off-domain screen, before retrieval (§6.1) ───────────────────────────
+  //
+  // Whether a question is a government-service question at all is a scope
+  // decision, and scope does not depend on what the corpus happens to score.
+  // This used to sit inside the confidence gate, where it was only consulted if
+  // retrieval came back below the floor — so "what is the capital of france",
+  // which matches a vehicle-registration passage at 0.205 against a floor of
+  // 0.20, walked straight past it into generation. Whether the citizen then got
+  // a refusal depended on the model's own judgement: Claude declined, GPT
+  // sometimes answered "Paris". A scope rule that holds only on some model
+  // families is not a scope rule.
+  //
+  // OFF_DOMAIN matches only unmistakable non-service requests and lets anything
+  // ambiguous fall through, so running it earlier costs no legitimate question —
+  // and saves a retrieval and a model call on the ones it catches.
+  if (isOffDomain(question)) {
+    return finish(
+      {
+        id,
+        tier: 3,
+        lang,
+        answer: notAServiceQuestion(lang),
+        citations: [],
+        // No officer: sending someone to a government desk because they asked
+        // for the weather wastes their time and the officer's.
+        escalate: false,
+      },
+      baseDiagnostics({ tier: 3, refusalReason: "scope:not_a_service_question" }),
+    );
+  }
+
   // ── Retrieval ────────────────────────────────────────────────────────────
   const { query, candidates, topScore } = retrieve(question, history);
 
@@ -300,6 +357,82 @@ export async function ask(req: AskRequest): Promise<AskResponse> {
     rewrittenQuery: query.rewritten,
     candidates: diagCandidates,
   };
+
+  /**
+   * Unsourced fallback (GENERAL_FALLBACK_ENABLED). Returns null when it is off,
+   * when no model is available, or when the model itself declines — every one
+   * of which means the caller should carry on to its refusal.
+   *
+   * Two callers, because there are two ways to arrive at "no approved source
+   * answers this". Retrieval can find nothing above the floor, or it can find
+   * something plausible that turns out not to answer the question, which the
+   * grounded generation reports by escalating. The second is the common one on
+   * a follow-up turn: history pulls the rewritten query toward whatever the
+   * corpus does cover, so the passport question retrieves driving-licence
+   * provisions and lands here rather than below the floor.
+   */
+  async function tryGeneralFallback(): Promise<AskResponse | null> {
+    if (!GENERAL_FALLBACK_ENABLED) return null;
+
+    /*
+      The scope screens belong here rather than at each call site, because they
+      were at one call site and not the other and both leaked immediately:
+      "what is the capital of France" came back as "Paris is the capital of
+      France" — AskGov answering as a general assistant, which §6.1 says it is
+      not — and a trademark lookup got an invented office location and search
+      fee in place of the §6.2 copy that names the real public registers.
+
+      A coverage gap is the only thing this fallback is for. Out of scope stays
+      out of scope however thin the corpus is.
+    */
+    if (isOffDomain(question) || looksLikeEntityLookup(question)) return null;
+
+    const general = await generate({
+      question: query.normalised,
+      lang,
+      sources: [],
+      history,
+      mode: "general",
+    });
+
+    // Rule 5 of the general prompt tells the model to decline rather than guess
+    // at a procedure it does not know, so a decline is a real signal, not a
+    // formality. An extractive degradation lands here too, and must not be
+    // dressed up as an unverified answer.
+    if (!general.answer || general.shouldEscalate) return null;
+
+    return finish(
+      {
+        id,
+        tier: 2,
+        lang,
+        answer: `${general.answer}\n\n${UNVERIFIED_NOTICE[lang]}`,
+        // Never any: an unsourced answer with a citation would be a fabricated
+        // government reference.
+        citations: [],
+        // Still offered. The officer is the path to a confirmed answer, and
+        // that matters more here than after a sourced one.
+        escalate: true,
+        office: supportOffice(),
+        unverified: true,
+      },
+      baseDiagnostics({
+        tier: 2,
+        ...retrievalDiag,
+        provider: general.provider.id,
+        model: general.provider.model,
+        hosting: general.provider.hosting,
+        residency: general.provider.residency,
+        providerFallback: general.fallbackReason,
+        promptVersion: GENERAL_PROMPT_VERSION,
+        // Nothing was verified against a source, so the verification gate did
+        // not run. Reporting passed:true would misread as "checked".
+        verification: { passed: false, unsupported: ["(unsourced answer)"] },
+        confidence: "low",
+        refusalReason: "fallback:general_knowledge",
+      }),
+    );
+  }
 
   // ── Confidence gate: escalate rather than generate over weak sources ─────
   // FR-16. This runs before generation on purpose (section 13).
@@ -336,30 +469,28 @@ export async function ask(req: AskRequest): Promise<AskResponse> {
       );
     }
 
-    // Off-domain and coverage gap both end in a refusal, but they are different
-    // failures and deserve different words. Escalation is offered only for the
-    // coverage gap: sending someone to a government officer because they asked
-    // how to say hello wastes the officer's time and the citizen's.
-    const offDomain = isOffDomain(question);
+    // Anything reaching here is in domain — the off-domain screen ran before
+    // retrieval — so this is a coverage gap, and the officer is worth offering.
+    const fallback = await tryGeneralFallback();
+    if (fallback) return fallback;
 
     return finish(
       {
         id,
         tier: 3,
         lang,
-        answer: offDomain ? notAServiceQuestion(lang) : cannotAnswer(lang),
+        answer: cannotAnswer(lang),
         citations: [],
-        escalate: !offDomain,
-        office: offDomain ? undefined : supportOffice(),
+        escalate: true,
+        office: supportOffice(),
       },
       baseDiagnostics({
         tier: 3,
         ...retrievalDiag,
         // Not a policy refusal: AskGov is allowed to answer this, it simply has
         // no source that covers it. Usually a content coverage gap.
-        refusalReason: offDomain
-          ? "scope:not_a_service_question"
-          : candidates.length === 0
+        refusalReason:
+          candidates.length === 0
             ? "retrieval:no_candidates"
             : "retrieval:below_floor",
       }),
@@ -372,7 +503,12 @@ export async function ask(req: AskRequest): Promise<AskResponse> {
   // with the published rule and nothing else, which is how "Baby Outlet's
   // trademark" came back as the definition of a trademark, cited.
   const top = candidates[0].chunk;
-  const topical = assess(question, `${top.text}\n${top.textKm ?? ""}`);
+  // Assessed against the RESOLVED query, not the bare follow-up. "where in
+  // phnom penh?" has two content words, which is under the floor, so the gate
+  // waved it through as trivially on-topic — the exact turn most in need of
+  // checking. The resolved query carries the subject from earlier in the
+  // conversation, which is what the source has to be about.
+  const topical = assess(query.normalised, `${top.text}\n${top.textKm ?? ""}`);
 
   if (looksLikeEntityLookup(question)) {
     // Public registers exist for exactly this. Refusing without naming them is
@@ -424,6 +560,13 @@ export async function ask(req: AskRequest): Promise<AskResponse> {
 
   // The model claimed it cannot answer, or produced no citations.
   if (outcome.shouldEscalate || !outcome.answer) {
+    // Retrieval returned something, but it did not answer the question — the
+    // same coverage gap the confidence gate catches, found one stage later.
+    // The entity-lookup and off-domain screens have already run above, so this
+    // is a genuine service question with nothing in the corpus behind it.
+    const fallback = await tryGeneralFallback();
+    if (fallback) return fallback;
+
     return finish(
       {
         id,

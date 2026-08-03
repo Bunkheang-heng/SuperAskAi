@@ -26,6 +26,7 @@ type Block =
   | { kind: "numbered"; marker: string; text: string }
   | { kind: "bullet"; text: string }
   | { kind: "notice"; text: string }
+  | { kind: "heading"; text: string }
   | { kind: "para"; text: string };
 
 /** Khmer digits ១-៩ and Latin 1-9, followed by a separator. */
@@ -46,6 +47,51 @@ const BULLET = /^[•·▪-]\s*(.*)$/;
 const LABEL = /^(From the approved source|ពីឯកសារយោងដែលបានអនុម័ត)\s*[:：]?\s*$/i;
 const NOTICE = /^[⚠️!]\s*/;
 
+/**
+ * Markdown emphasis.
+ *
+ * The prompts ask for a grouped, listed answer, and models write those groups
+ * as **Where to go:** headings. Rendering the answer as plain text printed the
+ * asterisks literally — the markers were visible and the emphasis was not.
+ *
+ * Only bold is handled, deliberately. It is the one thing the answer contract
+ * actually produces, and a general Markdown renderer here would be a licence to
+ * interpret link and image syntax inside text that reaches a citizen.
+ *
+ * Stripping the markers is presentation, in the same sense as the rest of this
+ * file: the words are unchanged and nothing is reordered or dropped.
+ */
+const BOLD = /\*\*(.+?)\*\*/g;
+/** A line that is entirely bold is a group heading, not a bold sentence. */
+const HEADING = /^\*\*(.+?)\*\*\s*[:：]?\s*$/;
+
+/** Split on **bold** runs, returning React nodes with the markers removed. */
+function inline(text: string, keyPrefix: string) {
+  const parts: Array<string | { bold: string }> = [];
+  let last = 0;
+
+  for (const m of text.matchAll(BOLD)) {
+    const at = m.index ?? 0;
+    if (at > last) parts.push(text.slice(last, at));
+    parts.push({ bold: m[1] });
+    last = at + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+
+  // No emphasis: return the string itself so the common case adds no spans.
+  if (parts.length === 1 && typeof parts[0] === "string") return text;
+
+  return parts.map((p, i) =>
+    typeof p === "string" ? (
+      p
+    ) : (
+      <strong key={`${keyPrefix}-b${i}`} style={{ fontWeight: 600 }}>
+        {p.bold}
+      </strong>
+    ),
+  );
+}
+
 function parse(text: string): Block[] {
   const blocks: Block[] = [];
 
@@ -56,6 +102,12 @@ function parse(text: string): Block[] {
     if (LABEL.test(line)) continue;
     if (NOTICE.test(line)) {
       blocks.push({ kind: "notice", text: line.replace(NOTICE, "").trim() });
+      continue;
+    }
+
+    const heading = HEADING.exec(line);
+    if (heading && heading[1]) {
+      blocks.push({ kind: "heading", text: heading[1].trim() });
       continue;
     }
 
@@ -102,6 +154,24 @@ export function AnswerText({ text }: { text: string }) {
                 color: T.noticeText,
               }}
             >
+              {inline(b.text, key)}
+            </div>
+          );
+        }
+
+        if (b.kind === "heading") {
+          return (
+            <div
+              key={key}
+              className="km"
+              style={{
+                marginTop: i === 0 ? 0 : 20,
+                marginBottom: 2,
+                fontWeight: 600,
+                color: T.ink,
+                lineHeight: 1.7,
+              }}
+            >
               {b.text}
             </div>
           );
@@ -129,7 +199,9 @@ export function AnswerText({ text }: { text: string }) {
               >
                 {b.marker}.
               </span>
-              <span style={{ fontWeight: 600, lineHeight: 1.95 }}>{b.text}</span>
+              <span style={{ fontWeight: 600, lineHeight: 1.95 }}>
+                {inline(b.text, key)}
+              </span>
             </div>
           );
         }
@@ -151,14 +223,14 @@ export function AnswerText({ text }: { text: string }) {
               >
                 •
               </span>
-              <span style={{ lineHeight: 1.95 }}>{b.text}</span>
+              <span style={{ lineHeight: 1.95 }}>{inline(b.text, key)}</span>
             </div>
           );
         }
 
         return (
           <p key={key} style={{ marginTop: i === 0 ? 0 : 12, lineHeight: 1.95 }}>
-            {b.text}
+            {inline(b.text, key)}
           </p>
         );
       })}

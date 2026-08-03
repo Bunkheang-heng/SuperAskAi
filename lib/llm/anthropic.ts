@@ -12,7 +12,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import {
   ANSWER_SCHEMA,
-  GROUNDING_PROMPT,
+  systemPromptFor,
   buildUserContent,
   parseGeneration,
   type GenerationRequest,
@@ -120,10 +120,10 @@ export function createAnthropicProvider(): LlmProvider {
       system: [
         {
           type: "text",
-          text: GROUNDING_PROMPT,
-          // The grounding prompt is byte-stable across every request, so it is
-          // the natural cache breakpoint. Volatile content (sources, question)
-          // sits after it in the messages array.
+          text: systemPromptFor(req),
+          // Each mode's prompt is byte-stable across every request in that mode,
+          // so it is the natural cache breakpoint. Volatile content (sources,
+          // question) sits after it in the messages array.
           cache_control: { type: "ephemeral" },
         },
       ],
@@ -169,7 +169,7 @@ export function createAnthropicProvider(): LlmProvider {
       .map((b) => b.text)
       .join("\n");
 
-    return parseGeneration(raw);
+    return parseGeneration(raw, req.mode);
   }
 
   return { info, generate };
