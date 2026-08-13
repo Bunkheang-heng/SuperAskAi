@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="AskGov">
+  <!--
+    Tab icon. The same shield-and-check the interface uses as its attribution
+    mark (components/AnswerBlock.tsx), in the same deep blue, so the tab and the
+    answer header read as one service.
+
+    Present because its absence was a real defect, not a polish item: without
+    it the browser requests /favicon.ico, gets a 404, and logs a console error
+    that a Lighthouse audit counts against the site.
+  -->
+  <rect width="32" height="32" rx="7" fill="#025094"/>
+  <path d="M16 6.2 8.6 9.3v6.1c0 4.6 3.1 8.9 7.4 10.4 4.3-1.5 7.4-5.8 7.4-10.4V9.3L16 6.2Z"
+        fill="none" stroke="#fff" stroke-width="1.9" stroke-linejoin="round"/>
+  <path d="m12.6 16.1 2.5 2.5 4.6-4.9" fill="none" stroke="#fff"
+        stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

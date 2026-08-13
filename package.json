@@ -14,11 +14,12 @@
     "verify-check": "tsx scripts/verify-check.ts",
     "curated-check": "tsx scripts/curated-check.ts",
     "scope-check": "tsx scripts/scope-check.ts",
+    "rationale-check": "tsx scripts/rationale-check.ts",
     "build-sources": "tsx scripts/build-sources.ts",
     "crawl:verify": "tsx scripts/crawl.ts --mode=verify",
     "crawl:monitor": "tsx scripts/crawl.ts --mode=monitor",
     "crawl:weekly": "tsx scripts/crawl.ts --mode=monitor --priority=1,2",
-    "check": "npm run typecheck && npm run eval && npm run verify-check && npm run curated-check && npm run scope-check"
+    "check": "npm run typecheck && npm run eval && npm run verify-check && npm run curated-check && npm run scope-check && npm run rationale-check"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.70.0",

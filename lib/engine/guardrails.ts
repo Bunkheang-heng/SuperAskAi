@@ -17,6 +17,9 @@
  */
 
 import type { Lang } from "@/lib/types";
+import { normalizeFold, containsWord } from "@/lib/khmer/normalize";
+import { getKb } from "@/lib/kb/loader";
+import { isSubjectless } from "@/lib/lang/content";
 
 export type GuardrailKind =
   | "emergency"
@@ -222,8 +225,134 @@ const OFF_DOMAIN: RegExp[] = [
   /^[\d\s+\-*/().=]+\??$/,
 ];
 
-export function isOffDomain(question: string): boolean {
-  return OFF_DOMAIN.some((p) => p.test(question));
+/**
+ * Positive scope signal: is there anything in this question that makes it a
+ * government-service question at all?
+ *
+ * ── WHY A DENYLIST WAS NOT ENOUGH ──────────────────────────────────────────
+ * OFF_DOMAIN above enumerates non-service requests. Enumeration cannot work
+ * here: the set of things that are not government services is unbounded, and
+ * every gap in it is a leak. Two that reached citizens:
+ *
+ *   "tom holland from spider man"        → a filmography, 12 bullets
+ *   "i want to drink coffee, where
+ *    should i go?"                       → café chains, opening hours, prices
+ *
+ * Neither matched a pattern above — no "movie", no "film", no "translate" — so
+ * both fell through to the coverage-gap path, where GENERAL_FALLBACK_ENABLED
+ * answered them from the model's own knowledge under the "not from an approved
+ * source" banner. The banner is not the point. §6.1 scopes AskGov to government
+ * service information; answering the question at all is the failure, and a
+ * disclaimer on an out-of-scope answer is still an out-of-scope answer.
+ *
+ * So scope is decided positively: a question is in scope when it carries some
+ * service signal, not when it happens to miss every pattern someone thought to
+ * write down. That flips the failure mode from "unbounded leak" to "a service
+ * question with unusual vocabulary gets refused" — the direction §13 prefers,
+ * since a refusal is recoverable via the officer and a fluent wrong answer is
+ * not.
+ * ───────────────────────────────────────────────────────────────────────────
+ *
+ * The lexicon is deliberately broad. It is not a topic list for the corpus — a
+ * coverage gap is a question about a ministry not yet onboarded, and those must
+ * still reach the coverage-gap path. It only asks whether the citizen is talking
+ * about dealing with the state.
+ */
+const SERVICE_TERMS =
+  /\b(passport|visa|immigration|citizenship|nationality|residence|residency|id ?card|identity|identification|birth|death|marriage|divorce|family (book|record)|certificate|licen[cs]e|permit|authorisation|authorization|register|registration|registry|deregister|renew|renewal|apply|application|applicant|submit|submission|document|documents|paperwork|form|fee|fees|charge|stamp duty|tax|taxation|customs|duty|excise|tariff|import|export|company|business|enterprise|sole proprietor|trademark|patent|copyright|land|title|deed|cadastral|property|vehicle|driving|driver|motorbike|motorcycle|car|truck|plate|inspection|ministry|department|authority|agency|municipality|province|provincial|district|khan|commune|sangkat|village|city hall|one ?window|counter|officer|official|government|state|public service|civil (status|registration)|notary|notari[sz]ed|legali[sz]ed|apostille|appeal|complaint|grievance|procedure|process|requirement|eligib|deadline|expiry|expire|validity|penalt(y|ies)|fine|fined|surcharge|late (fee|penalty|charge|payment|registration|submission)|overdue|arrears|exemption|waiver|refund|instal?ment|pension|social security|nssf|insurance|labour|labor|work permit|employment (card|book)|school|university|diploma|transcript|equivalence|health (certificate|card)|vaccination|police (clearance|record)|criminal record|court|bank account|construction|building permit|utility|water supply|electricity connection)\b/i;
+
+/**
+ * Procedural framing aimed at an institution. Catches in-scope questions whose
+ * nouns are unusual — "what documents do I need for the thing at the commune" —
+ * without catching "where should I go" on its own, which is the coffee question.
+ */
+const SERVICE_FRAMING: RegExp[] = [
+  /\b(how do i|how can i|where do i|where can i|what do i need to)\s+(apply|register|renew|obtain|get|request|submit|file|declare|pay|claim|appeal)\b/i,
+  /\bwhat (documents|papers|requirements|conditions)\b/i,
+  /\bwhich (office|ministry|department|authority|counter|window)\b/i,
+  /\bhow (much|long) does it (cost|take) to\b/i,
+];
+
+/**
+ * Khmer service vocabulary — the same test, in the other script (FR-08).
+ *
+ * "The same test" is the requirement, and it is easy to break: the two lists are
+ * maintained by hand and drift silently, because nothing fails when one gains a
+ * term the other lacks. It cost a real refusal. SERVICE_TERMS carries a whole
+ * penalty cluster — penalty, fine, surcharge, late fee, overdue, arrears — and
+ * this one carried none, so "ហេតុអ្វីបានជាមានការពិន័យយឺតយ៉ាវ" ("why is there a
+ * late penalty") was refused as not a government-service question, while the
+ * identical English question was answered. A citizen asking in Khmer about a
+ * government fine is asking the most in-scope question there is.
+ *
+ * When adding to either list, check the other.
+ */
+const SERVICE_TERMS_KM =
+  /(លិខិតឆ្លងដែន|ទិដ្ឋាការ|អត្តសញ្ញាណប័ណ្ណ|សំបុត្រកំណើត|មរណភាព|អាពាហ៍ពិពាហ៍|លែងលះ|សៀវភៅគ្រួសារ|វិញ្ញាបនបត្រ|អាជ្ញាបណ្ណ|ច្បាប់អនុញ្ញាត|ចុះបញ្ជី|ចុះឈ្មោះ|ពាក្យសុំ|ស្នើសុំ|ឯកសារ|សំណុំបែបបទ|កម្រៃ|ថ្លៃសេវា|ពន្ធ|គយ|នាំចូល|នាំចេញ|ក្រុមហ៊ុន|អាជីវកម្ម|ម៉ាកសញ្ញា|ដីធ្លី|ប័ណ្ណកម្មសិទ្ធិ|យានយន្ត|បើកបរ|ប័ណ្ណបើកបរ|ក្រសួង|អាជ្ញាធរ|រាជធានី|ខេត្ត|ស្រុក|ខណ្ឌ|ឃុំ|សង្កាត់|សាលាក្រុង|មន្ត្រី|រដ្ឋាភិបាល|សេវាសាធារណៈ|សារការី|បណ្តឹង|តវ៉ា|នីតិវិធី|លក្ខខណ្ឌ|ផុតកំណត់|ពិន័យ|យឺតយ៉ាវ|ហួសកំណត់|ការលើកលែង|បង្វិលសង|សុវត្ថិភាពសង្គម|លិខិតអនុញ្ញាតការងារ|សញ្ញាបត្រ|សំបុត្រថ្កោលទោស|តុលាការ|សំណង់)/;
+
+/**
+ * Official terminology carries scope on its own: §6.1 puts plain-language
+ * explanation of these terms IN scope, so "what does prakas mean" must survive
+ * this gate. Read from the glossary rather than restated here, because a term
+ * added to the glossary and not to this list would become unaskable — the
+ * definition question would be refused as off-domain before the glossary that
+ * answers it is ever consulted.
+ */
+function mentionsOfficialTerm(question: string): boolean {
+  const q = normalizeFold(question);
+  return getKb().glossary.some((entry) =>
+    entry.match.some((alias) => containsWord(q, normalizeFold(alias))),
+  );
+}
+
+/**
+ * Romanised Khmer — "sombot kamnaot trauv ke ekasa avei khlah".
+ *
+ * Citizens type Khmer in Latin characters constantly, and nothing else in the
+ * pipeline handles it: there is no romanisation layer, no romanised alias set,
+ * and detectLang reads these as English. Before scope was decided positively
+ * such a question reached the coverage-gap path by default, simply because no
+ * denylist pattern matched it. It has to be named explicitly now, or asking for
+ * a birth certificate in the way many people actually type it is refused.
+ *
+ * This is a partial list of common service words, not romanisation support. The
+ * real fix is a romanised alias set maintained alongside data/aliases.json
+ * (FR-06 content, not code); until then, unusual spellings will over-refuse.
+ */
+const SERVICE_TERMS_ROMAN =
+  /\b(som?bot|sambot|kamnaot|komnaot|ka?mnaeut|ekasa|aekasa|ekasar|lekhet|chhlong ?den|attasanhean|atta ?sanhan|bat ?pracheachon|banhchi|chuh ?banhchi|krosuong|khum|sangkat|srok|khan|thlai ?sewa|bang ?kan ?dai|aphibal|meanotei|akaphearkech|sarakar)\b/i;
+
+export function looksLikeServiceQuestion(question: string): boolean {
+  if (SERVICE_TERMS.test(question)) return true;
+  if (SERVICE_TERMS_KM.test(question)) return true;
+  if (SERVICE_TERMS_ROMAN.test(question)) return true;
+  if (SERVICE_FRAMING.some((p) => p.test(question))) return true;
+  return mentionsOfficialTerm(question);
+}
+
+/**
+ * Out of scope when an explicit off-domain pattern fires, OR when nothing marks
+ * the question as being about a government service at all.
+ *
+ * `history` matters because scope is a property of the conversation, not of the
+ * characters in the latest turn. "Where in phnom penh?" carries no service
+ * signal on its own and is in scope after a driving-licence question; refusing
+ * it because it is short would break every follow-up (FR-07).
+ *
+ * The test is isSubjectless() — the same one retrieval uses to decide whether a
+ * turn can anchor a follow-up, so the two cannot drift into disagreeing about
+ * what a follow-up is. A question that introduces its own subject is judged on
+ * its own subject however deep in a conversation it appears: "tom holland from
+ * spider man" has four content words and does not inherit anything.
+ */
+export function isOffDomain(
+  question: string,
+  history: Array<{ text: string }> = [],
+): boolean {
+  if (OFF_DOMAIN.some((p) => p.test(question))) return true;
+  if (looksLikeServiceQuestion(question)) return false;
+  // No signal of its own. In scope only if it is leaning on a turn that had one.
+  return !(history.length > 0 && isSubjectless(question));
 }
 
 /**

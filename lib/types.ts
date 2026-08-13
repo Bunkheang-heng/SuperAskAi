@@ -134,6 +134,13 @@ export interface Diagnostics {
    *   verification:failed  FR-15 gate suppressed a written answer
    *   moderation:<kind>    NFR-04 output moderation caught the answer
    *   provider:escalated   the model itself declined to answer
+   *   rationale:not_in_source  the citizen asked WHY a rule exists and the
+   *                       sources state the rule without giving a reason. The
+   *                       ENGINE decided this, not the model — see
+   *                       lib/engine/rationale.ts. Kept separate from
+   *                       provider:escalated because the corpus does cover the
+   *                       subject: the rate of these measures a gap in the
+   *                       published source pages, and the fix is content.
    *   fallback:general_knowledge  NOT a refusal — no source covered the
    *                       question and GENERAL_FALLBACK_ENABLED served an
    *                       unverified model answer instead. Recorded here so the

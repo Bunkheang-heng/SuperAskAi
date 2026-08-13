@@ -46,6 +46,7 @@ import {
 } from "./guardrails";
 import { verify } from "./verify";
 import { freshnessOf, STALE_NOTICE } from "./freshness";
+import { rationaleGap } from "./rationale";
 
 const CURATED_THRESHOLD = Number(
   process.env.CURATED_MATCH_THRESHOLD ?? "0.72",
@@ -147,6 +148,49 @@ function cannotAnswer(lang: Lang): string {
     ...ministries.map((m) => `• ${m}`),
     "",
     "If your question is in one of those areas, try asking it a different way. If it is not, an officer can help you.",
+  ].join("\n");
+}
+
+/**
+ * The citizen asked WHY, and the source gives the rule without a reason.
+ *
+ * This is the one refusal in the file that has to actively resist being helpful
+ * in the wrong direction. The tempting reply is to restate the rule — AskGov
+ * does have a source, the source is on the right subject, and repeating it
+ * feels like answering. It is not: a citizen who asks why a late fee exists has
+ * already been told what it is, and saying it again is what made them type "but
+ * why though?" and get the same paragraph back.
+ *
+ * So it does three things and no more: names the distinction between the rule
+ * and its reason, says AskGov will not invent the second, and offers both real
+ * ways forward — the officer, who can speak to policy, and the rule question,
+ * which AskGov genuinely can answer.
+ */
+function reasonNotInSource(lang: Lang): string {
+  if (lang === "km") {
+    return [
+      "អ្នកបានសួរថា ហេតុអ្វី។ នោះជាសំណួរផ្សេងពី «វិធានគឺជាអ្វី»។",
+      "",
+      "• AskGov មានឯកសារយោងដែលបានអនុម័តចែងអំពីវិធាននេះ",
+      "• ប៉ុន្តែឯកសារនោះមិនបានផ្តល់មូលហេតុនៃវិធាននេះទេ",
+      "• AskGov មិនបង្កើតមូលហេតុដែលគ្មាននៅក្នុងឯកសារយោងឡើយ — មូលហេតុដែលប្រឌិតឡើងសម្រាប់វិធានរបស់រដ្ឋាភិបាល អាក្រក់ជាងការមិនឆ្លើយ",
+      "",
+      "អ្វីដែលអាចជួយបាន៖",
+      "• មន្ត្រីអាចពន្យល់អំពីគោលនយោបាយនៅពីក្រោយវិធាននេះ",
+      "• បើអ្នកចង់ដឹងអំពីវិធានខ្លួនឯង — លក្ខខណ្ឌ ថ្លៃសេវា ឬពេលវេលាដែលវាអនុវត្ត — សូមសួរបែបនោះ ហើយ AskGov នឹងឆ្លើយពីឯកសារយោង",
+    ].join("\n");
+  }
+
+  return [
+    "You asked why. That is a different question from what the rule is.",
+    "",
+    "• AskGov has an approved source that sets out this rule",
+    "• That source does not give a reason for it",
+    "• AskGov does not supply reasons that are not in the source — an invented rationale for a government rule is worse than none",
+    "",
+    "What can help:",
+    "• An officer can explain the policy behind it",
+    "• If you want the rule itself — the conditions, the fee, or when it applies — ask for that and AskGov will answer it from the source",
   ].join("\n");
 }
 
@@ -322,7 +366,7 @@ export async function ask(req: AskRequest): Promise<AskResponse> {
   // OFF_DOMAIN matches only unmistakable non-service requests and lets anything
   // ambiguous fall through, so running it earlier costs no legitimate question —
   // and saves a retrieval and a model call on the ones it catches.
-  if (isOffDomain(question)) {
+  if (isOffDomain(question, history)) {
     return finish(
       {
         id,
@@ -385,7 +429,8 @@ export async function ask(req: AskRequest): Promise<AskResponse> {
       A coverage gap is the only thing this fallback is for. Out of scope stays
       out of scope however thin the corpus is.
     */
-    if (isOffDomain(question) || looksLikeEntityLookup(question)) return null;
+    if (isOffDomain(question, history) || looksLikeEntityLookup(question))
+      return null;
 
     const general = await generate({
       question: query.normalised,
@@ -543,6 +588,75 @@ export async function ask(req: AskRequest): Promise<AskResponse> {
     textKm: c.chunk.textKm,
   }));
 
+  // ── Rationale gate ───────────────────────────────────────────────────────
+  //
+  // The citizen asked WHY a rule exists, the retrieved sources are about the
+  // right subject, and not one of them gives a reason. See the header of
+  // lib/engine/rationale.ts for the answer this prevents — a tautology that the
+  // verification gate passes because every clause of it is genuinely supported.
+  //
+  // Decided here rather than by the model, and that placement is the fix. Rule 2
+  // of the grounding prompt already tells the model to escalate when the SOURCES
+  // do not contain the answer, and the escalation branch below already handles
+  // it correctly. Production showed the model simply does not agree that it is
+  // in that situation: asked why the late penalty exists it read the penalty
+  // provision as the answer, restated it, and appended "because the regulation
+  // provides that a licence expired for more than 30 days is subject to a daily
+  // penalty". Nothing downstream could catch that. The same argument the
+  // off-domain screen makes above applies here — a rule that holds only when the
+  // configured model family happens to comply is not a rule.
+  //
+  // Gated on topical.onTopic because the copy asserts that AskGov HAS a source
+  // setting out the rule. When retrieval only found something adjacent, that
+  // claim would be false, and the ordinary path below already downgrades and
+  // captions an off-topic source honestly.
+  //
+  // Running before generation is deliberate: the answer does not depend on
+  // anything the model would say, so the call is pure cost and pure risk.
+  //
+  // Tested against the TOP source alone, not the whole candidate set, and that
+  // is load-bearing. "Why is there a late penalty" retrieves MPWT-DL-008 first
+  // — which states the penalty and gives no reason — but also drags in
+  // NBC-IR-001 at rank four, an interest-rate cap whose text happens to contain
+  // "to protect consumers from excessive interest rates". Scanning every
+  // candidate let that unrelated purpose clause report that the reason had been
+  // found, and the gate never fired. A reason in a source that is not about the
+  // question does not answer the question.
+  //
+  // The top source is also what `topical` above is assessed against, so the two
+  // gates judge the same passage rather than quietly disagreeing about which
+  // source the answer is really resting on. The cost is a rationale sitting in
+  // the second candidate and not the first, which escalates a question the
+  // corpus could have answered — the over-refusal direction §13 prefers, and
+  // recoverable through the officer.
+  if (topical.onTopic && rationaleGap(question, [top.text])) {
+    return finish(
+      {
+        id,
+        tier: 3,
+        lang,
+        answer: reasonNotInSource(lang),
+        // The rule is not what was asked for. Citing the provision here would
+        // put the "what" back in front of a citizen who has already been told
+        // it twice — which is the complaint this whole path exists to answer.
+        citations: [],
+        escalate: true,
+        office: supportOffice(),
+      },
+      baseDiagnostics({
+        tier: 3,
+        ...retrievalDiag,
+        confidence: "low",
+        // Distinct from provider:escalated. The corpus covers this subject and
+        // the engine, not the model, decided the question was unanswerable from
+        // it — and the rate of these is a content signal worth measuring
+        // separately: a "why" the corpus cannot answer is a gap in the
+        // published source page, and the fix for it is content, not code.
+        refusalReason: "rationale:not_in_source",
+      }),
+    );
+  }
+
   const outcome = await generate({
     question: query.normalised,
     lang,
@@ -560,11 +674,27 @@ export async function ask(req: AskRequest): Promise<AskResponse> {
 
   // The model claimed it cannot answer, or produced no citations.
   if (outcome.shouldEscalate || !outcome.answer) {
-    // Retrieval returned something, but it did not answer the question — the
-    // same coverage gap the confidence gate catches, found one stage later.
-    // The entity-lookup and off-domain screens have already run above, so this
-    // is a genuine service question with nothing in the corpus behind it.
-    const fallback = await tryGeneralFallback();
+    /*
+      Retrieval returned something the model would not answer from. That is a
+      coverage gap ONLY when what it returned was not about the question.
+
+      This used to hand every escalation to the unsourced fallback, on the
+      reading that a model declining meant the corpus held nothing. It does not.
+      "Why is there a late penalty" retrieves MPWT-DL-008 — which states the
+      penalty, its rate, and when it starts — and the model escalates because the
+      source gives the rule and not the REASON for it. The citizen was then told
+      "AskGov has no approved government document covering this" and handed
+      general-knowledge speculation ("it may encourage people to complete the
+      procedure on time"). The notice was false: an approved source covers late
+      penalties. Substituting invented rationale for a published rule is the
+      §13 failure the fallback is supposed to be fenced away from.
+
+      So the fallback is offered only when the top source is genuinely off the
+      topic. When it is on topic, the honest ending is the escalation below: the
+      corpus has something, this particular question is not answered by it, and
+      an officer is the way to a real answer.
+    */
+    const fallback = topical.onTopic ? null : await tryGeneralFallback();
     if (fallback) return fallback;
 
     return finish(

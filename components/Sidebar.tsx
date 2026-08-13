@@ -15,7 +15,7 @@
 
 import { Plus, X } from "lucide-react";
 import type { Lang } from "@/lib/types";
-import { T } from "@/lib/theme";
+import { T, BRAND_BAR_HEIGHT } from "@/lib/theme";
 import { SUGGESTIONS, UI } from "@/lib/ui-copy";
 import type { Conversation } from "@/lib/history";
 
@@ -66,37 +66,49 @@ export function Sidebar({
         borderRight: `1px solid ${T.line}`,
       }}
     >
-      {/* Brand lockup */}
-      <div className="px-5 pb-4 pt-5">
+      {/*
+        Brand lockup. Carried on the deep brand surface, not on paper, so that it
+        forms one continuous bar with the main header beside it — the two sit at
+        the same y and any colour difference between them reads as a seam.
+      */}
+      <div
+        className="flex shrink-0 items-center px-5"
+        style={{
+          height: BRAND_BAR_HEIGHT,
+          background: T.deep,
+          borderBottom: `1px solid ${T.deepHover}`,
+        }}
+      >
         <div className="flex items-baseline gap-1">
           <span
             style={{
               fontWeight: 700,
               fontSize: 20,
               letterSpacing: "-0.025em",
-              color: T.deep,
+              color: T.paper,
             }}
           >
             AskGov
           </span>
-          <span className="ag-mono" style={{ fontSize: 10, color: T.sky }}>
+          <span className="ag-mono" style={{ fontSize: 10, color: T.skyLine }}>
             .kh
           </span>
         </div>
-        <div
-          className="km"
-          style={{
-            fontSize: 11,
-            color: T.inkFaint,
-            marginTop: 1,
-            lineHeight: 1.6,
-          }}
-        >
-          {UI.brandSub[lang]}
-        </div>
       </div>
 
-      <div className="px-4">
+      {/*
+        The attribution sits below the bar rather than inside it. Keeping it in
+        would have made this block taller than the header it abuts, and the two
+        blues would meet in a step rather than a line.
+      */}
+      <div
+        className="km px-5 pt-3"
+        style={{ fontSize: 11, color: T.inkFaint, lineHeight: 1.6 }}
+      >
+        {UI.brandSub[lang]}
+      </div>
+
+      <div className="px-4 pt-4">
         <button
           onClick={onReset}
           className="ag-press flex w-full items-center gap-2 rounded-xl px-3 py-2.5 transition-all"

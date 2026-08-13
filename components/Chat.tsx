@@ -11,7 +11,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, ChevronLeft, ChevronRight, ShieldCheck } from "lucide-react";
 import type { AskResponse, Lang } from "@/lib/types";
-import { T } from "@/lib/theme";
+import { T, BRAND_BAR_HEIGHT } from "@/lib/theme";
 import { SUGGESTIONS, UI } from "@/lib/ui-copy";
 import { detectLang } from "@/lib/lang/detect";
 import { SUPPORT_BOT, SUPPORT_HANDLE } from "@/lib/support";
@@ -292,25 +292,31 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
 
       <main className="flex min-w-0 flex-1 flex-col">
         <header
-          className="flex shrink-0 items-center gap-3 px-4 py-2.5"
+          className="flex shrink-0 items-center gap-3 px-4"
           style={{
-            background: T.paper,
-            borderBottom: `1px solid ${T.line}`,
+            // Inverted: deep brand bar, white wordmark. The former white bar
+            // carried the wordmark in `deep` on `paper` and the ".kh" in `sky`,
+            // which measures ~2.8:1 — below the 4.5:1 AA floor for 9px type.
+            height: BRAND_BAR_HEIGHT,
+            background: T.deep,
+            borderBottom: `1px solid ${T.deepHover}`,
           }}
         >
           <button
             onClick={() => setSidebar((s) => !s)}
             className="hidden rounded-lg p-1.5 transition-colors md:block"
-            style={{ color: T.inkFaint }}
+            // On the deep bar the control reads as a light tint and resolves to
+            // white on hover, rather than the ink greys it used on paper.
+            style={{ color: T.skyLine }}
             aria-label={UI.toggleSidebar[lang]}
             aria-expanded={sidebar}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = T.lineSoft;
-              e.currentTarget.style.color = T.deep;
+              e.currentTarget.style.background = "rgba(255,255,255,0.14)";
+              e.currentTarget.style.color = T.paper;
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.color = T.inkFaint;
+              e.currentTarget.style.color = T.skyLine;
             }}
           >
             {sidebar ? (
@@ -321,10 +327,11 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
           </button>
 
           <div className="flex items-baseline gap-1 md:hidden">
-            <span style={{ fontWeight: 700, fontSize: 16.5, color: T.deep }}>
+            <span style={{ fontWeight: 700, fontSize: 16.5, color: T.paper }}>
               AskGov
             </span>
-            <span className="ag-mono" style={{ fontSize: 9, color: T.sky }}>
+            {/* skyLine, not sky: 6.5:1 on deep, where sky itself is 3.1:1. */}
+            <span className="ag-mono" style={{ fontSize: 9, color: T.skyLine }}>
               .kh
             </span>
           </div>

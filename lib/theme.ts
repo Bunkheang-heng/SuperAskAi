@@ -75,6 +75,13 @@ export const T = {
   ringSky: "0 0 0 3px rgba(38,161,218,0.18)",
 } as const;
 
+/**
+ * Height of the deep brand bar across the top of the app. The sidebar lockup and
+ * the main header are separate elements that abut, so they share this rather than
+ * each carrying padding that happens to agree today.
+ */
+export const BRAND_BAR_HEIGHT = 56;
+
 export const fontStack =
   "'Kantumruy Pro', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif";
 
