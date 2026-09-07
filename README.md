@@ -25,7 +25,7 @@ verification gate, escalation, and the whole interface work unchanged.
 
 ```bash
 npm run check            # typecheck + test + build + every harness below. CI runs this
-npm test                 # 588 unit and integration tests, no model calls
+npm test                 # 599 unit and integration tests, no model calls
 npm run test:watch       # the same, on change
 npm run test:coverage    # the same, with v8 coverage and its thresholds enforced
 npm run eval             # M-03 recall@8 and M-04 refusal precision, no model calls
@@ -98,10 +98,10 @@ gateway credit. Everything measured here is pre-model anyway.
 `npm run eval` on the starter golden set (34 in-scope, 10 out-of-scope):
 
 ```
-Recall @1        : 58.8%
-Recall @3        : 79.4%
+Recall @1        : 67.6%
+Recall @3        : 82.4%
 Recall @8  M-03  : 94.1%   target 85.0%   PASS
-MRR              : 0.718
+MRR              : 0.768
 Refusal    M-04  : 100.0%  target 98.0%   PASS
   by gate        : policy 8 · scope 1 · floor 1
 ```
@@ -119,7 +119,31 @@ against a 0.200 floor and was counted as a leak, while the running service
 refuses it as `scope:not_a_service_question` before retrieval is ever consulted.
 A harness that models a different order measures a system nobody is running.
 
-`npm run test` — 588 tests across 20 files, no model called, **89% line coverage**
+**Ordering is the constraint, not recall.** Fusion already puts the correct chunk
+inside the reranker's shortlist for 94.1% of the golden set, and the reranker
+drops none of them — so Recall@8 is not what is limiting the service. Replacing
+the reranker with an oracle (correct chunk first whenever it is in the
+shortlist) would take Recall@1 from 67.6% to 94.1% and MRR to 0.941. That gap is
+the whole value of the FR-13 cross-encoder swap, and it is why `rerank.ts` and
+not `embed.ts` is the next model to land: a better embedder improves a recall
+number that is already sufficient.
+
+The last change to close part of that gap was suffix stripping — see
+`lib/lang/stem.ts`, which lifted Recall@1 by 8.8 points on its own by making
+`registering` match `register`. Lexical variants beyond it (IDF-weighted
+coverage, blending the dense score into the rerank, debiasing chunks that carry
+more candidate questions, sweeping the RRF constant) were each measured and each
+made things worse or made no difference. The cheap lexical levers are spent.
+
+One open decision the sweep surfaces: the FR-16 floor sits at `0.200`, which
+answers 73.5% of in-scope questions. At `0.150` it answers 88.2% with refusal
+still at 100%. That looks free, but the by-gate line is the caveat — only *one*
+of the ten negatives rests on the floor at all, so the sweep's refusal column is
+one question wide. The floor's real job is catching out-of-domain questions the
+golden set does not contain, and that is untested. Widen the negatives before
+trusting the sweep.
+
+`npm run test` — 599 tests across 21 files, no model called, **89% line coverage**
 over `lib/` and `app/api/`:
 
 | Suite | Covers |
@@ -135,6 +159,7 @@ over `lib/` and `app/api/`:
 | `tests/retrieval/fusion` | BM25, RRF, the hashed-n-gram embedder, the reranker |
 | `tests/khmer/normalize`, `romanize` | FR-04/FR-05 canonical ordering and idempotence; FR-03 romanised Khmer, and that `prakas` is not mistaken for it |
 | `tests/lang/content` | the shared content-word test retrieval and topicality must not drift apart on |
+| `tests/lang/stem` | FR-05 suffix stripping: the inflections that were losing matches, the prefix property `topicality` depends on, over-stemming guards, and that no stem reaches citizen-facing text |
 | `tests/llm/prompt` | the grounded vs general prompt contracts, and `parseGeneration` refusing to fabricate |
 | `tests/llm/provider` | NFR-09 degradation, and that no metadata path exposes a credential |
 | `tests/llm/gateway` | the provider actually in production: request shaping, bearer-only credential, honest residency |
