@@ -24,11 +24,15 @@ verbatim with its citation. Retrieval, tiering, guardrails, citation, the
 verification gate, escalation, and the whole interface work unchanged.
 
 ```bash
-npm run check          # typecheck + every check below
-npm run eval           # M-03 recall@8 and M-04 refusal precision, no model calls
-npm run verify-check   # proves the FR-15 gate blocks fabricated figures
-npm run curated-check  # Tier 1 matching, and that greetings do not swallow questions
-npm run scope-check    # definition vs off-domain vs coverage gap vs answered
+npm run check            # typecheck + test + build + every harness below. CI runs this
+npm test                 # 588 unit and integration tests, no model calls
+npm run test:watch       # the same, on change
+npm run test:coverage    # the same, with v8 coverage and its thresholds enforced
+npm run eval             # M-03 recall@8 and M-04 refusal precision, no model calls
+npm run verify-check     # proves the FR-15 gate blocks fabricated figures
+npm run curated-check    # Tier 1 matching, and that greetings do not swallow questions
+npm run scope-check      # definition vs off-domain vs coverage gap vs answered
+npm run rationale-check  # "why does this rule exist" when no source gives a reason
 ```
 
 ---
@@ -84,24 +88,97 @@ someone asked for would be the worse answer.
 
 ### Measured, not asserted
 
+`npm run check` is the whole gate — typecheck, tests, build, and every harness
+below. It exits non-zero on a regression in any of them, and CI runs it on every
+push and pull request (`.github/workflows/ci.yml`). CI runs with **no provider
+credential**: generation falls back to the deterministic extractive provider, so
+nothing in it makes a paid model call and a fork's pull request cannot spend the
+gateway credit. Everything measured here is pre-model anyway.
+
 `npm run eval` on the starter golden set (34 in-scope, 10 out-of-scope):
 
 ```
-Recall @1        : 64.7%
-Recall @3        : 88.2%
-Recall @8  M-03  : 100.0%   target 85.0%   PASS
-MRR              : 0.783
-Refusal    M-04  : 100.0%   target 98.0%   PASS
+Recall @1        : 58.8%
+Recall @3        : 79.4%
+Recall @8  M-03  : 94.1%   target 85.0%   PASS
+MRR              : 0.718
+Refusal    M-04  : 100.0%  target 98.0%   PASS
+  by gate        : policy 8 · scope 1 · floor 1
 ```
+
+The by-gate line is what makes M-04 readable rather than merely green. Eight of
+the ten negatives are §12 policy cases caught by regex before retrieval, one is
+caught by the positive scope gate, and exactly one rests on the retrieval floor.
+A shift between those columns is a real change in how the service refuses, and
+it is now visible instead of being averaged away.
+
+The harness applies all three gates in the order `lib/engine/tiers.ts` applies
+them — policy, then scope, then the FR-16 floor. It previously skipped the scope
+gate, which understated M-04: "what is the capital of france" scores 0.205
+against a 0.200 floor and was counted as a leak, while the running service
+refuses it as `scope:not_a_service_question` before retrieval is ever consulted.
+A harness that models a different order measures a system nobody is running.
+
+`npm run test` — 588 tests across 20 files, no model called, **89% line coverage**
+over `lib/` and `app/api/`:
+
+| Suite | Covers |
+|---|---|
+| `tests/engine/tiers` | §10.2 tiering and **the order the gates run in** — policy before scope before retrieval before generation. Post-generation branches use a mocked provider, because the extractive one never escalates |
+| `tests/engine/guardrails` | the §12 refusal policy, rule by rule, in both languages; the positive scope gate; NFR-04 output moderation |
+| `tests/engine/verify` | FR-15 — invented fees and deadlines blocked, faithful paraphrase passed |
+| `tests/engine/rationale` | rule-restated-as-its-own-reason; the stray-purpose-clause trap |
+| `tests/engine/topicality` | R-07 — every bad answer this build shipped, as a regression case |
+| `tests/engine/curated`, `glossary` | Tier 1 matching against the **live** corpus, not a fixture |
+| `tests/engine/freshness` | FR-26 / M-05, with the clock injected |
+| `tests/retrieval/query` | FR-07 follow-up anchoring — including that the query walks back *past* subject-less turns and keeps them |
+| `tests/retrieval/fusion` | BM25, RRF, the hashed-n-gram embedder, the reranker |
+| `tests/khmer/normalize`, `romanize` | FR-04/FR-05 canonical ordering and idempotence; FR-03 romanised Khmer, and that `prakas` is not mistaken for it |
+| `tests/lang/content` | the shared content-word test retrieval and topicality must not drift apart on |
+| `tests/llm/prompt` | the grounded vs general prompt contracts, and `parseGeneration` refusing to fabricate |
+| `tests/llm/provider` | NFR-09 degradation, and that no metadata path exposes a credential |
+| `tests/llm/gateway` | the provider actually in production: request shaping, bearer-only credential, honest residency |
+| `tests/log/audit` | FR-56 — that the writers redact *before* the write |
+| `tests/history` | device-local storage, quota and private-browsing failure, and that nothing is transmitted |
+| `tests/api/routes` | the boundary: malformed, oversized and hostile input, and NFR-09 degradation |
+| `tests/kb/corpus` | FR-45 metadata on every chunk, and the `data/README.md` honesty conventions |
+
+Coverage thresholds are a **floor**, set in `vitest.config.ts` just below the
+current numbers: an ordinary change has room to move, but deleting a suite fails
+the build rather than showing up as a slowly sinking percentage nobody reads.
+`lib/llm/anthropic.ts` and `lib/llm/vllm.ts` sit near 5% and are what hold the
+figure below 90 — they are the Phase 1 migration targets (NFR-18), worth
+covering when one of them becomes the provider in use, not before.
+
+The corpus suite is the one to watch. It runs against live `data/` on every push,
+because the corpus is the part of this system that changes without a code review
+— it fails on a placeholder fee, an invented instrument number, a chunk with no
+FR-44 questions, a non-public sensitivity, or a `[SAMPLE]` marker outside the
+declared quarantine. The quarantine is exact: the eight `MOI-CR-*` chunks are
+named, and both adding sample content elsewhere *and* replacing that file with
+real content will fail until the list is updated deliberately.
 
 `npm run verify-check` — 8/8 cases behave as specified: invented deadlines, fees,
 document counts, and fabricated citation ids are all blocked; faithful
 paraphrases and number-form changes ("thirty days" ⇄ "30 days") pass.
 
-Three caveats on those numbers. The M-04 refusal figure is measured against ten
-negatives that are mostly §12 policy cases refused by regex before retrieval —
-it does not currently contain the hard case, and there is a live defect it
-cannot see. Read the first entry under Known gaps before quoting it.
+`npm run rationale-check` — 31/31 cases. Asks-for-a-reason detection in English,
+Khmer and romanised Khmer; purpose clause vs. procedural infinitive; and the
+gate itself, including the stray-purpose-clause case that documents why
+`tiers.ts` must pass only the top source.
+
+`npm run scope-check` — 22/24 routed as specified, plus **2 declared known
+gaps**. A `knownGap` marker keeps a case that specifies the right behaviour but
+does not yet hold: it is reported as `GAP`, excluded from the failure count,
+and — if it ever starts passing — reported as `FIXD` and fails the run, so a
+stale marker cannot quietly stop asserting what it was protecting. The two open
+gaps are both retrieval precision, not routing; see Known gaps.
+
+Two caveats stand on those numbers. M-04 is measured against ten negatives whose
+by-gate breakdown is above: it does not contain the hard case, and there is a
+live defect it cannot see. Read the first entry under Known gaps before quoting
+it. A green M-04 means the ten negatives were refused, not that refusal is
+solved.
 
 The golden set is 34 questions, not the ≥300
 produced with the officers who answer these queries today (§13, weeks 1–3) —
@@ -330,11 +407,25 @@ precisely the failure §13 calls worse than no service, and the confidence gate
 exists to stop it. "register", "apply" and "licence" are simply enough shared
 signal to clear a floor tuned on a two-ministry corpus.
 
-Note what this means for M-04 below. Refusal precision measures 100%, and that
-number is real, but the golden set's ten negatives are eight §12 policy cases
-(caught by regex before retrieval, so trivially refused) and two questions that
-fall well below the floor. **It contains no plausible adjacent-ministry service
-question** — the hard case — so the metric cannot currently see this failure.
+Note what this means for M-04 above. Refusal precision measures 100%, and that
+number is real, but the by-gate breakdown says where it comes from: `policy 8 ·
+scope 1 · floor 1`. Eight are §12 policy cases caught by regex before retrieval,
+so trivially refused; one is caught by the scope gate; exactly one rests on the
+floor. **The set contains no plausible adjacent-ministry service question** —
+the hard case — so the metric cannot currently see this failure.
+
+`npm run scope-check` carries two live instances of it as declared `knownGap`
+cases, reported as `GAP` rather than counted as failures:
+
+| Case | What happens | Should happen |
+|---|---|---|
+| "how do i enrol my child in school" | answered from civil-registration content | coverage gap, offer the officer |
+| "where in phnom penh?" after a passport thread | drifts to driving-licence locations | coverage gap, offer the officer |
+
+They are marked rather than deleted so the specification survives, and the
+marker itself is checked: if either starts passing, scope-check reports `FIXD`
+and fails until the marker is removed. Both close the same way this section
+describes — retrieval precision, not routing.
 
 Closing it is not a test fix, and probably not a threshold change either: at
 0.25 the floor already costs 30 points of in-scope answer rate. It likely needs

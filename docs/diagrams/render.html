@@ -1,0 +1,36 @@
+<!doctype html><meta charset="utf-8"><body style="background:#222;color:#eee;font:14px system-ui">
+<div id="log">rendering…</div>
+<script>
+// Rasterises the To-Be SVG at two sizes:
+//   askgov-tobe-process-flow@2x.png   — 2x, for the Word / Google Docs BRD
+//   askgov-tobe-process-flow@check.png — small, for visual inspection
+let W = 3720, H = 2800;   // overwritten from the SVG root below
+const JOBS = [
+  { scale: 2,    name: 'askgov-tobe-process-flow@2x.png' },
+  { scale: 0.55, name: 'askgov-tobe-process-flow@check.png' },
+];
+const log = m => document.getElementById('log').textContent = m;
+(async () => {
+  const svg = await (await fetch('askgov-tobe-process-flow.svg?' + Date.now())).text();
+  W = +svg.match(/\bwidth="(\d+)"/)[1];
+  H = +svg.match(/\bheight="(\d+)"/)[1];
+  const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+  const img = new Image();
+  img.onerror = () => log('img load failed');
+  img.onload = async () => {
+    const done = [];
+    for (const j of JOBS) {
+      const c = document.createElement('canvas');
+      c.width = Math.round(W * j.scale); c.height = Math.round(H * j.scale);
+      const g = c.getContext('2d');
+      g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+      g.drawImage(img, 0, 0, c.width, c.height);
+      const r = await fetch('/save/' + j.name, { method: 'POST', body: c.toDataURL('image/png') });
+      done.push((await r.text()) + ' (' + c.width + 'x' + c.height + ')');
+      log(done.join('  |  '));
+    }
+    log('DONE — ' + done.join('  |  '));
+  };
+  img.src = url;
+})();
+</script>

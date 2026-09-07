@@ -1,0 +1,104 @@
+name: CI
+
+# Every check that used to depend on someone remembering to run it.
+#
+# Runs with NO provider credential configured. That is deliberate: generation
+# falls back to the deterministic extractive provider, so nothing here makes a
+# paid model call, and a fork's pull request cannot spend the gateway credit.
+# What is measured — retrieval, refusal, the guardrail policy, corpus integrity
+# — does not involve the model at all.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      # Pin the governance-relevant switches rather than inheriting a default
+      # that could drift. FR-72/73: the answer trace is never on in CI.
+      DIAGNOSTICS_ENABLED: "false"
+      GENERAL_FALLBACK_ENABLED: "false"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # Coverage thresholds are a floor set in vitest.config.ts, so deleting a
+      # suite fails here rather than showing up as a sinking percentage.
+      - name: Unit and integration tests
+        run: npm run test:coverage
+
+      - name: Build
+        run: npm run build
+
+      # The measured metrics from PRD section 4. These fail the build on a
+      # regression in recall or refusal, which is the point — M-03 and M-04 are
+      # targets, not observations.
+      - name: Retrieval and refusal evaluation (M-03, M-04)
+        run: npm run eval
+
+      - name: Verification gate check (FR-15)
+        run: npm run verify-check
+
+      - name: Curated answer check (FR-10, FR-11)
+        run: npm run curated-check
+
+      - name: Scope gate check
+        run: npm run scope-check
+
+      - name: Rationale gate check
+        run: npm run rationale-check
+
+  secrets-scan:
+    # R-15 / FR-74: the provider credential must never reach the repository.
+    # .gitignore covers .env.local, but a check that depends on a file being
+    # correct is not a check.
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fail on a committed credential
+        run: |
+          if git grep -nIE '(sk-ant-|sk-nous-|sk-proj-)[A-Za-z0-9_-]{12,}' -- . ':!.github/workflows/ci.yml'; then
+            echo "::error::A provider credential appears to be committed (R-15 / FR-74)."
+            exit 1
+          fi
+          echo "No credential patterns found."
+
+      - name: Fail if an env file is tracked
+        run: |
+          if git ls-files --error-unmatch .env .env.local 2>/dev/null; then
+            echo "::error::An environment file is tracked by git."
+            exit 1
+          fi
+          echo "No tracked env files."

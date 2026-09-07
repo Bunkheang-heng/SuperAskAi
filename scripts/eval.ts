@@ -23,7 +23,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { retrieve } from "../lib/retrieval";
-import { screen } from "../lib/engine/guardrails";
+import { screen, isOffDomain } from "../lib/engine/guardrails";
 
 interface Golden {
   positives: Array<{ q: string; expect: string }>;
@@ -71,20 +71,43 @@ for (const { q, expect } of golden.positives) {
 const total = golden.positives.length;
 
 // ── Refusal ────────────────────────────────────────────────────────────────
-// A negative is correctly handled when a guardrail catches it, or when
-// retrieval falls below the escalation threshold. Both paths end in a refusal
-// with an offer of a human, which is what M-04 measures.
+// A negative is correctly handled when it is refused, and the live path has
+// THREE gates that can refuse it. They are applied here in the same order
+// lib/engine/tiers.ts applies them, because a harness that models a different
+// order measures a system nobody is running:
+//
+//   1. screen()      §12 refusal policy               tiers.ts:313
+//   2. isOffDomain() positive scope gate              tiers.ts:369
+//   3. retrieval floor below RETRIEVAL_MIN_SCORE      FR-16
+//
+// Gate 2 was previously absent from this harness, which understated M-04: "what
+// is the capital of france" scores 0.205 against a 0.200 floor and was counted
+// as a leak, while the running service refuses it as scope:not_a_service_question
+// before retrieval is ever consulted. Adding it measures what the service does
+// rather than lowering the bar — a question the scope gate does not catch still
+// has to clear the floor exactly as before.
 
 let refused = 0;
 const leaks: Array<{ q: string; reason: string; topScore: number; top: string }> =
   [];
-/** Top rerank score per out-of-scope question that no guardrail caught. */
+/** Which gate caught each refusal, so a shift between them is visible. */
+const refusedBy = { policy: 0, scope: 0, floor: 0 };
+/** Top rerank score per out-of-scope question that no gate caught. */
 const negativeTopScores: number[] = [];
 
 for (const { q, reason } of golden.negatives) {
   const hit = screen(q);
   if (hit) {
     refused += 1;
+    refusedBy.policy += 1;
+    continue;
+  }
+
+  // The golden negatives are single questions with no conversation behind
+  // them, which is the same thing the live path sees on a first turn.
+  if (isOffDomain(q, [])) {
+    refused += 1;
+    refusedBy.scope += 1;
     continue;
   }
 
@@ -93,6 +116,7 @@ for (const { q, reason } of golden.negatives) {
 
   if (candidates.length === 0 || topScore < RETRIEVAL_MIN_SCORE) {
     refused += 1;
+    refusedBy.floor += 1;
     continue;
   }
 
@@ -155,6 +179,9 @@ console.log(
 console.log(`MRR              : ${(mrrSum / total).toFixed(3)}`);
 console.log(
   `Refusal    M-04  : ${pct(refused, golden.negatives.length)}   target 98.0%   ${bar(refusalPrecision, 0.98)}`,
+);
+console.log(
+  `  by gate        : policy ${refusedBy.policy} · scope ${refusedBy.scope} · floor ${refusedBy.floor}`,
 );
 console.log("=".repeat(62));
 
