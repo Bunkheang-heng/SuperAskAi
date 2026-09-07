@@ -23,6 +23,18 @@ SEED = [
 ("Royal Government of Cambodia (National Portal)", "រាជរដ្ឋាភិបាលកម្ពុជា", "RGC", "cambodia.gov.kh",
  "Portal", "Central Government", "National", N, N, "Phnom Penh", "Phnom Penh",
  "SEARCH", "search", 1, "Legacy national e-Gov portal; blocked automated fetch during discovery - confirm liveness."),
+("Public Service Information Portal", "ច្រកទ្វារអេឡិចត្រូនិកផ្ដល់ព័ត៌មានសេវាសាធារណៈ", N, "service.gov.kh",
+ "Portal", "Central Government", "National", "Council for Administrative Reform", "Ministry of Civil Service",
+ "Phnom Penh", "Phnom Penh",
+ "SEARCH", "search", 1,
+ "National public-service information portal; indexes procedures by ministry, by group and in full - the "
+ "closest existing analogue to AskGov's own corpus and a priority acquisition target. Homepage observed "
+ "2026-09-07; ownership read from the site banner (Ministry of Civil Service + Council for Administrative "
+ "Reform). CANNOT CURRENTLY BE MONITORED: a WAF rejects automated fetches, and it answers HTTP 200 with a "
+ "266-byte 'Request Rejected' page rather than an error status, so a crawler that trusts the status code will "
+ "record the rejection page as content - see FR-48. robots.txt is blocked too, so NFR-15 politeness rules "
+ "cannot be read. TLS certificate presents CN=www.preyveng.gov.kh, a different domain. Access must be "
+ "arranged with the owning institution (Mode B, section 2.6) rather than crawled."),
 ("Office of the Council of Ministers - Press and Quick Reaction Unit", "ទីស្តីការគណៈរដ្ឋមន្ត្រី", "OCM / PQRU", "pressocm.gov.kh",
  "Government", "Executive Office", "National", "Office of the Council of Ministers", N, "Phnom Penh", "Phnom Penh",
  "GDT-LINKS", "directory", 1, "Primary publisher of RGC decisions, sub-decrees and press releases. High-value RAG source."),

@@ -83,6 +83,14 @@ const sources: OutSource[] = full.map((r) => {
   const priority = Number(r.crawl_priority || "3");
   const renderMode = r.seed_render_mode || "static";
   const headless = renderMode === "headless";
+  // status=waf-blocked — the host rejects automated clients outright. Distinct
+  // from verify_outcome=blocked, which in this codebase means robots.txt
+  // forbids us (lib/monitor/types.ts). A WAF gives no robots.txt to obey and
+  // frequently answers 200 with a rejection page, so a crawler that trusts the
+  // status code records the rejection as content. Crawling anyway would spend
+  // the whole page budget on rejections and put repeated refused requests from
+  // a government address against another government host — the NFR-15 problem.
+  const wafBlocked = (r.status || "").trim() === "waf-blocked";
 
   return {
     id: `SRC-${r.id.padStart(3, "0")}`,
@@ -101,10 +109,12 @@ const sources: OutSource[] = full.map((r) => {
     depth: Number(r.seed_max_depth || "4"),
     maxPages: PAGE_BUDGET[String(priority)] ?? 10,
     politenessDelayMs: Number(r.seed_politeness_delay_s || "2") * 1000,
-    enabled: !headless,
+    enabled: !headless && !wafBlocked,
     disabledReason: headless
       ? "render_mode=headless — client-rendered SPA; a static fetch returns an empty shell. Needs a headless adapter."
-      : undefined,
+      : wafBlocked
+        ? "status=waf-blocked — the host rejects automated clients, so monitoring cannot see content and must not be attempted. Access is a Section 2.6 institutional matter, not a crawler setting."
+        : undefined,
     kbMinistry: ONBOARDED[host],
     notes: r.notes || undefined,
   };
@@ -143,7 +153,16 @@ writeFileSync(
 
 console.log(`\ndata/sources.json — ${sources.length} sources`);
 console.log(`  enabled          ${out.counts.enabled}`);
-console.log(`  disabled         ${sources.length - out.counts.enabled} (headless)`);
+const disabledBy = sources.reduce<Record<string, number>>((acc, s) => {
+  if (!s.enabled) {
+    const kind = s.renderMode === "headless" ? "headless" : "waf-blocked";
+    acc[kind] = (acc[kind] ?? 0) + 1;
+  }
+  return acc;
+}, {});
+console.log(
+  `  disabled         ${sources.length - out.counts.enabled} ${JSON.stringify(disabledBy)}`,
+);
 console.log(`  by provenance    ${JSON.stringify(byVerified)}`);
 console.log(`  by priority      ${JSON.stringify(out.counts.byPriority)}`);
 console.log(
