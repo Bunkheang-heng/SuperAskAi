@@ -13,6 +13,7 @@
  */
 
 import { normalizeFold } from "./normalize";
+import { normaliseWord } from "@/lib/lang/stem";
 
 const COENG = "្";
 const VOWEL = /[ា-ៅ]/;
@@ -138,9 +139,11 @@ function segmentKhmerRun(run: string): string[] {
 
 /**
  * Tokenise mixed Khmer / Latin text into comparable units.
- * Latin words are lowercased and split on non-alphanumerics; Khmer runs go
- * through the segmenter. Khmer cluster bigrams are appended as extra units to
- * lift recall on compounds the lexicon does not yet cover (R-07).
+ * Latin words are lowercased, split on non-alphanumerics, and suffix-stripped
+ * (see lib/lang/stem.ts — without it "registering" never matches "register");
+ * Khmer runs go through the segmenter and do not inflect this way, so they are
+ * left alone. Khmer cluster bigrams are appended as extra units to lift recall
+ * on compounds the lexicon does not yet cover (R-07).
  */
 export function segment(input: string): string[] {
   const s = normalizeFold(input);
@@ -162,7 +165,7 @@ export function segment(input: string): string[] {
       run
         .split(/[^a-z0-9]+/i)
         .filter((w) => w.length > 1)
-        .forEach((w) => tokens.push(w.toLowerCase()));
+        .forEach((w) => tokens.push(normaliseWord(w.toLowerCase())));
     }
   }
 

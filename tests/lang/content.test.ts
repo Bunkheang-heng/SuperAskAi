@@ -15,20 +15,22 @@ describe("contentTerms", () => {
   });
 
   it("keeps the words that carry aboutness", () => {
+    // Terms come back suffix-stripped: segment() stems Latin tokens so that
+    // "driving" and "drive" compare equal. See lib/lang/stem.ts.
     const terms = contentTerms("how do i renew my driving licence");
-    expect(terms).toEqual(expect.arrayContaining(["renew", "driving", "licence"]));
+    expect(terms).toEqual(expect.arrayContaining(["renew", "driv", "licenc"]));
   });
 
   it("drops bare numbers", () => {
-    expect(contentTerms("30 days 2026")).toEqual(["days"]);
+    expect(contentTerms("30 days 2026")).toEqual(["day"]);
   });
 
   it("drops single characters", () => {
-    expect(contentTerms("a b driving")).toEqual(["driving"]);
+    expect(contentTerms("a b driving")).toEqual(["driv"]);
   });
 
   it("folds case", () => {
-    expect(contentTerms("DRIVING Licence")).toEqual(["driving", "licence"]);
+    expect(contentTerms("DRIVING Licence")).toEqual(["driv", "licenc"]);
   });
 
   it("drops deictic words that point at the previous turn rather than a service", () => {

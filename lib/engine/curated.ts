@@ -11,6 +11,7 @@
 import type { Lang } from "@/lib/types";
 import { segment } from "@/lib/khmer/segment";
 import { normalizeFold, containsWord } from "@/lib/khmer/normalize";
+import { normaliseWord } from "@/lib/lang/stem";
 import { getKb } from "@/lib/kb/loader";
 
 export interface CuratedMatch {
@@ -49,8 +50,16 @@ const STOPWORDS = new Set([
   "please", "tell", "about",
 ]);
 
+/**
+ * The stoplist as `segment()` actually emits it — it suffix-strips Latin tokens,
+ * so "does" arrives as "doe". Matching the authored spellings against stemmed
+ * tokens would let every inflected function word count as content and re-open
+ * the "what do you do" mismatch described above.
+ */
+const STOPWORD_STEMS = new Set([...STOPWORDS].map((w) => normaliseWord(w)));
+
 function contentTokens(tokens: string[]): Set<string> {
-  return new Set(tokens.filter((t) => !STOPWORDS.has(t)));
+  return new Set(tokens.filter((t) => !STOPWORD_STEMS.has(t)));
 }
 
 /**

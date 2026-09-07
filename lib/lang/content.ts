@@ -20,6 +20,7 @@
 
 import { segment } from "@/lib/khmer/segment";
 import { normalizeFold } from "@/lib/khmer/normalize";
+import { normaliseWord } from "@/lib/lang/stem";
 
 /**
  * Words that carry no aboutness. A question made only of these has nothing to
@@ -43,11 +44,23 @@ export const STOPWORDS = new Set([
   "info", "information",
 ]);
 
+/**
+ * The stoplist as `segment()` will actually produce it.
+ *
+ * `segment()` suffix-strips Latin tokens, so the authored list above — written
+ * in ordinary English for a human to maintain — no longer matches it directly:
+ * "give" arrives as "giv" and "locations" as "locat". Comparing the raw list
+ * against stemmed tokens silently lets every inflected stopword through, which
+ * makes a subject-less follow-up look substantive and re-opens the FR-07 bug in
+ * this file's header. Stem both sides, once, here.
+ */
+const STOPWORD_STEMS = new Set([...STOPWORDS].map((w) => normaliseWord(w)));
+
 /** Distinct content words in a text, normalised and segmented. */
 export function contentTerms(text: string): string[] {
   const folded = normalizeFold(text);
   return segment(folded).filter(
-    (t) => t.length > 1 && !STOPWORDS.has(t) && !/^\d+$/.test(t),
+    (t) => t.length > 1 && !STOPWORD_STEMS.has(t) && !/^\d+$/.test(t),
   );
 }
 
