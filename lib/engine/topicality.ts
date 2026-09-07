@@ -31,7 +31,7 @@
  */
 
 import { normalizeFold } from "@/lib/khmer/normalize";
-import { contentTerms, MIN_TERMS } from "@/lib/lang/content";
+import { contentTerms, MIN_TERMS, surfaceForms } from "@/lib/lang/content";
 
 export interface Topicality {
   /** Fraction of the question's content words present in the source. */
@@ -65,15 +65,21 @@ export function assess(question: string, sourceText: string): Topicality {
   const terms = [...new Set(contentTerms(question))];
   const haystack = normalizeFold(sourceText);
 
+  // Terms are stemmed, because that is what matching needs. `missing` is shown
+  // to the citizen verbatim (see lib/engine/tiers.ts), so report it in their
+  // own words rather than in stems.
+  const surface = surfaceForms(question);
+  const say = (t: string) => surface.get(t) ?? t;
+
   if (terms.length < MIN_TERMS) {
-    return { coverage: 1, missing: [], covered: terms, onTopic: true };
+    return { coverage: 1, missing: [], covered: terms.map(say), onTopic: true };
   }
 
   const covered: string[] = [];
   const missing: string[] = [];
   for (const t of terms) {
-    if (haystack.includes(t)) covered.push(t);
-    else missing.push(t);
+    if (haystack.includes(t)) covered.push(say(t));
+    else missing.push(say(t));
   }
 
   const coverage = covered.length / terms.length;

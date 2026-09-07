@@ -93,3 +93,23 @@ describe("stemming and the stoplists stay in step", () => {
     expect(isSubjectless("how do i renew my driving licence")).toBe(false);
   });
 });
+
+describe("citizen-facing text never shows stems", () => {
+  it("reports uncovered terms in the wording the citizen typed", async () => {
+    const { assess } = await import("@/lib/engine/topicality");
+    // Matching runs on stems; the warning in lib/engine/tiers.ts interpolates
+    // `missing` straight into the answer, so "licenc, vehicl" must never reach
+    // a citizen. Pins the surface-form mapping in lib/lang/content.ts.
+    const t = assess(
+      "i missed the thirty day window for registering a birth",
+      "Late birth registration requires two witness statements.",
+    );
+    for (const term of [...t.missing, ...t.covered]) {
+      expect(
+        ["miss", "licenc", "vehicl", "registrat", "driv", "compani"],
+        `stem "${term}" leaked into citizen-facing text`,
+      ).not.toContain(term);
+    }
+    expect(t.missing).toContain("missed");
+  });
+});

@@ -51,8 +51,8 @@ describe("assess — does the source address the question?", () => {
       "what is the driving licence renewal fee",
       "The renewal fee for a driving licence is 30,000 riel.",
     );
-    // Stemmed forms — "renewal" and "renewed" both reduce to "renew".
-    expect(t.covered).toEqual(expect.arrayContaining(["driv", "licenc", "renew", "fee"]));
+    // Matching happens on stems, but the report is in the citizen's own words.
+    expect(t.covered).toEqual(expect.arrayContaining(["driving", "licence", "renewal", "fee"]));
     expect(t.missing).toEqual([]);
     expect(t.coverage).toBe(1);
   });
@@ -72,7 +72,7 @@ describe("assess — does the source address the question?", () => {
       "how do i renew a licence for my vehicle",
       "Vehicle licences are renewed at the department of public works.",
     );
-    expect(t.covered).toEqual(expect.arrayContaining(["renew", "licenc", "vehicl"]));
+    expect(t.covered).toEqual(expect.arrayContaining(["renew", "licence", "vehicle"]));
     expect(t.onTopic).toBe(true);
   });
 
@@ -87,7 +87,7 @@ describe("assess — does the source address the question?", () => {
     );
     // "registration" stems to "registrat", which is still not a substring of
     // "register" — the one-directional leniency is unchanged by stemming.
-    expect(t.missing).toContain("registrat");
+    expect(t.missing).toContain("registration");
   });
 
   it("works across scripts", () => {

@@ -65,6 +65,26 @@ export function contentTerms(text: string): string[] {
 }
 
 /**
+ * Map each stemmed term back to the wording the citizen actually typed.
+ *
+ * Matching runs on stems, but anything shown to a citizen must not. The
+ * topicality warning names the terms a source does not cover, and "the source
+ * says nothing about: licenc, vehicl, registrat" reads as a broken system
+ * rather than an honest caveat. First surface form wins; a term the map does
+ * not know falls back to the stem, which is the pre-stemming behaviour.
+ */
+export function surfaceForms(text: string): Map<string, string> {
+  const out = new Map<string, string>();
+  for (const word of normalizeFold(text).split(/[^\p{L}\p{N}]+/u)) {
+    if (word.length < 2) continue;
+    for (const term of segment(word)) {
+      if (!out.has(term)) out.set(term, word);
+    }
+  }
+  return out;
+}
+
+/**
  * Below this many content words, a text does not say what it is about.
  *
  * Used in both directions: a turn with fewer cannot anchor a follow-up, and a
