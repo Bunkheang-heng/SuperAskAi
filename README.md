@@ -25,7 +25,7 @@ verification gate, escalation, and the whole interface work unchanged.
 
 ```bash
 npm run check            # typecheck + test + build + every harness below. CI runs this
-npm test                 # 599 unit and integration tests, no model calls
+npm test                 # 617 unit and integration tests, no model calls
 npm run test:watch       # the same, on change
 npm run test:coverage    # the same, with v8 coverage and its thresholds enforced
 npm run eval             # M-03 recall@8 and M-04 refusal precision, no model calls
@@ -46,7 +46,7 @@ npm run rationale-check  # "why does this rule exist" when no source gives a rea
 | §6.1 Terminology | Plain-language explanation of official terms — instrument types, ministry abbreviations, administrative levels, and the three dates on a citation — served as Tier 1 from `data/glossary.json` |
 | §8.3 Citation | Every field of FR-20 → FR-26, always visible |
 | §8.4 Escalation | Explicit action (FR-27, FR-30), transcript handover to DG Support on Telegram (FR-28), office fallback details (FR-29) |
-| §8.7 Content monitoring | Web adapter over a 130-source registry (FR-47), change signals raised to a steward review queue and never published (FR-49), raw copy and fetch timestamp retained (FR-54), §10.5 risk classification. Facebook, Telegram, video and document adapters not built |
+| §8.7 Content monitoring | Web adapter over a 132-source registry (FR-47), change signals raised to a steward review queue and never published (FR-49), raw copy and fetch timestamp retained (FR-54), §10.5 risk classification. Facebook, Telegram, video and document adapters not built |
 | §8.8 Audit | Full FR-55 record, PII redacted before storage (FR-56) |
 | §8.9 Citizen interface | FR-60 → FR-74 |
 | §9 NFRs | NFR-01 gate, NFR-02 refusal, NFR-03 untrusted-content handling, NFR-04 output moderation, NFR-09 degradation, NFR-10 index swap, NFR-18 abstraction layer |
@@ -218,7 +218,7 @@ cannot support.
 
 ```bash
 npm run build-sources    # data/registry/*.csv → data/sources.json
-npm run crawl:verify     # probe all 130 seeds, ~5 min, writes no content
+npm run crawl:verify     # probe all 132 seeds, ~20 min, writes no content
 npm run crawl:monitor    # change detection over confirmed sources
 npm run crawl:weekly     # what the scheduled task runs: priority 1 and 2
 ```
@@ -232,10 +232,12 @@ Weekly scheduling on Windows, per-user, no admin rights:
 
 ### The registry
 
-130 organisations — ministries, institutions, general departments, regulators,
-25 provincial administrations, public universities, national hospitals. It is
-maintained in `data/registry/seed_registry.py` and generated into
-`data/sources.json`; **do not edit `data/sources.json` by hand.**
+132 organisations — ministries, institutions, general departments, regulators,
+25 provincial administrations, public universities, national hospitals, and the
+two cross-government service portals (`service.gov.kh`,
+`services.misti.gov.kh`). It is maintained in `data/registry/seed_registry.py`
+and generated into `data/sources.json`; **do not edit `data/sources.json` by
+hand.**
 
 Every row carries a provenance code, and one value changes what the crawler is
 allowed to do with it:
@@ -247,7 +249,7 @@ allowed to do with it:
 | `search` | Seen verbatim on an official page or PDF | Crawled |
 | `unconfirmed` | **Derived from a naming convention, never observed** | Probed by `crawl:verify`, skipped by `crawl:monitor` |
 
-51 of the 130 are `unconfirmed` — mostly `<province>.gov.kh`, a pattern
+51 of the 132 are `unconfirmed` — mostly `<province>.gov.kh`, a pattern
 confirmed for 7 of 25 provinces and assumed for the rest. They are leads, not
 facts. `crawl:verify` is how a lead becomes a source: it probes the seed, and a
 lead that returns 2xx with real content can then be promoted in the registry.
@@ -258,13 +260,40 @@ Two sources are disabled outright: `apps.customs.gov.kh` and
 returns an empty shell. Recording that as "the page" would be worse than not
 crawling them, so they wait for a headless adapter.
 
+### A 200 is not proof of a page
+
+The crawler's change signal used to rest on one assumption — an HTTP 200
+carries the page — and on this infrastructure that assumption is wrong often
+enough to poison the review queue. `lib/monitor/soft-block.ts` is the check that
+was missing. Three shapes, all observed:
+
+| Shape | Where | What it looked like before |
+|---|---|---|
+| WAF rejection page, HTTP 200 | 23 hosts, incl. MOJ, MFAIC, MoEYS, 18 provinces | `empty`, `robotsAllowsUs=true` — 155 chars of "The requested URL was rejected" |
+| SPA catch-all, HTTP 200 on *every* path | `services.misti.gov.kh` | 40 "pages" that were all the same 2.5KB shell |
+| JSON `{"status":"fail"}`, HTTP 200 | `services-api.misti.gov.kh` | an auth wall recorded as content |
+
+The WAF case is the expensive one. Its rejection page embeds a fresh support ID
+on every fetch, so its text hash changes every run: 22 hosts that can never be
+read would each have raised a `modified` signal every week, forever. A review
+queue that cries wolf weekly is a review queue nobody opens.
+
+So `/robots.txt` is now sniffed rather than parsed on faith — a body with no
+directives in it is not permission — and a WAF page there **fails closed**, on
+the same reasoning as a 403. These hosts are up and serving citizens; they are
+declining `AskGovBot` specifically. That is an access conversation with the
+owning institution (§2.6), not a crawler setting, and deliberately not something
+this crawler routes around: a browser `User-Agent` gets through, and spoofing
+one to defeat another institution's access control is not a decision a crawler
+config should be making.
+
 ### What a crawl can and cannot do
 
-It writes to `var/`. It cannot write to `data/kb/` — there is no function in
-`lib/monitor/` that could. A crawl raises change signals to
-`var/review-queue.jsonl`; a steward publishes. That is FR-49 and §10.4's closing
-line, and it is why this can be pointed at live government infrastructure
-without any risk of unreviewed content reaching a citizen.
+It writes to `data/crawl/`. It cannot write to `data/kb/` — there is no function
+in `lib/monitor/` that could. A crawl raises change signals to
+`data/crawl/review-queue.jsonl`; a steward publishes. That is FR-49 and §10.4's
+closing line, and it is why this can be pointed at live government
+infrastructure without any risk of unreviewed content reaching a citizen.
 
 Changes are classified `factual` or `presentation` against the §10.5 table —
 fees, deadlines, required documents, eligibility, procedure steps, and the
@@ -282,8 +311,9 @@ crawler from a DGC address is a political problem before it is a technical one.
 
 - `robots.txt` honoured per host, including `Crawl-delay`, with a named
   `User-Agent` group beating the wildcard
-- **fail-closed on a 401/403 for `robots.txt` itself** — a host that will not
-  show its rules is not inviting a guess
+- **fail-closed on a 401/403 for `robots.txt` itself, and on a WAF page served
+  in its place** — a host that will not show its rules is not inviting a guess,
+  and a body with no directives in it is not a permissive `robots.txt`
 - 2s minimum between requests to one host; concurrency is across *different*
   hosts only, capped at 6
 - 20s request timeout, 5MB body cap, retry only on 429/5xx with backoff, never

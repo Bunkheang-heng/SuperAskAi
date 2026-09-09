@@ -29,6 +29,7 @@ import { politeFetch, USER_AGENT } from "./fetch";
 import { getRobots } from "./robots";
 import { extract } from "./extract";
 import { classify, changedLines } from "./classify";
+import { detectSoftBlock } from "./soft-block";
 import {
   loadSnapshots,
   saveSnapshots,
@@ -98,6 +99,15 @@ interface CrawlOptions {
   onProgress?: (line: string) => void;
 }
 
+/**
+ * How many pages identical to the seed it takes to call a host a catch-all.
+ *
+ * Some sites legitimately serve one duplicate — a /home that mirrors /. Five in
+ * a row is a router answering every path with the same shell, and continuing
+ * would spend the whole page budget re-fetching one document.
+ */
+const CATCH_ALL_THRESHOLD = 5;
+
 async function crawlSource(
   source: Source,
   previous: SourceSnapshot | undefined,
@@ -107,6 +117,7 @@ async function crawlSource(
   changes: ChangeSignal[];
   fetched: number;
   blocked: number;
+  rejected: number;
 }> {
   const changes: ChangeSignal[] = [];
   const pages: Record<string, PageSnapshot> = {};
@@ -114,23 +125,35 @@ async function crawlSource(
 
   let fetched = 0;
   let blocked = 0;
+  let rejected = 0;
+
+  /** Abandon the source without keeping a partial snapshot. */
+  const abort = (error: string) => ({
+    snapshot: { sourceId: source.id, crawledAt, pages: {}, error },
+    changes: [] as ChangeSignal[],
+    fetched,
+    blocked,
+    rejected,
+  });
 
   const robots = await getRobots(source.url, USER_AGENT);
   if (robots.blocked) {
-    log(`  robots.txt refused (401/403) — skipping entire source`);
-    return {
-      snapshot: { sourceId: source.id, crawledAt, pages: {}, error: "robots-refused" },
-      changes: [],
-      fetched: 0,
-      blocked: 1,
-    };
+    log(`  ${robots.note ?? "robots.txt refused"} — skipping entire source`);
+    blocked += 1;
+    return abort(robots.note ? `robots-refused: ${robots.note}` : "robots-refused");
   }
+  if (robots.note) log(`  note: ${robots.note}`);
 
   // Breadth-first from the seed, same host only, bounded by depth and maxPages.
   const queue: Array<{ url: string; depth: number }> = [
     { url: source.url, depth: 0 },
   ];
   const seen = new Set<string>([source.url]);
+
+  // Set from the seed, then used to recognise a host that answers every path
+  // with the same document.
+  let seedTextHash = "";
+  let duplicatesOfSeed = 0;
 
   while (queue.length > 0 && fetched < source.maxPages) {
     const { url, depth } = queue.shift()!;
@@ -152,22 +175,43 @@ async function crawlSource(
       // before, which the removal pass below handles.
       if (depth === 0) {
         log(`  seed unreachable — HTTP ${res.status || "no response"}`);
-        return {
-          snapshot: {
-            sourceId: source.id,
-            crawledAt,
-            pages: {},
-            error: res.status ? `HTTP ${res.status}` : res.body || "unreachable",
-          },
-          changes: [],
-          fetched,
-          blocked,
-        };
+        return abort(res.status ? `HTTP ${res.status}` : res.body || "unreachable");
+      }
+      continue;
+    }
+
+    // A 200 that is a refusal, not a page. Never snapshotted: a WAF rejection
+    // carries a fresh support ID on every fetch, so recording one would raise a
+    // "modified" signal every run for a source that can never be read.
+    const softBlock = detectSoftBlock(res.body, res.contentType);
+    if (softBlock) {
+      rejected += 1;
+      if (depth === 0) {
+        log(`  seed returned a refusal with HTTP 200 — ${softBlock.detail}`);
+        return abort(`${softBlock.kind}: ${softBlock.detail}`);
       }
       continue;
     }
 
     const { title, text, links } = extract(res.body, res.url);
+
+    if (depth === 0) {
+      seedTextHash = sha256(text);
+    } else if (sha256(text) === seedTextHash) {
+      // Byte-identical to the seed. One or two of these are ordinary; a run of
+      // them means the host serves a single client-rendered shell for every
+      // path, and every link we follow will be the same document again.
+      duplicatesOfSeed += 1;
+      if (duplicatesOfSeed >= CATCH_ALL_THRESHOLD) {
+        log(
+          `  every path returns the seed document (${duplicatesOfSeed} identical) — ` +
+            `catch-all host, needs a headless or API adapter`,
+        );
+        return abort("catch-all-200: every path returns the seed document");
+      }
+      continue;
+    }
+
     const snap = snapshotPage(
       source.id,
       url,
@@ -231,6 +275,7 @@ async function crawlSource(
     changes,
     fetched,
     blocked,
+    rejected,
   };
 }
 
@@ -282,15 +327,20 @@ export async function crawl(options: CrawlOptions = {}): Promise<CrawlReport> {
 
   let pagesFetched = 0;
   let pagesBlockedByRobots = 0;
+  let pagesRejected = 0;
   let reachable = 0;
 
   for (const [i, source] of sources.entries()) {
-    log(`[${i + 1}/${sources.length}] ${source.abbr} — ${source.url}`);
+    // Not every registry row has an abbreviation — the e-service and registry
+    // entries mostly do not — and "undefined — https://…" in a run log is how
+    // an operator loses track of which source failed.
+    log(`[${i + 1}/${sources.length}] ${source.abbr || source.host} — ${source.url}`);
 
     try {
       const result = await crawlSource(source, state[source.id], log);
       pagesFetched += result.fetched;
       pagesBlockedByRobots += result.blocked;
+      pagesRejected += result.rejected;
 
       if (result.snapshot.error) {
         errors.push({ sourceId: source.id, error: result.snapshot.error });
@@ -308,7 +358,8 @@ export async function crawl(options: CrawlOptions = {}): Promise<CrawlReport> {
       log(
         `  ${result.fetched} pages · ${result.changes.length} changes` +
           (factual ? ` (${factual} factual)` : "") +
-          (result.blocked ? ` · ${result.blocked} blocked by robots` : ""),
+          (result.blocked ? ` · ${result.blocked} blocked by robots` : "") +
+          (result.rejected ? ` · ${result.rejected} refused with 200` : ""),
       );
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -327,6 +378,7 @@ export async function crawl(options: CrawlOptions = {}): Promise<CrawlReport> {
     sourcesReachable: reachable,
     pagesFetched,
     pagesBlockedByRobots,
+    pagesRejected,
     changes: {
       total: allChanges.length,
       factual: allChanges.filter((c) => c.risk === "factual").length,

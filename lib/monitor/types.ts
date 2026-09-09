@@ -50,6 +50,15 @@ export interface Source {
   politenessDelayMs: number;
   enabled: boolean;
   disabledReason?: string;
+  /**
+   * A known access obstacle that does not stop this source being monitored.
+   *
+   * Deliberately not a reason to disable. A host behind a WAF is still a
+   * source AskGov wants; the crawler now recognises the refusal (soft-block.ts)
+   * instead of recording it, so monitoring costs one request and reports the
+   * true state — and starts working by itself the day access is granted.
+   */
+  accessNote?: string;
   /** Ministry name in data/kb/, when this source feeds onboarded content. */
   kbMinistry?: string;
   notes?: string;
@@ -92,8 +101,17 @@ export interface VerificationResult {
    * redirect  — resolved to a different host
    * dead      — 4xx/5xx or no response
    * blocked   — robots.txt forbids us
+   * rejected  — 2xx whose body is a refusal: a WAF interstitial or an API
+   *             failure envelope. Distinct from `blocked`, which is a rule the
+   *             operator wrote and we are honouring, and from `dead`, which is
+   *             the site being broken. `rejected` means the site works, is
+   *             refusing us specifically, and did not use a status code to say
+   *             so — the one case a status-code-trusting crawler records as
+   *             content (lib/monitor/soft-block.ts).
    */
-  outcome: "live" | "empty" | "redirect" | "dead" | "blocked";
+  outcome: "live" | "empty" | "redirect" | "dead" | "blocked" | "rejected";
+  /** Which detector fired, when the outcome is `rejected` or `blocked`. */
+  softBlock?: string;
   error?: string;
   checkedAt: string;
 }
@@ -181,6 +199,15 @@ export interface CrawlReport {
   sourcesReachable: number;
   pagesFetched: number;
   pagesBlockedByRobots: number;
+  /**
+   * 200s discarded because the body was a refusal rather than a page.
+   *
+   * Reported separately from `pagesFetched` because the two answer different
+   * questions: how much did we ask for, and how much did we actually get. A
+   * run where those diverge is a run whose sources need a conversation, not a
+   * retry.
+   */
+  pagesRejected: number;
   changes: {
     total: number;
     factual: number;

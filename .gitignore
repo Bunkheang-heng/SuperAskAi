@@ -15,6 +15,18 @@ next-env.d.ts
 var/
 *.log
 
+# Crawler output. data/crawl/verification.json is registry EVIDENCE and stays
+# tracked; everything below is run state that a fresh crawl reproduces.
+#
+# data/crawl/raw/ is the FR-54 retention store — the raw bytes of every page
+# fetched from every ministry, growing by thousands of files per weekly run.
+# It belongs in the same domestic managed storage as the audit log under the
+# NFR-11 residency policy, not in the git history of a public repository.
+data/crawl/raw/
+data/crawl/snapshots.json
+data/crawl/review-queue.jsonl
+data/crawl/last-report.json
+
 .DS_Store
 Thumbs.db
 .vscode/

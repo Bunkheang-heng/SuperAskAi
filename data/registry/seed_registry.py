@@ -303,6 +303,20 @@ SEED = [
 ("Customs Document Tracking System", N, N, "apps.customs.gov.kh",
  "Digital Platform", "e-Service", "National", "General Department of Customs and Excise", "Ministry of Economy and Finance", "Phnom Penh", "Phnom Penh",
  "SEARCH", "search", 3, "JavaScript SPA - requires headless rendering to crawl."),
+("MISTI Online Services Portal", "ច្រកសេវាអនឡាញ ក្រសួងឧស្សាហកម្ម វិទ្យាសាស្ត្រ បច្ចេកវិទ្យា និងនវានុវត្តន៍", N, "services.misti.gov.kh",
+ "Digital Platform", "e-Service", "National", "Ministry of Industry, Science, Technology and Innovation",
+ "Ministry of Industry, Science, Technology and Innovation", "Phnom Penh", "Phnom Penh",
+ "SEARCH", "search", 3,
+ "Online application portal for MISTI licences and certificates (NMC metrology, ISC standards, ACC "
+ "accreditation, STINL testing). Observed 2026-09-07. Vue/webpack single-page app: EVERY path, including "
+ "/robots.txt and /sitemap.xml, returns the same 2.5KB shell with HTTP 200 - a catch-all router, so link "
+ "following yields one document repeated. Its JSON backend is https://services-api.misti.gov.kh/api/v1, and "
+ "every endpoint probed anonymously (/public/stinl/product-types, /public/setting/get_form_options, "
+ "/user/service/list) answers HTTP 200 with {\"status\":\"fail\"} - the portal is transactional and "
+ "login-walled, like owp.tax.gov.kh. NO PUBLIC CONTENT TO CRAWL: it holds application forms behind "
+ "authentication, not the service descriptions AskGov answers from. Registered so it is monitored for the "
+ "day a public catalogue endpoint appears; the crawler detects the catch-all and stops after a few requests "
+ "(lib/monitor/soft-block.ts). Service descriptions for these licences live on misti.gov.kh instead."),
 ("Cambodia National Single Window", N, "CNSW", "cnsw.gov.kh",
  "Digital Platform", "e-Service", "National", "Ministry of Economy and Finance", "Ministry of Economy and Finance", "Phnom Penh", "Phnom Penh",
  "CONVENTION", "unconfirmed", 3, "Candidate domain - verify."),

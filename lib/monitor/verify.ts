@@ -28,15 +28,7 @@ import type { Source, VerificationResult } from "./types";
 import { politeFetch, USER_AGENT } from "./fetch";
 import { getRobots } from "./robots";
 import { extract } from "./extract";
-
-/**
- * Below this many characters of extracted text, a 200 is not really a page.
- *
- * Client-rendered SPAs, registrar parking pages and "coming soon" placeholders
- * all return 200 with a near-empty body. Calling those `live` would mark 51
- * unconfirmed leads as confirmed on the strength of a holding page.
- */
-const MIN_REAL_TEXT = 200;
+import { detectSoftBlock, looksLikeRobotsTxt, isThin } from "./soft-block";
 
 /** Sitemap directives are host-level; robots.txt is where they are declared. */
 function sitemapsFrom(robotsBody: string): string[] {
@@ -78,7 +70,11 @@ export async function verifySource(
       `${new URL(source.url).origin}/robots.txt`,
       source.politenessDelayMs,
     );
-    if (robotsRes.status === 200 && robotsRes.body.trim()) {
+    // "Exists" has to mean a readable robots.txt, not merely a 200. Hosts that
+    // route every path to an app shell — or to a WAF page — answer /robots.txt
+    // with 200 and a document containing no directives, and recording that as
+    // `robots_txt: true` in the registry is a fact the registry does not have.
+    if (robotsRes.status === 200 && looksLikeRobotsTxt(robotsRes.body)) {
       base.robotsExists = true;
       robotsBody = robotsRes.body;
       base.sitemapUrls = sitemapsFrom(robotsBody);
@@ -91,6 +87,7 @@ export async function verifySource(
   const robots = await getRobots(source.url, USER_AGENT);
   base.robotsAllowsUs = !robots.blocked && robots.isAllowed(source.url);
   base.crawlDelayMs = robots.crawlDelayMs;
+  if (robots.note) base.softBlock = robots.note;
 
   if (!base.robotsAllowsUs) {
     return { ...base, outcome: "blocked" };
@@ -123,12 +120,28 @@ export async function verifySource(
     return { ...base, outcome: "dead" };
   }
 
+  // A 200 whose body is a refusal. Checked before `empty` and before
+  // `redirect`, because "the host answered, with a rejection" is a more
+  // specific and more actionable finding than either — and because a rejection
+  // page is short enough that `empty` would otherwise swallow it and hide the
+  // reason (lib/monitor/soft-block.ts).
+  const softBlock = detectSoftBlock(res.body, res.contentType);
+  if (softBlock) {
+    const { title } = extract(res.body, res.url);
+    return {
+      ...base,
+      homepageTitle: title,
+      outcome: "rejected",
+      softBlock: softBlock.detail,
+    };
+  }
+
   const { title, text } = extract(res.body, res.url);
   base.homepageTitle = title;
   base.textLength = text.length;
 
   if (base.offHost) return { ...base, outcome: "redirect" };
-  if (text.length < MIN_REAL_TEXT) return { ...base, outcome: "empty" };
+  if (isThin(text)) return { ...base, outcome: "empty" };
 
   return { ...base, outcome: "live" };
 }

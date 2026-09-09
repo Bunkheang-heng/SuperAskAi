@@ -68,6 +68,14 @@ interface OutSource {
   politenessDelayMs: number;
   enabled: boolean;
   disabledReason?: string;
+  /**
+   * Known access obstacle that does NOT stop the source being monitored.
+   *
+   * Separate from disabledReason on purpose: "we cannot read this today" and
+   * "do not attempt this" are different statements, and only the second one
+   * should remove a source from the run.
+   */
+  accessNote?: string;
   kbMinistry?: string;
   notes?: string;
 }
@@ -85,11 +93,20 @@ const sources: OutSource[] = full.map((r) => {
   const headless = renderMode === "headless";
   // status=waf-blocked — the host rejects automated clients outright. Distinct
   // from verify_outcome=blocked, which in this codebase means robots.txt
-  // forbids us (lib/monitor/types.ts). A WAF gives no robots.txt to obey and
-  // frequently answers 200 with a rejection page, so a crawler that trusts the
-  // status code records the rejection as content. Crawling anyway would spend
-  // the whole page budget on rejections and put repeated refused requests from
-  // a government address against another government host — the NFR-15 problem.
+  // forbids us (lib/monitor/types.ts).
+  //
+  // This used to disable the source, on the reasoning that a crawler trusting
+  // the status code would record the rejection page as content and burn the
+  // page budget on refusals. Both of those are now handled where they belong,
+  // in the crawler: lib/monitor/soft-block.ts recognises a WAF page, and
+  // lib/monitor/robots.ts fails closed when /robots.txt returns one — which
+  // costs a single request per run and stops before the seed is even fetched.
+  //
+  // So the source stays ENABLED and monitored. Disabling it would have made
+  // AskGov's registry quietly disagree with reality: the site is a priority-1
+  // acquisition target, and the moment the owning institution allowlists
+  // AskGovBot the crawler must pick it up without anyone remembering to flip a
+  // flag. A run reports it as refused every week, which is the honest state.
   const wafBlocked = (r.status || "").trim() === "waf-blocked";
 
   return {
@@ -109,12 +126,13 @@ const sources: OutSource[] = full.map((r) => {
     depth: Number(r.seed_max_depth || "4"),
     maxPages: PAGE_BUDGET[String(priority)] ?? 10,
     politenessDelayMs: Number(r.seed_politeness_delay_s || "2") * 1000,
-    enabled: !headless && !wafBlocked,
+    enabled: !headless,
     disabledReason: headless
       ? "render_mode=headless — client-rendered SPA; a static fetch returns an empty shell. Needs a headless adapter."
-      : wafBlocked
-        ? "status=waf-blocked — the host rejects automated clients, so monitoring cannot see content and must not be attempted. Access is a Section 2.6 institutional matter, not a crawler setting."
-        : undefined,
+      : undefined,
+    accessNote: wafBlocked
+      ? "status=waf-blocked — the host answers automated clients with a WAF rejection page carrying HTTP 200. The crawler detects and reports this rather than recording it; getting real access is a Section 2.6 institutional matter, not a crawler setting."
+      : undefined,
     kbMinistry: ONBOARDED[host],
     notes: r.notes || undefined,
   };
@@ -153,15 +171,9 @@ writeFileSync(
 
 console.log(`\ndata/sources.json — ${sources.length} sources`);
 console.log(`  enabled          ${out.counts.enabled}`);
-const disabledBy = sources.reduce<Record<string, number>>((acc, s) => {
-  if (!s.enabled) {
-    const kind = s.renderMode === "headless" ? "headless" : "waf-blocked";
-    acc[kind] = (acc[kind] ?? 0) + 1;
-  }
-  return acc;
-}, {});
+console.log(`  disabled         ${sources.length - out.counts.enabled} (headless)`);
 console.log(
-  `  disabled         ${sources.length - out.counts.enabled} ${JSON.stringify(disabledBy)}`,
+  `  access notes     ${sources.filter((s) => s.accessNote).length} (monitored, but the host refuses automated clients)`,
 );
 console.log(`  by provenance    ${JSON.stringify(byVerified)}`);
 console.log(`  by priority      ${JSON.stringify(out.counts.byPriority)}`);

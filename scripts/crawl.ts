@@ -48,9 +48,14 @@ async function runVerify() {
 
   const results = await verifyAll(sources, undefined, (r, done, total) => {
     appendFileSync(partial, JSON.stringify(r) + "\n", "utf8");
-    const mark = { live: "ok  ", empty: "EMPTY", redirect: "→   ", dead: "DEAD", blocked: "BLOCK" }[
-      r.outcome
-    ];
+    const mark = {
+      live: "ok  ",
+      empty: "EMPTY",
+      redirect: "→   ",
+      dead: "DEAD",
+      blocked: "BLOCK",
+      rejected: "REJCT",
+    }[r.outcome];
     const detail =
       r.outcome === "redirect"
         ? ` → ${r.finalUrl}`
@@ -58,7 +63,9 @@ async function runVerify() {
           ? ` (${r.httpStatus || r.error || "no response"})`
           : r.outcome === "empty"
             ? ` (${r.textLength} chars)`
-            : "";
+            : r.outcome === "rejected" || r.outcome === "blocked"
+              ? ` (${r.softBlock ?? "robots.txt"})`
+              : "";
     console.log(
       `[${String(done).padStart(3)}/${total}] ${mark} ${r.host.padEnd(34)} P${r.priority} ${r.claimed.padEnd(12)}${detail}`,
     );
@@ -87,7 +94,7 @@ function writeBackToMaster(results: VerificationResult[]): number {
   const cols: Array<keyof VerificationResult> = [
     "sourceId", "outcome", "httpStatus", "finalUrl", "redirected", "offHost",
     "https", "homepageTitle", "textLength", "robotsExists", "robotsAllowsUs",
-    "crawlDelayMs", "checkedAt", "error",
+    "crawlDelayMs", "checkedAt", "softBlock", "error",
   ];
 
   const text = readFileSync(MASTER, "utf8");
@@ -134,6 +141,18 @@ function summarise(results: VerificationResult[], written: number) {
   console.log(`empty     ${by("empty").length}`);
   console.log(`dead      ${by("dead").length}`);
   console.log(`blocked   ${by("blocked").length}`);
+  console.log(`rejected  ${by("rejected").length}`);
+
+  // A 200 that carried a refusal. Worth its own block because the remedy is
+  // never technical: these hosts are working and are declining an automated
+  // client, which is a conversation with the owning institution (section 2.6).
+  const rejected = by("rejected");
+  if (rejected.length) {
+    console.log(`\nrefused with HTTP 200 (${rejected.length}):`);
+    for (const r of rejected) {
+      console.log(`  ${r.host.padEnd(34)} ${r.softBlock ?? ""}`);
+    }
+  }
 
   // The point of the exercise: which unproven leads turned out to be real.
   const leads = results.filter((r) => r.claimed === "unconfirmed");
@@ -150,10 +169,33 @@ function summarise(results: VerificationResult[], written: number) {
     for (const r of redirects) console.log(`  ${r.host} → ${r.finalUrl}`);
   }
 
+  // "Blocked" covers two situations that call for opposite responses, and
+  // printing them in one list hid that. A ministry that wrote a Disallow rule
+  // has told us its terms and we honour them — nothing to do. A host whose
+  // robots.txt is itself a WAF rejection has told us nothing; it is refusing
+  // every automated client, and the remedy is an institutional conversation
+  // (section 2.6), not a crawler setting.
   const blocked = by("blocked");
-  if (blocked.length) {
-    console.log(`\nrobots.txt disallows us (${blocked.length}):`);
-    for (const r of blocked) console.log(`  ${r.host}`);
+  const wafBlocked = blocked.filter((r) => /WAF page/i.test(r.softBlock ?? ""));
+  const ruleBlocked = blocked.filter((r) => !wafBlocked.includes(r));
+
+  if (ruleBlocked.length) {
+    console.log(`\nrobots.txt disallows us (${ruleBlocked.length}):`);
+    for (const r of ruleBlocked) {
+      console.log(`  ${r.host.padEnd(34)} ${r.softBlock ?? "Disallow rule"}`);
+    }
+  }
+
+  if (wafBlocked.length) {
+    console.log(
+      `\nWAF refuses us — robots.txt itself returns a rejection page (${wafBlocked.length}):`,
+    );
+    for (const r of wafBlocked) console.log(`  ${r.host}`);
+    console.log(
+      `  These hosts are up and serving citizens; they decline AskGovBot. Not a\n` +
+        `  crawler defect and not fixable by retrying — raise access with the owning\n` +
+        `  institution (section 2.6).`,
+    );
   }
 
   console.log(`\nWritten: data/crawl/verification.json`);
@@ -177,7 +219,10 @@ async function runMonitor() {
 
   console.log("\n" + "=".repeat(78));
   console.log(`sources    ${report.sourcesReachable}/${report.sourcesAttempted} reachable`);
-  console.log(`pages      ${report.pagesFetched} fetched, ${report.pagesBlockedByRobots} blocked by robots`);
+  console.log(
+    `pages      ${report.pagesFetched} fetched, ${report.pagesBlockedByRobots} blocked by robots, ` +
+      `${report.pagesRejected} refused with 200`,
+  );
   console.log(
     `changes    ${report.changes.total} (${report.changes.factual} factual, ${report.changes.presentation} presentation)`,
   );

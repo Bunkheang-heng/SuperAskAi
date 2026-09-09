@@ -9,9 +9,19 @@
  * Fail-open on a MISSING robots.txt (404 or unreachable) because absence means
  * no restriction was stated. Fail-CLOSED on a 401 or 403 for robots.txt itself:
  * a host that refuses to show its rules is not inviting a guess.
+ *
+ * A third case sits between those two and used to be handled as neither: a
+ * host that answers /robots.txt with 200 and something that is not robots.txt.
+ * Both observed shapes — a WAF rejection page and a single-page app's catch-all
+ * shell — parse to zero directives, and zero directives reads as "no rules,
+ * crawl freely". That is a guess wearing a rule's clothes. The body is now
+ * sniffed (lib/monitor/soft-block.ts): a WAF page is a refusal and fails
+ * closed, anything else unreadable is treated as absent and fails open, and
+ * either way the reason is recorded rather than inferred.
  */
 
 import { politeFetch, MIN_HOST_DELAY_MS } from "./fetch";
+import { detectSoftBlock, looksLikeRobotsTxt } from "./soft-block";
 
 interface Group {
   /** Longest-match wins between Allow and Disallow, per the usual convention. */
@@ -25,6 +35,15 @@ export interface Robots {
   crawlDelayMs: number;
   /** No rules could be read and the host refused to say — treat as disallowed. */
   blocked: boolean;
+  /**
+   * How this verdict was reached, when it was not simply "we read the file".
+   *
+   * Carried so the crawl report can say *why* a source was skipped. "Blocked"
+   * alone cannot distinguish a ministry that deliberately excluded us from a
+   * WAF that would refuse anyone, and those two want opposite responses: the
+   * first is a rule to honour, the second is a conversation to have.
+   */
+  note?: string;
 }
 
 const ALLOW_ALL: Robots = {
@@ -38,6 +57,8 @@ const BLOCK_ALL: Robots = {
   crawlDelayMs: MIN_HOST_DELAY_MS,
   blocked: true,
 };
+
+const withNote = (base: Robots, note: string): Robots => ({ ...base, note });
 
 /**
  * Match a robots path pattern, supporting the `*` and `$` extensions that are
@@ -150,11 +171,25 @@ export async function getRobots(url: string, agent: string): Promise<Robots> {
 
   const res = await politeFetch(`${origin}/robots.txt`, MIN_HOST_DELAY_MS);
 
+  const softBlock =
+    res.status === 200 ? detectSoftBlock(res.body, res.contentType) : null;
+
   let robots: Robots;
   if (res.status === 401 || res.status === 403) {
-    robots = BLOCK_ALL;
+    robots = withNote(BLOCK_ALL, `robots.txt refused with HTTP ${res.status}`);
+  } else if (softBlock?.kind === "waf") {
+    // The host is refusing automated clients outright, and it is refusing them
+    // at the one URL whose whole purpose is to state the terms of automated
+    // access. Fail closed for the same reason a 403 does: we were not told the
+    // rules, so we do not get to invent permissive ones.
+    robots = withNote(BLOCK_ALL, `robots.txt returned a WAF page (${softBlock.detail})`);
   } else if (res.status !== 200 || !res.body.trim()) {
     robots = ALLOW_ALL;
+  } else if (!looksLikeRobotsTxt(res.body)) {
+    // 200, but the body holds no directives — almost always a catch-all route
+    // serving an app shell. No restriction was stated, so this is the same
+    // situation as a 404, and it fails open like one.
+    robots = withNote(ALLOW_ALL, "robots.txt served a non-robots body; treated as absent");
   } else {
     robots = toRobots(parse(res.body, agent));
   }

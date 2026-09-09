@@ -4,10 +4,10 @@
   "_verifiedNote": "verified=directory|wikipedia|search are observed domains. verified=unconfirmed were DERIVED from a naming convention and are leads, not facts: probing them is how they get confirmed, and nothing from an unconfirmed source may be ingested until its homepage returns 2xx and confirms ownership.",
   "generatedAt": "2026-09-07",
   "counts": {
-    "total": 131,
-    "enabled": 128,
+    "total": 132,
+    "enabled": 130,
     "byVerified": {
-      "search": 24,
+      "search": 25,
       "directory": 46,
       "unconfirmed": 51,
       "wikipedia": 10
@@ -15,7 +15,7 @@
     "byPriority": {
       "1": 43,
       "2": 58,
-      "3": 30
+      "3": 31
     }
   },
   "sources": [
@@ -2543,9 +2543,28 @@
       "depth": 4,
       "maxPages": 60,
       "politenessDelayMs": 2000,
-      "enabled": false,
-      "disabledReason": "status=waf-blocked — the host rejects automated clients, so monitoring cannot see content and must not be attempted. Access is a Section 2.6 institutional matter, not a crawler setting.",
+      "enabled": true,
+      "accessNote": "status=waf-blocked — the host answers automated clients with a WAF rejection page carrying HTTP 200. The crawler detects and reports this rather than recording it; getting real access is a Section 2.6 institutional matter, not a crawler setting.",
       "notes": "National public-service information portal; the closest existing analogue to AskGov's corpus and a priority acquisition target. Homepage observed 2026-09-07; ownership from site banner (Ministry of Civil Service + Council for Administrative Reform). NOT CRAWLABLE: WAF rejects automated fetches and returns HTTP 200 with a 266-byte 'Request Rejected' page, so status code alone is misleading (FR-48); robots.txt also blocked, so NFR-15 delays cannot be read; TLS certificate CN=www.preyveng.gov.kh. Obtain access via the owning institution (Mode B, section 2.6)."
+    },
+    {
+      "id": "SRC-132",
+      "registryId": 132,
+      "org": "MISTI Online Services Portal",
+      "orgKm": "ច្រកសេវាអនឡាញ ក្រសួងឧស្សាហកម្ម វិទ្យាសាស្ត្រ បច្ចេកវិទ្យា និងនវានុវត្តន៍",
+      "category": "Digital Platform",
+      "parentMinistry": "Ministry of Industry, Science, Technology and Innovation",
+      "url": "https://services.misti.gov.kh",
+      "host": "services.misti.gov.kh",
+      "adapter": "web",
+      "priority": 3,
+      "verified": "search",
+      "renderMode": "static",
+      "depth": 4,
+      "maxPages": 10,
+      "politenessDelayMs": 2000,
+      "enabled": true,
+      "notes": "Vue/webpack SPA; every path including /robots.txt returns the same 2.5KB shell with HTTP 200 (catch-all router). JSON backend services-api.misti.gov.kh/api/v1 answers {\"status\":\"fail\"} to every anonymously probed endpoint - transactional and login-walled, no public content to crawl. Monitored for the day a public catalogue endpoint appears. Observed 2026-09-07."
     }
   ]
 }
