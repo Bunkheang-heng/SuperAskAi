@@ -116,6 +116,49 @@ describe("processQuery", () => {
       const turnCount = (q.rewritten ?? "").match(/\bok \d+/g)?.length ?? 0;
       expect(turnCount).toBeLessThanOrEqual(4);
     });
+
+    it("does not rewrite an in-scope question against an earlier off-domain turn", () => {
+      const q = processQuery("where in phnom penh?", [
+        { role: "user", text: "what is the capital of france" },
+        {
+          role: "assistant",
+          text: "AskGov only answers questions about Cambodian government service procedures",
+        },
+      ]);
+      expect(q.rewritten ?? "").not.toMatch(/france/i);
+    });
+
+    it("does not glue refused short questions onto a later service question", () => {
+      // Live leak: "who is elon musk?" + "what is law" + "how do I get married?"
+      // became one retrieval query because all three have fewer than 3 content
+      // words, so rewrite treated the marriage question as a follow-up.
+      const q = processQuery("how do I get married?", [
+        { role: "user", text: "who is elon musk?" },
+        {
+          role: "assistant",
+          text: "AskGov only answers questions about Cambodian government service procedures",
+        },
+        { role: "user", text: "what is law" },
+        {
+          role: "assistant",
+          text: "AskGov only answers questions about Cambodian government service procedures",
+        },
+      ]);
+      expect(q.rewritten).toBeUndefined();
+      expect(q.normalised).not.toMatch(/elon|musk|what is law/i);
+    });
+
+    it("does not glue a new service question onto a previous service topic", () => {
+      const q = processQuery("how do I get married?", [
+        { role: "user", text: "how do i renew my driving licence" },
+        {
+          role: "assistant",
+          text: "Bring your old licence and national ID card.",
+        },
+      ]);
+      expect(q.rewritten).toBeUndefined();
+      expect(q.normalised).not.toMatch(/licence|license/i);
+    });
   });
 
   describe("romanised Khmer (FR-03)", () => {

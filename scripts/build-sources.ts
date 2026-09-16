@@ -3,7 +3,7 @@
  *
  * The registry is maintained upstream in Python (data/registry/seed_registry.py
  * → build_dataset.py, which emits CSV, XLSX, JSON and SQL). This script is the
- * one-way bridge into the shape lib/monitor/ consumes, so the Python remains
+ * one-way bridge into the shape lib/crawl/ consumes, so the Python remains
  * the single place a source is added or corrected and this file is never edited
  * by hand.
  *
@@ -93,13 +93,13 @@ const sources: OutSource[] = full.map((r) => {
   const headless = renderMode === "headless";
   // status=waf-blocked — the host rejects automated clients outright. Distinct
   // from verify_outcome=blocked, which in this codebase means robots.txt
-  // forbids us (lib/monitor/types.ts).
+  // forbids us (lib/crawl/types.ts).
   //
   // This used to disable the source, on the reasoning that a crawler trusting
   // the status code would record the rejection page as content and burn the
   // page budget on refusals. Both of those are now handled where they belong,
-  // in the crawler: lib/monitor/soft-block.ts recognises a WAF page, and
-  // lib/monitor/robots.ts fails closed when /robots.txt returns one — which
+  // in the crawler: lib/crawl/soft-block.ts recognises a WAF page, and
+  // lib/crawl/robots.ts fails closed when /robots.txt returns one — which
   // costs a single request per run and stops before the seed is even fetched.
   //
   // So the source stays ENABLED and monitored. Disabling it would have made

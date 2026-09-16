@@ -10,7 +10,7 @@
 
 import { NextResponse } from "next/server";
 import type { AskRequest } from "@/lib/types";
-import { ask } from "@/lib/engine/tiers";
+import { ask } from "@/lib/engine";
 import { recordAnswer } from "@/lib/log/audit";
 
 export const runtime = "nodejs";

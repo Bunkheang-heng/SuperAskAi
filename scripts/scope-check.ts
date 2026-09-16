@@ -41,7 +41,7 @@
  */
 process.env.DIAGNOSTICS_ENABLED = "true";
 
-import { ask } from "../lib/engine/tiers";
+import { ask } from "../lib/engine";
 import { detectLang } from "../lib/lang/detect";
 
 type Route =

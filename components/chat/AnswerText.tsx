@@ -20,7 +20,7 @@
  * reaches the screen (FR-14, FR-15).
  */
 
-import { T } from "@/lib/theme";
+import { T } from "@/lib/ui/theme";
 
 type Block =
   | { kind: "numbered"; marker: string; text: string }

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { loadAll, save, remove, clearAll } from "@/lib/history";
-import type { StoredTurn } from "@/lib/history";
+import { loadAll, save, remove, clearAll } from "@/lib/ui/history";
+import type { StoredTurn } from "@/lib/ui/history";
 
 /**
  * Device-local conversation history.
@@ -17,6 +17,7 @@ import type { StoredTurn } from "@/lib/history";
  */
 
 const KEY = "askgov.history.v1";
+const LEGACY_KEY = "superask.history.v1";
 
 class MemoryStorage {
   private map = new Map<string, string>();
@@ -234,6 +235,18 @@ describe("the privacy property", () => {
   it("writes only to localStorage under one namespaced key", () => {
     save("c1", turns());
     expect(storage.getItem(KEY)).toBeTruthy();
+  });
+
+  it("moves conversations saved under the previous product key", () => {
+    storage.setItem(
+      LEGACY_KEY,
+      JSON.stringify([{ id: "old", title: "t", at: 1, turns: turns() }]),
+    );
+    const list = loadAll();
+    expect(list).toHaveLength(1);
+    expect(list[0].id).toBe("old");
+    expect(storage.getItem(KEY)).toBeTruthy();
+    expect(storage.getItem(LEGACY_KEY)).toBeNull();
   });
 
   it("makes no network call — the module imports no fetch client", () => {

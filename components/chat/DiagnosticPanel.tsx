@@ -17,8 +17,8 @@
 
 import { X } from "lucide-react";
 import type { Diagnostics, Lang } from "@/lib/types";
-import { T, monoStack } from "@/lib/theme";
-import { UI } from "@/lib/ui-copy";
+import { T, monoStack } from "@/lib/ui/theme";
+import { UI } from "@/lib/ui/copy";
 
 function Row({ k, v }: { k: string; v: React.ReactNode }) {
   return (

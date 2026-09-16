@@ -151,6 +151,16 @@ describe("provider selection", () => {
     expect(serialised).not.toContain("sk-nous");
     expect(serialised).not.toMatch(/api[_-]?key/i);
   });
+
+  it.each(["sealion", "SEA-LION", "sea-lion"])(
+    "selects SEA-LION when LLM_PROVIDER=%s",
+    async (value) => {
+      vi.stubEnv("LLM_PROVIDER", value);
+      vi.stubEnv("SEALION_API_KEY", "sk-sealion-should-never-appear");
+      const { describeProvider } = await load();
+      expect(describeProvider().id).toBe("sealion");
+    },
+  );
 });
 
 describe("generate — NFR-09 degradation", () => {

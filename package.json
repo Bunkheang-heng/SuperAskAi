@@ -2,7 +2,7 @@
   "name": "askgov",
   "version": "0.1.0",
   "private": true,
-  "description": "AskGov (askgov.kh) — National Citizen Information Assistant. Phase 0 prototype.",
+  "description": "AskGov — citizen information assistant for Cambodian government services. Phase 0 prototype.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

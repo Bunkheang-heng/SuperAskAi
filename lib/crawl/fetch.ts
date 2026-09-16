@@ -11,7 +11,7 @@
  * So the defaults here are conservative on purpose, and every one of them is a
  * limit rather than a target:
  *
- *   · robots.txt honoured, including Crawl-delay      (lib/monitor/robots.ts)
+ *   · robots.txt honoured, including Crawl-delay      (lib/crawl/robots.ts)
  *   · a real User-Agent naming the service and a contact address
  *   · a minimum delay between requests to the SAME host, always
  *   · a hard per-request timeout, so one hanging site cannot stall the run
@@ -27,8 +27,8 @@
  * monitoring crawler becomes a security incident. Override the contact address
  * with MONITOR_CONTACT once a real mailbox exists.
  */
-const CONTACT = process.env.MONITOR_CONTACT ?? "content-ops@askgov.kh";
-export const USER_AGENT = `AskGovBot/0.1 (+https://askgov.kh/bot; ${CONTACT}) DGC content monitoring`;
+const CONTACT = process.env.MONITOR_CONTACT ?? "content-ops@localhost";
+export const USER_AGENT = `AskGovBot/0.1 (${CONTACT}) content monitoring`;
 
 /** Floor on the gap between two requests to one host, even if robots allows faster. */
 export const MIN_HOST_DELAY_MS = Number(process.env.MONITOR_MIN_DELAY_MS ?? "2000");

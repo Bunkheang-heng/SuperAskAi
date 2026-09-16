@@ -24,6 +24,7 @@
 import type { AskResponse } from "@/lib/types";
 
 const KEY = "askgov.history.v1";
+const LEGACY_KEY = "superask.history.v1";
 
 /** Keep the list short: it is a convenience, not an archive. */
 const MAX_CONVERSATIONS = 20;
@@ -51,10 +52,24 @@ function canStore(): boolean {
   }
 }
 
+function readStored(): string | null {
+  const current = window.localStorage.getItem(KEY);
+  if (current) return current;
+  const legacy = window.localStorage.getItem(LEGACY_KEY);
+  if (!legacy) return null;
+  try {
+    window.localStorage.setItem(KEY, legacy);
+    window.localStorage.removeItem(LEGACY_KEY);
+  } catch {
+    // Copy failed; still serve the old key so a rename does not wipe history.
+  }
+  return legacy;
+}
+
 export function loadAll(): Conversation[] {
   if (!canStore()) return [];
   try {
-    const raw = window.localStorage.getItem(KEY);
+    const raw = readStored();
     if (!raw) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
@@ -132,6 +147,7 @@ export function clearAll(): Conversation[] {
   if (canStore()) {
     try {
       window.localStorage.removeItem(KEY);
+      window.localStorage.removeItem(LEGACY_KEY);
     } catch {
       /* nothing further we can do */
     }

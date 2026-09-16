@@ -215,6 +215,72 @@ h3 {
   overflow-wrap: break-word;
 }
 
+/* Hero chat preview — only this surface animates (a real conversation loop). */
+.chat-bubble-in {
+  animation: chat-bubble-in 0.35s ease-out both;
+}
+
+@keyframes chat-bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.chat-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ag-ink-faint);
+  animation: chat-dot 1s ease-in-out infinite;
+}
+
+.chat-dot-2 {
+  animation-delay: 0.15s;
+}
+
+.chat-dot-3 {
+  animation-delay: 0.3s;
+}
+
+@keyframes chat-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+.chat-caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: var(--ag-sky);
+  animation: chat-caret 0.85s step-end infinite;
+}
+
+@keyframes chat-caret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
 /* NFR-15: low bandwidth. No web-font blocking, no background images, no
    gradients that force a repaint on scroll. Fonts load `swap` so text is
    readable before the webfont arrives. */

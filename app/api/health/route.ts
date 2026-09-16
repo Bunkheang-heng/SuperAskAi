@@ -32,6 +32,7 @@ export async function GET() {
         credentialPresent: Boolean(
           process.env.ANTHROPIC_API_KEY ||
             process.env.LLM_GATEWAY_API_KEY ||
+            process.env.SEALION_API_KEY ||
             process.env.VLLM_API_KEY,
         ),
         baseUrlOverridden: Boolean(process.env.ANTHROPIC_BASE_URL?.trim()),

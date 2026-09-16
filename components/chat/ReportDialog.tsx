@@ -12,8 +12,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Flag, X } from "lucide-react";
 import type { Lang } from "@/lib/types";
-import { T } from "@/lib/theme";
-import { UI } from "@/lib/ui-copy";
+import { T } from "@/lib/ui/theme";
+import { UI } from "@/lib/ui/copy";
 
 export function ReportDialog({
   answerId,

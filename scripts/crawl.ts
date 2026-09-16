@@ -13,11 +13,11 @@
 
 import { readFileSync, writeFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { crawl, loadSources } from "../lib/monitor/crawl";
-import { verifyAll } from "../lib/monitor/verify";
-import { USER_AGENT } from "../lib/monitor/fetch";
+import { crawl, loadSources } from "../lib/crawl/crawl";
+import { verifyAll } from "../lib/crawl/verify";
+import { USER_AGENT } from "../lib/crawl/fetch";
 import { parseCsv, toRecords, fromRecords } from "../lib/registry/csv";
-import type { VerificationResult } from "../lib/monitor/types";
+import type { VerificationResult } from "../lib/crawl/types";
 
 function arg(name: string): string | undefined {
   const hit = process.argv.find((a) => a.startsWith(`--${name}=`));

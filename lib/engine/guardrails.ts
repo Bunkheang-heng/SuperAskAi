@@ -347,12 +347,57 @@ export function looksLikeServiceQuestion(question: string): boolean {
  */
 export function isOffDomain(
   question: string,
-  history: Array<{ text: string }> = [],
+  history: Array<{ text: string; role?: string }> = [],
 ): boolean {
   if (OFF_DOMAIN.some((p) => p.test(question))) return true;
   if (looksLikeServiceQuestion(question)) return false;
-  // No signal of its own. In scope only if it is leaning on a turn that had one.
-  return !(history.length > 0 && isSubjectless(question));
+  // Only a prior turn that was itself a service question can carry the topic
+  // forward. An off-domain first turn is not a topic.
+  const hasServiceAnchor = history.some(
+    (t) => t.role !== "assistant" && looksLikeServiceQuestion(t.text),
+  );
+  return !(hasServiceAnchor && isSubjectless(question));
+}
+
+/**
+ * A prior turn that must not rewrite or contextualise a later question.
+ *
+ * Judged the same way as a first message, against the turns already kept: a
+ * short celebrity question is off-domain on its own, so it is dropped, while
+ * "where in phnom penh?" stays after a licence question because that history
+ * is a service anchor. Treating every short turn as a refinement is what
+ * glued "who is elon musk?" onto "how do I get married?".
+ */
+export function isOffTopicTurn(
+  text: string,
+  prior: Array<{ text: string; role?: string }> = [],
+): boolean {
+  return isOffDomain(text, prior);
+}
+
+/**
+ * Drop off-domain exchanges so they cannot rewrite a follow-up or travel into
+ * the model as conversation context (FR-07).
+ *
+ * Walks in order: a turn stays only if it is still in-scope given the turns
+ * already kept. Assistant replies ride with their user turn.
+ */
+export function inScopeHistory<T extends { text: string; role?: string }>(
+  history: T[],
+): T[] {
+  const kept: T[] = [];
+  for (let i = 0; i < history.length; i++) {
+    const turn = history[i];
+    if (turn.role === "assistant") {
+      const prev = i > 0 ? history[i - 1] : undefined;
+      if (prev && prev.role !== "assistant" && kept[kept.length - 1] === prev) {
+        kept.push(turn);
+      }
+      continue;
+    }
+    if (!isOffDomain(turn.text, kept)) kept.push(turn);
+  }
+  return kept;
 }
 
 /**

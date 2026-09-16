@@ -12,9 +12,9 @@
 import { useState } from "react";
 import { AlertTriangle, Flag, Send, ShieldCheck, Terminal } from "lucide-react";
 import type { AskResponse } from "@/lib/types";
-import { T } from "@/lib/theme";
-import { UI, UNVERIFIED_NOTICE } from "@/lib/ui-copy";
-import { SUPPORT_HANDLE } from "@/lib/support";
+import { T } from "@/lib/ui/theme";
+import { UI, UNVERIFIED_NOTICE } from "@/lib/ui/copy";
+import { SUPPORT_HANDLE } from "@/lib/ui/support";
 import { AnswerText } from "./AnswerText";
 import { SourceCard } from "./SourceCard";
 import { ReportDialog } from "./ReportDialog";
@@ -42,7 +42,7 @@ export function AnswerBlock({
     which render only the text still carry the warning. This interface renders
     it as a banner above the answer instead — earlier in the reading order,
     where a qualification is actually read — so the trailing copy of it comes
-    off first. Both strings come from lib/ui-copy.ts, so the match is exact.
+    off first. Both strings come from lib/ui/copy.ts, so the match is exact.
   */
   const body =
     answer.unverified && answer.answer.endsWith(UNVERIFIED_NOTICE[lang])

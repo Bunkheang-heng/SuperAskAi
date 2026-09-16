@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   screen,
   isOffDomain,
+  isOffTopicTurn,
+  inScopeHistory,
   looksLikeServiceQuestion,
   moderateOutput,
 } from "@/lib/engine/guardrails";
@@ -284,6 +286,70 @@ describe("isOffDomain", () => {
     it("still refuses an explicit off-domain request mid-conversation", () => {
       expect(isOffDomain("tell me a joke", history)).toBe(true);
     });
+
+    it("does not treat an off-domain first turn as a service anchor", () => {
+      // The first turn was refused as not a service question. A later
+      // subject-less follow-up is not "about" that turn — there is no service
+      // topic to lean on — and must still be refused.
+      expect(
+        isOffDomain("where in phnom penh?", [{ text: "tell me a joke" }]),
+      ).toBe(true);
+      expect(
+        isOffDomain("where in phnom penh?", [
+          { text: "what is the capital of france" },
+        ]),
+      ).toBe(true);
+    });
+  });
+});
+
+describe("inScopeHistory — refused turns cannot rewrite the next question", () => {
+  const refusal = {
+    role: "assistant" as const,
+    text: "AskGov only answers questions about Cambodian government service procedures",
+  };
+
+  it("drops a short celebrity question that was already refused", () => {
+    // Two content words ("elon", "musk") used to look like a follow-up
+    // refinement, so the turn survived filtering and was glued onto "how do
+    // I get married?". First-turn scope already refuses it; history must too.
+    expect(isOffTopicTurn("who is elon musk?")).toBe(true);
+    expect(isOffTopicTurn("what is law")).toBe(true);
+    expect(
+      inScopeHistory([
+        { role: "user", text: "who is elon musk?" },
+        refusal,
+        { role: "user", text: "what is law" },
+        refusal,
+      ]),
+    ).toEqual([]);
+  });
+
+  it("keeps a subject-less follow-up after a real service question", () => {
+    const kept = inScopeHistory([
+      { role: "user", text: "how do i renew my driving licence" },
+      { role: "assistant", text: "Bring your old licence and national ID card." },
+      { role: "user", text: "where in phnom penh?" },
+    ]);
+    expect(kept.map((t) => t.text)).toEqual([
+      "how do i renew my driving licence",
+      "Bring your old licence and national ID card.",
+      "where in phnom penh?",
+    ]);
+    expect(
+      isOffTopicTurn("where in phnom penh?", [
+        { role: "user", text: "how do i renew my driving licence" },
+      ]),
+    ).toBe(false);
+  });
+
+  it("drops an off-domain turn sitting in front of a later service question", () => {
+    const kept = inScopeHistory([
+      { role: "user", text: "who is elon musk?" },
+      refusal,
+      { role: "user", text: "how do I get married?" },
+    ]);
+    expect(kept.map((t) => t.text)).toEqual(["how do I get married?"]);
   });
 });
 

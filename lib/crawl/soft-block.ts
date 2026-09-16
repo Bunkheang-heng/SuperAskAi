@@ -30,7 +30,7 @@
  * A browser User-Agent gets through case 1; the honest one does not, and
  * neither does Googlebot's. Defeating a WAF by impersonating a browser is a
  * decision about how AskGov treats another institution's access control, not a
- * crawler setting, and lib/monitor/fetch.ts is explicit that this crawler
+ * crawler setting, and lib/crawl/fetch.ts is explicit that this crawler
  * identifies itself honestly. So this module's job is to NAME the refusal
  * accurately and stop, leaving the access question where it belongs — with the
  * owning institution (section 2.6).
@@ -174,7 +174,7 @@ export function detectSoftBlock(body: string, contentType = ""): SoftBlock | nul
  * parser a document with no directives in it, which parses to "no rules" and
  * silently reads as permission. That is a guess dressed up as a rule. Sniffing
  * the body lets the caller say "no rules were readable" and decide
- * deliberately, which is what lib/monitor/robots.ts now does.
+ * deliberately, which is what lib/crawl/robots.ts now does.
  */
 export function looksLikeRobotsTxt(body: string): boolean {
   const trimmed = body.trim();

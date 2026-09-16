@@ -15,9 +15,10 @@
 
 import { Plus, X } from "lucide-react";
 import type { Lang } from "@/lib/types";
-import { T, BRAND_BAR_HEIGHT } from "@/lib/theme";
-import { SUGGESTIONS, UI } from "@/lib/ui-copy";
-import type { Conversation } from "@/lib/history";
+import { T, BRAND_BAR_HEIGHT } from "@/lib/ui/theme";
+import { SUGGESTIONS, UI } from "@/lib/ui/copy";
+import type { Conversation } from "@/lib/ui/history";
+import { AskGovLogo } from "@/components/site";
 
 /** Section label. Repeated three times here; the sizing is the shared part. */
 function Label({ children }: { children: React.ReactNode }) {
@@ -79,21 +80,7 @@ export function Sidebar({
           borderBottom: `1px solid ${T.deepHover}`,
         }}
       >
-        <div className="flex items-baseline gap-1">
-          <span
-            style={{
-              fontWeight: 700,
-              fontSize: 20,
-              letterSpacing: "-0.025em",
-              color: T.paper,
-            }}
-          >
-            AskGov
-          </span>
-          <span className="ag-mono" style={{ fontSize: 10, color: T.skyLine }}>
-            .kh
-          </span>
-        </div>
+        <AskGovLogo href="/" size="sm" tone="onDark" />
       </div>
 
       {/*
@@ -164,7 +151,7 @@ export function Sidebar({
         </div>
       )}
 
-      {/* Recent conversations. Device-local — see lib/history.ts. */}
+      {/* Recent conversations. Device-local — see lib/ui/history.ts. */}
       {history.length > 0 && (
         <div className="mt-7 flex min-h-0 flex-1 flex-col px-4 pb-4">
           <div className="mb-2 flex items-baseline justify-between gap-2 px-1">

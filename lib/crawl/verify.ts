@@ -124,7 +124,7 @@ export async function verifySource(
   // `redirect`, because "the host answered, with a rejection" is a more
   // specific and more actionable finding than either — and because a rejection
   // page is short enough that `empty` would otherwise swallow it and hide the
-  // reason (lib/monitor/soft-block.ts).
+  // reason (lib/crawl/soft-block.ts).
   const softBlock = detectSoftBlock(res.body, res.contentType);
   if (softBlock) {
     const { title } = extract(res.body, res.url);

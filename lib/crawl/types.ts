@@ -107,7 +107,7 @@ export interface VerificationResult {
    *             the site being broken. `rejected` means the site works, is
    *             refusing us specifically, and did not use a status code to say
    *             so — the one case a status-code-trusting crawler records as
-   *             content (lib/monitor/soft-block.ts).
+   *             content (lib/crawl/soft-block.ts).
    */
   outcome: "live" | "empty" | "redirect" | "dead" | "blocked" | "rejected";
   /** Which detector fired, when the outcome is `rejected` or `blocked`. */

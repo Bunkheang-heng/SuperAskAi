@@ -34,7 +34,7 @@ import type { ChangeSignal, SourceSnapshot, CrawlReport } from "./types";
  * â”€â”€ THE ONE LINE THAT MATTERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * data/kb/ is the ONLY directory retrieval reads. data/crawl/ is fetched
  * material that no steward has approved, sitting in the same parent folder as
- * material that has been. Nothing in lib/monitor/ writes to data/kb/, and
+ * material that has been. Nothing in lib/crawl/ writes to data/kb/, and
  * nothing in lib/retrieval/ reads data/crawl/ â€” the shared parent is a
  * convenience for humans, not a merge of the two.
  * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

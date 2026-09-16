@@ -17,6 +17,7 @@ import { isSubjectless } from "@/lib/lang/content";
 import { getKb } from "@/lib/kb/loader";
 import { fuse, MAX_RRF } from "./rrf";
 import { rerankOne } from "./rerank";
+import { inScopeHistory, isOffDomain } from "@/lib/engine/guardrails";
 
 export interface ProcessedQuery {
   raw: string;
@@ -66,12 +67,19 @@ function rewriteWithContext(
   history: Array<{ role: "user" | "assistant"; text: string }>,
 ): string | undefined {
   const trimmed = question.trim();
-  const short = segment(question).length <= 5;
   const anaphoric = ANAPHORIC.test(trimmed) || ANAPHORIC_KM.test(trimmed);
+  const usable = inScopeHistory(history);
 
-  if (!short && !anaphoric && !isSubjectless(question)) return undefined;
+  // A question that is in-scope on its own is a new topic, not a follow-up.
+  // "how do I get married?" has one content word so the old short/subjectless
+  // test treated it as a refinement and prepended whatever came before —
+  // including "who is elon musk?". Anaphoric openers ("and the fee?") still
+  // rewrite: they name a service term but clearly point at the prior turn.
+  const standsAlone = !isOffDomain(question, []);
+  if (!anaphoric && standsAlone) return undefined;
+  if (!anaphoric && isOffDomain(question, usable)) return undefined;
 
-  const priorUserTurns = history
+  const priorUserTurns = usable
     .filter((m) => m.role === "user")
     .reverse()
     .slice(0, MAX_ANCHOR_LOOKBACK);

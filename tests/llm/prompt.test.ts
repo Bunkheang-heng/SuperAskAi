@@ -62,6 +62,7 @@ describe("prompt selection", () => {
 
   it("identifies AskGov as a government service in both prompts", () => {
     for (const prompt of [GROUNDING_PROMPT, GENERAL_KNOWLEDGE_PROMPT]) {
+      expect(prompt).toMatch(/You are AskGov/);
       expect(prompt).toMatch(/Royal Government of Cambodia/i);
     }
   });

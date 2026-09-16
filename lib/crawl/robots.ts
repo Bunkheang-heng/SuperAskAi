@@ -15,7 +15,7 @@
  * Both observed shapes — a WAF rejection page and a single-page app's catch-all
  * shell — parse to zero directives, and zero directives reads as "no rules,
  * crawl freely". That is a guess wearing a rule's clothes. The body is now
- * sniffed (lib/monitor/soft-block.ts): a WAF page is a refusal and fails
+ * sniffed (lib/crawl/soft-block.ts): a WAF page is a refusal and fails
  * closed, anything else unreadable is treated as absent and fails open, and
  * either way the reason is recorded rather than inferred.
  */

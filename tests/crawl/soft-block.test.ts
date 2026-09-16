@@ -1,7 +1,7 @@
 /**
- * The 200-that-is-not-content detector (lib/monitor/soft-block.ts).
+ * The 200-that-is-not-content detector (lib/crawl/soft-block.ts).
  *
- * vitest.config.ts excludes lib/monitor/** from coverage on the grounds that a
+ * vitest.config.ts excludes lib/crawl/** from coverage on the grounds that a
  * unit test of the crawler would assert the shape of a mock. That reasoning
  * holds for the fetch/orchestration layer and does not hold here: this module
  * is a pure function over a response body, and the bodies below are the actual
@@ -17,7 +17,7 @@ import {
   looksLikeRobotsTxt,
   isThin,
   MIN_REAL_TEXT,
-} from "@/lib/monitor/soft-block";
+} from "@/lib/crawl/soft-block";
 
 /** Verbatim from https://www.service.gov.kh/, HTTP 200, 266 bytes. */
 const F5_REJECTION =

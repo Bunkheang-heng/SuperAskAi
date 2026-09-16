@@ -23,13 +23,13 @@ export default defineConfig({
         // Crawler and registry. Exercised by scripts/crawl.ts against live
         // government sites; a unit test of them would assert the shape of a
         // mock, not that monitoring works.
-        "lib/monitor/**",
+        "lib/crawl/**",
         "lib/registry/**",
         // Presentation constants — a palette and a copy table. Both are
-        // asserted where they matter (lib/ui-copy.ts is covered through the
+        // asserted where they matter (lib/ui/copy.ts is covered through the
         // engine), and pinning hex values in a test blocks design changes
         // without catching a defect.
-        "lib/theme.ts",
+        "lib/ui/theme.ts",
       ],
       /**
        * A floor, not a target. Set just below the current numbers so an

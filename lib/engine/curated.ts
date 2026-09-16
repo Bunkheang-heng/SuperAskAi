@@ -88,7 +88,7 @@ function stripConversational(s: string): string {
   return s
     .replace(/[?!.,;:៕។\s]+$/g, "")
     .replace(/^(um+|uh+|ok|okay|so|hey)\s+/g, "")
-    .replace(/\s+(there|askgov|bot)$/g, "")
+    .replace(/\s+(there|askgov|superask|bot)$/g, "")
     .trim();
 }
 

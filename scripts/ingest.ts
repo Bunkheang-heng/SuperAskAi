@@ -34,8 +34,8 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const UA =
-  "AskGovBot/0.1 (+https://askgov.kh/bot; " +
-  (process.env.MONITOR_CONTACT ?? "content-ops@askgov.kh") +
+  "AskGovBot/0.1 (" +
+  (process.env.MONITOR_CONTACT ?? "content-ops@localhost") +
   ") DGC content ingestion";
 
 interface Target {

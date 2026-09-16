@@ -15,8 +15,8 @@
 
 import { ExternalLink } from "lucide-react";
 import type { Citation, Lang } from "@/lib/types";
-import { T, monoStack } from "@/lib/theme";
-import { UI } from "@/lib/ui-copy";
+import { T, monoStack } from "@/lib/ui/theme";
+import { UI } from "@/lib/ui/copy";
 import { FreshnessBadge } from "./FreshnessBadge";
 
 export function SourceCard({

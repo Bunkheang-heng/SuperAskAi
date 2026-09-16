@@ -16,7 +16,7 @@
 
 import { NextResponse } from "next/server";
 import { recordEscalation } from "@/lib/log/audit";
-import { escalationRef, supportLink, SUPPORT_HANDLE } from "@/lib/support";
+import { escalationRef, supportLink, SUPPORT_HANDLE } from "@/lib/ui/support";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

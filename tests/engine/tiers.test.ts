@@ -30,7 +30,7 @@ async function loadAsk(env: Record<string, string> = {}) {
   for (const [k, v] of Object.entries({ ...defaults, ...env })) {
     vi.stubEnv(k, v);
   }
-  return (await import("@/lib/engine/tiers")).ask;
+  return (await import("@/lib/engine")).ask;
 }
 
 function req(question: string, over: Partial<AskRequest> = {}): AskRequest {
@@ -237,6 +237,67 @@ describe("Tier 2 — grounded answer over retrieved sources", () => {
     expect(res.diagnostics?.rewrittenQuery).toContain("driving licence");
     expect(res.citations[0]?.id).toMatch(/^MPWT-DL-/);
   });
+
+  it("does not carry an off-domain first turn into the next in-scope answer", async () => {
+    const res = await ask(
+      req("how do i renew my driving licence", {
+        history: [
+          { role: "user", text: "what is the capital of france" },
+          {
+            role: "assistant",
+            text: "AskGov only answers questions about Cambodian government service procedures — the steps, required documents, official fees, timelines, and which office handles a case.",
+          },
+        ],
+      }),
+    );
+    expect(res.tier).toBeLessThan(3);
+    expect(res.answer.toLowerCase()).not.toMatch(/france|paris|capital/);
+    expect(res.diagnostics?.rewrittenQuery ?? "").not.toMatch(/france/i);
+    expect(res.diagnostics?.normalisedQuery ?? "").not.toMatch(/france/i);
+  });
+
+  it("does not carry a short celebrity question into a later service question", async () => {
+    // The session that shipped: Elon → what is law → how do I get married?
+    // The france/paris case never caught it, because "capital of" is an
+    // explicit OFF_DOMAIN regex and "how do i renew my driving licence" has
+    // enough content words that rewrite skipped it.
+    const res = await ask(
+      req("how do I get married?", {
+        history: [
+          { role: "user", text: "who is elon musk?" },
+          {
+            role: "assistant",
+            text: "AskGov only answers questions about Cambodian government service procedures — the steps, required documents, official fees, timelines, and which office handles a case.",
+          },
+          { role: "user", text: "what is law" },
+          {
+            role: "assistant",
+            text: "AskGov only answers questions about Cambodian government service procedures — the steps, required documents, official fees, timelines, and which office handles a case.",
+          },
+        ],
+      }),
+    );
+    expect(res.answer.toLowerCase()).not.toMatch(/elon|musk/);
+    expect(res.diagnostics?.rewrittenQuery ?? "").not.toMatch(/elon|musk|what is law/i);
+    expect(res.diagnostics?.normalisedQuery ?? "").not.toMatch(/elon|musk|what is law/i);
+    expect(res.unverified).toBeFalsy();
+  });
+
+  it("still refuses a subject-less follow-up after an off-domain first turn", async () => {
+    const res = await ask(
+      req("where in phnom penh?", {
+        history: [
+          { role: "user", text: "what is the capital of france" },
+          {
+            role: "assistant",
+            text: "AskGov only answers questions about Cambodian government service procedures",
+          },
+        ],
+      }),
+    );
+    expect(res.diagnostics?.refusalReason).toBe("scope:not_a_service_question");
+    expect(res.diagnostics?.rewrittenQuery).toBeUndefined();
+  });
 });
 
 describe("FR-16 confidence gate", () => {
@@ -327,13 +388,16 @@ describe("GENERAL_FALLBACK_ENABLED — the unsourced answer switch", () => {
     expect(res.diagnostics?.refusalReason).toBe("scope:not_a_service_question");
   });
 
-  it("never attaches a citation to an unsourced answer", async () => {
+  it("does not invent a procedure when the corpus has no source, even if fallback is on", async () => {
     const ask = await loadAsk({
       GENERAL_FALLBACK_ENABLED: "true",
       RETRIEVAL_MIN_SCORE: "0.99",
     });
     const res = await ask(req("how do i apply for a fishing permit"));
-    if (res.unverified) expect(res.citations).toEqual([]);
+    expect(res.unverified).toBeFalsy();
+    expect(res.tier).toBe(3);
+    expect(res.escalate).toBe(true);
+    expect(res.citations).toEqual([]);
   });
 });
 
@@ -414,7 +478,7 @@ describe("post-generation gates", () => {
     const actual = await vi.importActual<typeof import("@/lib/llm")>("@/lib/llm");
     vi.doMock("@/lib/llm", () => ({ ...actual, generate }));
 
-    return (await import("@/lib/engine/tiers")).ask;
+    return (await import("@/lib/engine")).ask;
   }
 
   afterEach(() => {

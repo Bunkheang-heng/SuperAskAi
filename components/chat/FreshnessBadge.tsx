@@ -10,8 +10,8 @@
  */
 
 import type { Freshness, Lang } from "@/lib/types";
-import { T, monoStack } from "@/lib/theme";
-import { UI } from "@/lib/ui-copy";
+import { T, monoStack } from "@/lib/ui/theme";
+import { UI } from "@/lib/ui/copy";
 
 const STYLES: Record<Freshness, { fg: string; bg: string; border: string }> = {
   fresh: { fg: T.green, bg: T.greenWash, border: "#BFE3D4" },

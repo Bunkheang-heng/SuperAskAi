@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AskGov · askgov.kh",
+  title: "AskGov",
   description:
     "Ask about Cambodian government services. Every answer shows the official source it came from.",
   applicationName: "AskGov",
@@ -23,7 +23,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="km">
+    <html lang="en">
       <head>
         {/* Khmer needs a font with correct subscript positioning; the system
             stack on most Android devices does not have one. `display=swap` so
