@@ -6,12 +6,16 @@
  * Layout only. Conversation state lives in useConversation. All model access
  * goes through POST /api/ask — this component holds no credential and knows no
  * provider (FR-74, R-15).
+ *
+ * Visual language matches the marketing surface: white chrome, deep brand
+ * accents, AskGov logo lockup.
  */
 
-import { Check, ChevronLeft, ChevronRight, ShieldCheck } from "lucide-react";
+import { Check, Menu, ShieldCheck, X } from "lucide-react";
 import { T, BRAND_BAR_HEIGHT } from "@/lib/ui/theme";
 import { SUGGESTIONS, UI } from "@/lib/ui/copy";
 import { SUPPORT_BOT, SUPPORT_HANDLE } from "@/lib/ui/support";
+import { useSiteLang } from "@/lib/ui/site-lang";
 import { AskGovLogo } from "@/components/site";
 import { AnswerBlock } from "./AnswerBlock";
 import { Composer } from "./Composer";
@@ -26,6 +30,7 @@ export interface Coverage {
 }
 
 export function Chat({ coverage }: { coverage: Coverage[] }) {
+  const { lang, setLang } = useSiteLang("en");
   const {
     turns,
     input,
@@ -39,7 +44,6 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
     handoverError,
     history,
     conversationId,
-    lang,
     terminated,
     firstEscalationIndex,
     endRef,
@@ -75,57 +79,56 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
       )}
 
       <main className="flex min-w-0 flex-1 flex-col">
+        {/* White chrome — same family as the landing SiteHeader */}
         <header
           className="flex shrink-0 items-center gap-3 px-4"
           style={{
-            // Inverted: deep brand bar, white wordmark.
             height: BRAND_BAR_HEIGHT,
-            background: T.deep,
-            borderBottom: `1px solid ${T.deepHover}`,
+            background: T.paper,
+            borderBottom: `1px solid ${T.line}`,
+            boxShadow: "0 1px 0 rgba(2,80,148,0.04)",
           }}
         >
           <button
             onClick={() => setSidebar((s) => !s)}
             className="hidden rounded-lg p-1.5 transition-colors md:block"
-            // On the deep bar the control reads as a light tint and resolves to
-            // white on hover, rather than the ink greys it used on paper.
-            style={{ color: T.skyLine }}
+            style={{ color: T.inkSoft }}
             aria-label={UI.toggleSidebar[lang]}
             aria-expanded={sidebar}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,0.14)";
-              e.currentTarget.style.color = T.paper;
+              e.currentTarget.style.background = T.skyWash;
+              e.currentTarget.style.color = T.deep;
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.color = T.skyLine;
+              e.currentTarget.style.color = T.inkSoft;
             }}
           >
-            {sidebar ? (
-              <ChevronLeft size={17} aria-hidden />
-            ) : (
-              <ChevronRight size={17} aria-hidden />
-            )}
+            {sidebar ? <X size={18} aria-hidden /> : <Menu size={18} aria-hidden />}
           </button>
 
-          <div className="md:hidden">
-            <AskGovLogo href="/" size="sm" tone="onDark" />
+          <AskGovLogo href="/" size="sm" />
+
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setLang(lang === "km" ? "en" : "km")}
+              className="ag-press inline-flex h-8 items-center rounded-md border px-2.5 text-[12px] font-medium"
+              style={{
+                borderColor: T.line,
+                color: T.ink,
+                background: T.paper,
+              }}
+              aria-label={lang === "km" ? "Switch to English" : "ប្តូរទៅភាសាខ្មែរ"}
+            >
+              {lang === "km" ? "ខ្មែរ" : "EN"}
+            </button>
           </div>
         </header>
 
-        {/*
-          The empty state is centred in the viewport; a conversation is not.
-
-          Top-aligning both left the landing screen with the hero pinned to the
-          top and a large dead band above the composer, which reads as content
-          that failed to load. Once turns exist the block goes back to normal
-          top-aligned flow, because a conversation has to grow downward from a
-          fixed origin — centring that would make the whole transcript jump on
-          every new answer.
-        */}
         <div className="ag-scroll flex flex-1 flex-col overflow-y-auto">
           <div
-            className="mx-auto flex w-full flex-1 flex-col px-4 py-8"
+            className="mx-auto flex w-full flex-1 flex-col px-4 py-8 sm:px-6"
             style={{
               maxWidth: 760,
               justifyContent: turns.length === 0 ? "center" : "flex-start",
@@ -133,69 +136,42 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
           >
             {turns.length === 0 && (
               <div className="ag-fade" style={{ paddingBottom: 24 }}>
+
                 <h1
+                  className={lang === "km" ? "km" : undefined}
                   style={{
-                    fontSize: 32,
-                    fontWeight: 650,
-                    letterSpacing: "-0.033em",
-                    color: T.ink,
-                  }}
-                >
-                  {UI.heroTitle.en}
-                </h1>
-                <p
-                  className="km"
-                  style={{
-                    fontSize: 21,
-                    fontWeight: 500,
+                    fontSize: "clamp(1.75rem, 4vw, 2.35rem)",
+                    fontWeight: 700,
+                    letterSpacing: lang === "km" ? undefined : "-0.03em",
                     color: T.deep,
-                    marginTop: 1,
+                    lineHeight: lang === "km" ? 1.4 : 1.25,
                   }}
                 >
-                  {UI.heroTitle.km}
-                </p>
-                {/* A short brand rule under the bilingual title. The Khmer line
-                    sits on a 1.95 line-height for subscript clearance (FR-61),
-                    which leaves a gap that reads as accidental without it. */}
-                <div
-                  aria-hidden
-                  style={{
-                    width: 40,
-                    height: 3,
-                    borderRadius: 2,
-                    background: T.sky,
-                    marginTop: 14,
-                  }}
-                />
+                  {UI.heroTitle[lang]}
+                </h1>
+
                 <p
-                  className="km"
+                  className={lang === "km" ? "km" : undefined}
                   style={{
-                    fontSize: 14,
+                    fontSize: 15,
                     color: T.inkSoft,
-                    marginTop: 16,
+                    marginTop: 14,
                     maxWidth: 520,
+                    lineHeight: 1.7,
                   }}
                 >
                   {UI.heroBody[lang]}
                 </p>
 
-                {/*
-                  Coverage, stated up front.
-
-                  A citizen cannot tell from a chat box which ministries are on
-                  the platform, so without this the only way to find the boundary
-                  is to ask something outside it and be refused — which reads as
-                  a broken service rather than an un-onboarded ministry. Naming
-                  the domains here converts a dead end into a redirect.
-                */}
-                <div className="mt-7">
+                <div className="mt-8">
                   <div
-                    className="ag-mono mb-2.5"
                     style={{
-                      fontSize: 9.5,
-                      letterSpacing: "0.09em",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      letterSpacing: "0.04em",
                       textTransform: "uppercase",
                       color: T.inkFaint,
+                      marginBottom: 10,
                     }}
                   >
                     {UI.coversNow[lang]}
@@ -205,36 +181,33 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
                       <span
                         key={c.ministry}
                         title={`${c.ministry} · ${c.ministryKm}`}
-                        className="inline-flex items-center gap-1.5 rounded-full py-1.5 pl-2.5 pr-3.5"
+                        className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5"
                         style={{
-                          fontSize: 12,
-                          fontWeight: 500,
+                          fontSize: 12.5,
+                          fontWeight: 600,
                           color: T.deep,
                           background: T.paper,
-                          border: `1px solid ${T.skyLine}`,
-                          boxShadow: T.shadowSm,
+                          borderColor: T.line,
                         }}
                       >
                         <Check size={12} color={T.sky} aria-hidden />
-                        {c.short}
+                        {lang === "km" ? c.ministryKm : c.short}
                       </span>
                     ))}
                   </div>
                 </div>
 
-                {/* FR-68 on mobile, where the sidebar is hidden. */}
-                <div className="mt-7 flex flex-col gap-2 md:hidden">
+                <div className="mt-8 flex flex-col gap-2 md:hidden">
                   {SUGGESTIONS.map((s) => (
                     <button
                       key={s.en}
                       onClick={() => ask(lang === "km" ? s.km : s.en)}
-                      className="km ag-press rounded-xl px-4 py-3 text-left"
+                      className={`ag-press rounded-xl border px-4 py-3 text-left ${lang === "km" ? "km" : ""}`}
                       style={{
-                        fontSize: 13,
-                        color: T.deep,
+                        fontSize: 13.5,
+                        color: T.ink,
                         background: T.paper,
-                        border: `1px solid ${T.line}`,
-                        boxShadow: T.shadowSm,
+                        borderColor: T.line,
                       }}
                     >
                       {lang === "km" ? s.km : s.en}
@@ -248,14 +221,13 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
               turn.role === "user" ? (
                 <div key={i} className="ag-fade mb-7 flex justify-end">
                   <div
-                    className="km rounded-2xl px-4 py-2.5"
+                    className="rounded-2xl rounded-br-md px-4 py-2.5"
                     style={{
                       background: T.deep,
                       color: "#fff",
                       fontSize: 14.5,
                       maxWidth: "82%",
-                      borderBottomRightRadius: 6,
-                      boxShadow: T.shadowSm,
+                      lineHeight: 1.65,
                     }}
                   >
                     {turn.text}
@@ -274,7 +246,7 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
 
             {handoverError && (
               <div
-                className="km mb-8 rounded-xl px-4 py-3"
+                className="mb-8 rounded-xl px-4 py-3"
                 style={{
                   background: T.noticeWash,
                   border: `1px solid ${T.noticeLine}`,
@@ -295,25 +267,22 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
               </div>
             )}
 
-            {/* Only where the question was asked — a thinking indicator in a
-                conversation that asked nothing is a lie about what is loading. */}
             {busyHere && (
-              <div className="mb-10 flex items-center gap-2">
+              <div className="mb-10 flex items-center gap-2.5">
                 <div
                   className="flex items-center justify-center rounded-md"
                   style={{
-                    width: 21,
-                    height: 21,
+                    width: 22,
+                    height: 22,
                     background: T.deep,
-                    boxShadow: T.shadowSm,
                   }}
                   aria-hidden
                 >
                   <ShieldCheck size={12.5} color="#fff" />
                 </div>
                 <span
-                  className="ag-mono ag-pulse km"
-                  style={{ fontSize: 11, color: T.inkFaint }}
+                  className="ag-pulse"
+                  style={{ fontSize: 13, color: T.inkSoft }}
                   role="status"
                   aria-live="polite"
                 >
@@ -332,7 +301,7 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
             style={{ background: T.page }}
           >
             <div
-              className="km mx-auto rounded-xl px-4 py-3 text-center"
+              className="mx-auto rounded-xl px-4 py-3 text-center"
               style={{
                 maxWidth: 760,
                 background: T.redWash,
@@ -356,7 +325,6 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
         )}
       </main>
 
-      {/* FR-72 / FR-73 */}
       {trace?.diagnostics && (
         <DiagnosticPanel
           diagnostics={trace.diagnostics}

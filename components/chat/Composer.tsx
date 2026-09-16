@@ -68,21 +68,20 @@ export function Composer({
   const canSend = value.trim().length > 0 && !busy;
 
   return (
-    <div className="shrink-0 px-4 pb-5 pt-2" style={{ background: T.page }}>
+    <div
+      className="shrink-0 px-4 pb-5 pt-3 sm:px-6"
+      style={{
+        background: T.paper,
+        borderTop: `1px solid ${T.line}`,
+      }}
+    >
       <div className="mx-auto" style={{ maxWidth: 760 }}>
-        {/*
-          The focus ring is drawn on the container rather than the textarea,
-          because the visible control here is the rounded box — a ring around
-          the bare textarea inside it looks like a rendering fault. The inner
-          field therefore suppresses its own ring, and this element takes
-          responsibility for FR-71 on its behalf.
-        */}
         <div
-          className="flex items-end gap-2 rounded-2xl py-2 pl-4 pr-2 transition-all"
+          className="flex items-end gap-2 rounded-xl py-2 pl-4 pr-2 transition-all"
           style={{
-            background: T.paper,
+            background: T.page,
             border: `1px solid ${focused ? T.sky : T.line}`,
-            boxShadow: focused ? T.ringSky : T.shadowMd,
+            boxShadow: focused ? T.ringSky : "none",
           }}
         >
           <label htmlFor="ag-question" className="sr-only">
@@ -92,15 +91,13 @@ export function Composer({
             id="ag-question"
             ref={ref}
             rows={1}
-            className="km ag-noring flex-1 resize-none bg-transparent py-1.5 outline-none"
-            placeholder={`${UI.placeholder.km} · ${UI.placeholder.en}`}
+            className={`ag-noring flex-1 resize-none bg-transparent py-1.5 outline-none ${lang === "km" ? "km" : ""}`}
+            placeholder={UI.placeholder[lang]}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             onKeyDown={(e) => {
-              // Enter sends, Shift+Enter breaks the line — the mainstream
-              // assistant convention FR-60 points at.
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 onSubmit();
@@ -113,14 +110,13 @@ export function Composer({
             type="button"
             onClick={onSubmit}
             disabled={!canSend}
-            className="ag-press mb-0.5 flex shrink-0 items-center justify-center rounded-xl transition-all"
+            className="ag-press mb-0.5 flex shrink-0 items-center justify-center rounded-lg transition-all"
             style={{
-              width: 34,
-              height: 34,
+              width: 36,
+              height: 36,
               background: canSend ? T.deep : T.lineSoft,
               color: canSend ? "#fff" : T.inkFaint,
               cursor: canSend ? "pointer" : "not-allowed",
-              boxShadow: canSend ? T.shadowSm : "none",
             }}
             onMouseEnter={(e) => {
               if (canSend) e.currentTarget.style.background = T.deepHover;
@@ -135,13 +131,12 @@ export function Composer({
         </div>
 
         <div
-          className="km"
           style={{
-            fontSize: 10.5,
+            fontSize: 11,
             color: T.inkFaint,
             textAlign: "center",
-            marginTop: 9,
-            lineHeight: 1.7,
+            marginTop: 10,
+            lineHeight: 1.6,
           }}
         >
           {UI.composerNote[lang]}

@@ -62,35 +62,25 @@ export function Sidebar({
     <aside
       className="hidden shrink-0 flex-col md:flex"
       style={{
-        width: 272,
+        width: 280,
         background: T.paper,
         borderRight: `1px solid ${T.line}`,
       }}
     >
-      {/*
-        Brand lockup. Carried on the deep brand surface, not on paper, so that it
-        forms one continuous bar with the main header beside it — the two sit at
-        the same y and any colour difference between them reads as a seam.
-      */}
       <div
         className="flex shrink-0 items-center px-5"
         style={{
           height: BRAND_BAR_HEIGHT,
-          background: T.deep,
-          borderBottom: `1px solid ${T.deepHover}`,
+          background: T.paper,
+          borderBottom: `1px solid ${T.line}`,
         }}
       >
-        <AskGovLogo href="/" size="sm" tone="onDark" />
+        <AskGovLogo href="/" size="sm" />
       </div>
 
-      {/*
-        The attribution sits below the bar rather than inside it. Keeping it in
-        would have made this block taller than the header it abuts, and the two
-        blues would meet in a step rather than a line.
-      */}
       <div
-        className="km px-5 pt-3"
-        style={{ fontSize: 11, color: T.inkFaint, lineHeight: 1.6 }}
+        className="px-5 pt-3"
+        style={{ fontSize: 12, color: T.inkFaint, lineHeight: 1.5 }}
       >
         {UI.brandSub[lang]}
       </div>
@@ -98,24 +88,19 @@ export function Sidebar({
       <div className="px-4 pt-4">
         <button
           onClick={onReset}
-          className="ag-press flex w-full items-center gap-2 rounded-xl px-3 py-2.5 transition-all"
+          className="ag-press flex w-full items-center gap-2 rounded-lg px-3 py-2.5 transition-all"
           style={{
             border: `1px solid ${T.line}`,
             fontSize: 13,
-            fontWeight: 500,
-            color: T.ink,
-            background: T.paper,
-            boxShadow: T.shadowSm,
+            fontWeight: 600,
+            color: T.paper,
+            background: T.deep,
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = T.skyLine;
-            e.currentTarget.style.background = T.skyWash;
-            e.currentTarget.style.color = T.deep;
+            e.currentTarget.style.background = T.deepHover;
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = T.line;
-            e.currentTarget.style.background = T.paper;
-            e.currentTarget.style.color = T.ink;
+            e.currentTarget.style.background = T.deep;
           }}
         >
           <Plus size={15} aria-hidden /> {UI.newQuestion[lang]}
@@ -133,7 +118,7 @@ export function Sidebar({
               <button
                 key={s.en}
                 onClick={() => onSuggestion(lang === "km" ? s.km : s.en)}
-                className="km rounded-lg px-3 py-2 text-left transition-colors"
+                className={`rounded-lg px-3 py-2 text-left transition-colors ${lang === "km" ? "km" : ""}`}
                 style={{ fontSize: 12.5, color: T.inkSoft, lineHeight: 1.75 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = T.skyWash;

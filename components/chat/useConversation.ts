@@ -86,8 +86,8 @@ export function useConversation() {
     setHistory(save(conversationId, turns));
   }, [turns, conversationId]);
 
-  // Interface language follows the last thing the citizen typed, so a Khmer
-  // question produces Khmer chrome without a language switcher (FR-08).
+  // Kept for callers that still read conversation lang. Chat UI chrome uses
+  // useSiteLang instead; answer language is chosen per-question via detectLang.
   const lastUser = [...turns].reverse().find((t) => t.role === "user");
   const lang: Lang =
     lastUser && lastUser.role === "user" ? detectLang(lastUser.text) : "en";
