@@ -89,7 +89,11 @@ jobs:
 
       - name: Fail on a committed credential
         run: |
-          if git grep -nIE '(sk-ant-|sk-nous-|sk-proj-)[A-Za-z0-9_-]{12,}' -- . ':!.github/workflows/ci.yml'; then
+          # Exclude tests/: fixtures deliberately use fake key-shaped strings to
+          # assert they never leak into responses (FR-74). Real credentials must
+          # not appear anywhere else in the tree.
+          if git grep -nIE '(sk-ant-|sk-nous-|sk-proj-)[A-Za-z0-9_-]{12,}' -- . \
+            ':!.github/workflows/ci.yml' ':!tests/**'; then
             echo "::error::A provider credential appears to be committed (R-15 / FR-74)."
             exit 1
           fi

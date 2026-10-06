@@ -25,11 +25,19 @@ export default defineConfig({
         // mock, not that monitoring works.
         "lib/crawl/**",
         "lib/registry/**",
+        // Telegram channel. Needs a live Bot API token and webhook round-trip;
+        // unit coverage of the HTTP wrapper would only pin mocks.
+        "lib/telegram/**",
+        "app/api/telegram/**",
         // Presentation constants — a palette and a copy table. Both are
         // asserted where they matter (lib/ui/copy.ts is covered through the
         // engine), and pinning hex values in a test blocks design changes
         // without catching a defect.
         "lib/ui/theme.ts",
+        "lib/ui/marketing.ts",
+        // Prototype localStorage UI stubs (real auth lands later).
+        "lib/ui/auth-session.ts",
+        "lib/ui/site-lang.ts",
       ],
       /**
        * A floor, not a target. Set just below the current numbers so an
