@@ -24,8 +24,8 @@ type Copy = Record<Lang, string>;
  * shared from here rather than defined privately in the engine.
  */
 export const UNVERIFIED_NOTICE: Copy = {
-  en: "⚠️ Not from an approved source. AskGov has no approved government document covering this, so the above is general guidance from the AI model — it may be incomplete, out of date, or wrong. Confirm any fee, deadline, document, or office with the responsible office before acting on it.",
-  km: "⚠️ មិនមែនមកពីឯកសារយោងដែលបានអនុម័តទេ។ AskGov គ្មានឯកសាររដ្ឋាភិបាលដែលបានអនុម័តសម្រាប់ករណីនេះទេ ដូច្នេះខ្លឹមសារខាងលើគឺជាការណែនាំទូទៅពីម៉ូដែល AI — វាអាចមិនពេញលេញ ហួសសម័យ ឬខុស។ សូមផ្ទៀងផ្ទាត់ថ្លៃសេវា កំណត់ពេល ឯកសារ ឬការិយាល័យទទួលបន្ទុក ជាមួយការិយាល័យពាក់ព័ន្ធ មុននឹងអនុវត្ត។",
+  en: "⚠️ Not from an approved source. SuperAsk has no approved government document covering this, so the above is general guidance from the AI model — it may be incomplete, out of date, or wrong. Confirm any fee, deadline, document, or office with the responsible office before acting on it.",
+  km: "⚠️ មិនមែនមកពីឯកសារយោងដែលបានអនុម័តទេ។ SuperAsk គ្មានឯកសាររដ្ឋាភិបាលដែលបានអនុម័តសម្រាប់ករណីនេះទេ ដូច្នេះខ្លឹមសារខាងលើគឺជាការណែនាំទូទៅពីម៉ូដែល AI — វាអាចមិនពេញលេញ ហួសសម័យ ឬខុស។ សូមផ្ទៀងផ្ទាត់ថ្លៃសេវា កំណត់ពេល ឯកសារ ឬការិយាល័យទទួលបន្ទុក ជាមួយការិយាល័យពាក់ព័ន្ធ មុននឹងអនុវត្ត។",
 };
 
 export const UI = {
@@ -58,8 +58,8 @@ export const UI = {
   heroTitle: { en: "Ask the government.", km: "សួរទៅរដ្ឋាភិបាល" } satisfies Copy,
 
   heroBody: {
-    en: "Procedures, documents, official fees, and which office handles your case. Every answer shows the official source it came from. AskGov does not handle personal cases and does not give legal advice.",
-    km: "នីតិវិធី ឯកសារ ថ្លៃសេវាជាផ្លូវការ និងការិយាល័យទទួលបន្ទុកករណីរបស់អ្នក។ ចម្លើយនីមួយៗបង្ហាញឯកសារយោងជាផ្លូវការ។ AskGov មិនដោះស្រាយករណីផ្ទាល់ខ្លួន និងមិនផ្តល់ការប្រឹក្សាផ្នែកច្បាប់ឡើយ។",
+    en: "Procedures, documents, official fees, and which office handles your case. Every answer shows the official source it came from. SuperAsk does not handle personal cases and does not give legal advice.",
+    km: "នីតិវិធី ឯកសារ ថ្លៃសេវាជាផ្លូវការ និងការិយាល័យទទួលបន្ទុកករណីរបស់អ្នក។ ចម្លើយនីមួយៗបង្ហាញឯកសារយោងជាផ្លូវការ។ SuperAsk មិនដោះស្រាយករណីផ្ទាល់ខ្លួន និងមិនផ្តល់ការប្រឹក្សាផ្នែកច្បាប់ឡើយ។",
   } satisfies Copy,
 
   placeholder: {
@@ -78,8 +78,8 @@ export const UI = {
   } satisfies Copy,
 
   composerNote: {
-    en: "AskGov answers only from approved government sources, and says so when it does not know.",
-    km: "AskGov ឆ្លើយតែពីឯកសារយោងរដ្ឋាភិបាលដែលបានអនុម័ត ហើយប្រាប់នៅពេលវាមិនដឹង។",
+    en: "SuperAsk answers only from approved government sources, and says so when it does not know.",
+    km: "SuperAsk ឆ្លើយតែពីឯកសារយោងរដ្ឋាភិបាលដែលបានអនុម័ត ហើយប្រាប់នៅពេលវាមិនដឹង។",
   } satisfies Copy,
 
   /**
@@ -109,8 +109,8 @@ export const UI = {
   } satisfies Copy,
 
   unverifiedBody: {
-    en: "AskGov has no approved government document covering this. The answer below is general guidance from the AI model — confirm any fee, deadline, document, or office before acting on it.",
-    km: "AskGov គ្មានឯកសាររដ្ឋាភិបាលដែលបានអនុម័តសម្រាប់ករណីនេះទេ។ ចម្លើយខាងក្រោមគឺជាការណែនាំទូទៅពីម៉ូដែល AI — សូមផ្ទៀងផ្ទាត់ថ្លៃសេវា កំណត់ពេល ឯកសារ ឬការិយាល័យ មុននឹងអនុវត្ត។",
+    en: "SuperAsk has no approved government document covering this. The answer below is general guidance from the AI model — confirm any fee, deadline, document, or office before acting on it.",
+    km: "SuperAsk គ្មានឯកសាររដ្ឋាភិបាលដែលបានអនុម័តសម្រាប់ករណីនេះទេ។ ចម្លើយខាងក្រោមគឺជាការណែនាំទូទៅពីម៉ូដែល AI — សូមផ្ទៀងផ្ទាត់ថ្លៃសេវា កំណត់ពេល ឯកសារ ឬការិយាល័យ មុននឹងអនុវត្ត។",
   } satisfies Copy,
 
   /** The one-line reason, always shown next to the action. */

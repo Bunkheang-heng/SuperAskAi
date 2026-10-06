@@ -4,7 +4,8 @@
  * routes and CTAs can behave like a finished product.
  */
 
-const KEY = "askgov.session.v1";
+const KEY = "superask.session.v1";
+const LEGACY_KEY = "askgov.session.v1";
 
 export interface SessionUser {
   email: string;
@@ -15,7 +16,14 @@ export interface SessionUser {
 export function readSession(): SessionUser | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = window.localStorage.getItem(KEY);
+    let raw = window.localStorage.getItem(KEY);
+    if (!raw) {
+      raw = window.localStorage.getItem(LEGACY_KEY);
+      if (raw) {
+        window.localStorage.setItem(KEY, raw);
+        window.localStorage.removeItem(LEGACY_KEY);
+      }
+    }
     if (!raw) return null;
     const parsed = JSON.parse(raw) as SessionUser;
     if (!parsed?.email) return null;
@@ -30,8 +38,14 @@ export function writeSession(user: Omit<SessionUser, "at">): void {
     KEY,
     JSON.stringify({ ...user, at: Date.now() } satisfies SessionUser),
   );
+  try {
+    window.localStorage.removeItem(LEGACY_KEY);
+  } catch {
+    /* ignore */
+  }
 }
 
 export function clearSession(): void {
   window.localStorage.removeItem(KEY);
+  window.localStorage.removeItem(LEGACY_KEY);
 }

@@ -122,7 +122,7 @@ describe("processQuery", () => {
         { role: "user", text: "what is the capital of france" },
         {
           role: "assistant",
-          text: "AskGov only answers questions about Cambodian government service procedures",
+          text: "SuperAsk only answers questions about Cambodian government service procedures",
         },
       ]);
       expect(q.rewritten ?? "").not.toMatch(/france/i);
@@ -136,12 +136,12 @@ describe("processQuery", () => {
         { role: "user", text: "who is elon musk?" },
         {
           role: "assistant",
-          text: "AskGov only answers questions about Cambodian government service procedures",
+          text: "SuperAsk only answers questions about Cambodian government service procedures",
         },
         { role: "user", text: "what is law" },
         {
           role: "assistant",
-          text: "AskGov only answers questions about Cambodian government service procedures",
+          text: "SuperAsk only answers questions about Cambodian government service procedures",
         },
       ]);
       expect(q.rewritten).toBeUndefined();

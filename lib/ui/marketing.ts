@@ -45,16 +45,16 @@ export const MARKETING = {
     en: "sourced, fast, and easy to use",
   } satisfies Copy,
   heroBody: {
-    km: "AskGov ឆ្លើយសំណួរអំពីនីតិវិធី ឯកសារតម្រូវ ថ្លៃសេវាជាផ្លូវការ និងការិយាល័យទទួលបន្ទុក។ ចម្លើយនីមួយៗបង្ហាញឯកសារយោងជាផ្លូវការ។",
-    en: "AskGov answers questions about procedures, required documents, official fees, and which office handles your case. Every answer shows the official source it came from.",
+    km: "SuperAsk ឆ្លើយសំណួរអំពីនីតិវិធី ឯកសារតម្រូវ ថ្លៃសេវាជាផ្លូវការ និងការិយាល័យទទួលបន្ទុក។ ចម្លើយនីមួយៗបង្ហាញឯកសារយោងជាផ្លូវការ។",
+    en: "SuperAsk answers questions about procedures, required documents, official fees, and which office handles your case. Every answer shows the official source it came from.",
   } satisfies Copy,
   usedBy: {
     km: "បម្រើប្រជាពលរដ្ឋ និងភ្នាក់ងាររដ្ឋាភិបាល",
     en: "Built for citizens and government agencies",
   } satisfies Copy,
   featuresTitle: {
-    km: "លក្ខណៈពិសេសនៃ AskGov",
-    en: "What AskGov gives you",
+    km: "លក្ខណៈពិសេសនៃ SuperAsk",
+    en: "What SuperAsk gives you",
   } satisfies Copy,
   features: [
     {
@@ -84,15 +84,15 @@ export const MARKETING = {
     {
       title: { km: "ភ្ជាប់ទៅមន្ត្រី", en: "Connect to an officer" },
       body: {
-        km: "នៅពេល AskGov មិនអាចឆ្លើយបាន វាភ្ជាប់អ្នកទៅមន្ត្រីដើម្បីជំនួយបន្ថែម។",
-        en: "When AskGov cannot answer, it connects you to an officer for further help.",
+        km: "នៅពេល SuperAsk មិនអាចឆ្លើយបាន វាភ្ជាប់អ្នកទៅមន្ត្រីដើម្បីជំនួយបន្ថែម។",
+        en: "When SuperAsk cannot answer, it connects you to an officer for further help.",
       },
     },
     {
       title: { km: "គ្មានការប្រឹក្សាផ្នែកច្បាប់", en: "Not legal advice" },
       body: {
-        km: "AskGov ផ្តល់ព័ត៌មានសេវាកម្មតែប៉ុណ្ណោះ — មិនមែនការសម្រេចចិត្តចងកាតព្វកិច្ចទេ។",
-        en: "AskGov gives service information only — never a binding decision.",
+        km: "SuperAsk ផ្តល់ព័ត៌មានសេវាកម្មតែប៉ុណ្ណោះ — មិនមែនការសម្រេចចិត្តចងកាតព្វកិច្ចទេ។",
+        en: "SuperAsk gives service information only — never a binding decision.",
       },
     },
     {
@@ -143,8 +143,8 @@ export const MARKETING = {
     en: "Information from official sources",
   } satisfies Copy,
   trustBody: {
-    km: "AskGov ឆ្លើយតែពីឯកសាររដ្ឋាភិបាលដែលបានអនុម័ត ហើយប្រាប់នៅពេលវាមិនដឹង។ វាមិនដោះស្រាយករណីបុគ្គល និងមិនផ្តល់ការប្រឹក្សាផ្នែកច្បាប់ឡើយ។",
-    en: "AskGov answers only from approved government documents, and says so when it does not know. It does not handle individual cases and does not give legal advice.",
+    km: "SuperAsk ឆ្លើយតែពីឯកសាររដ្ឋាភិបាលដែលបានអនុម័ត ហើយប្រាប់នៅពេលវាមិនដឹង។ វាមិនដោះស្រាយករណីបុគ្គល និងមិនផ្តល់ការប្រឹក្សាផ្នែកច្បាប់ឡើយ។",
+    en: "SuperAsk answers only from approved government documents, and says so when it does not know. It does not handle individual cases and does not give legal advice.",
   } satisfies Copy,
   ctaTitle: {
     km: "ចាប់ផ្តើមសួរសំណួររបស់អ្នកឥឡូវនេះ",
@@ -166,7 +166,7 @@ export const MARKETING = {
     km: "អគារលេខ១៣ មហាវិថីព្រះមុនីវង្ស សង្កាត់ស្រះចក ខណ្ឌដូនពេញ រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា ១២០២១០",
     en: "Building No. 13, Preah Monivong Blvd, Sangkat Srah Chak, Khan Daun Penh, Phnom Penh, Cambodia 120210",
   } satisfies Copy,
-  email: "info@askgov.kh",
+  email: "info@superask.kh",
 
   // Auth
   loginHeadline: {
@@ -174,12 +174,12 @@ export const MARKETING = {
     en: "Ask about government services with official sources",
   } satisfies Copy,
   loginHint: {
-    km: "ចូលគណនី AskGov របស់អ្នក",
-    en: "Log in to your AskGov account",
+    km: "ចូលគណនី SuperAsk របស់អ្នក",
+    en: "Log in to your SuperAsk account",
   } satisfies Copy,
   registerHeadline: {
-    km: "បង្កើតគណនី AskGov",
-    en: "Create your AskGov account",
+    km: "បង្កើតគណនី SuperAsk",
+    en: "Create your SuperAsk account",
   } satisfies Copy,
   registerHint: {
     km: "បំពេញព័ត៌មានខាងក្រោមដើម្បីចាប់ផ្តើម",

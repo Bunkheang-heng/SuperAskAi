@@ -29,7 +29,7 @@
  * ── WHY DETECTION AND NOT EVASION ──────────────────────────────────────────
  * A browser User-Agent gets through case 1; the honest one does not, and
  * neither does Googlebot's. Defeating a WAF by impersonating a browser is a
- * decision about how AskGov treats another institution's access control, not a
+ * decision about how SuperAsk treats another institution's access control, not a
  * crawler setting, and lib/crawl/fetch.ts is explicit that this crawler
  * identifies itself honestly. So this module's job is to NAME the refusal
  * accurately and stop, leaving the access question where it belongs — with the

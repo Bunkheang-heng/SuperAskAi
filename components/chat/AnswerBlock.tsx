@@ -54,7 +54,7 @@ export function AnswerBlock({
       {/*
         Attribution header.
 
-        The answer tier used to be printed here as "AskGov · Tier 2". Tier is
+        The answer tier used to be printed here as "SuperAsk · Tier 2". Tier is
         PRD vocabulary (§10.2) describing which internal path produced the
         answer; it means nothing to a citizen and invites them to wonder whether
         a "Tier 3" answer is worse than a "Tier 1" one. It remains in the
@@ -82,7 +82,7 @@ export function AnswerBlock({
             textTransform: "uppercase",
           }}
         >
-          AskGov
+          SuperAsk
         </span>
       </div>
 

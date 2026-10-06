@@ -1,7 +1,7 @@
 /**
  * Routing checks for the four ways a question can end (sections 6.1, 6.2, 12).
  *
- * When AskGov does not produce a retrieved answer, there are three different
+ * When SuperAsk does not produce a retrieved answer, there are three different
  * reasons, and answering all three with the same words is what makes a
  * correctly-behaving service feel stupid:
  *
@@ -83,7 +83,7 @@ interface Case {
 const CASES: Case[] = [
   // ── Definition questions are IN scope and must be answered ───────────────
   // The off-domain refusal copy names "What does prakas mean?" as an example of
-  // something AskGov can do. Before the glossary existed it then refused that
+  // something SuperAsk can do. Before the glossary existed it then refused that
   // exact question and offered to escalate it.
   {
     q: "what does prakas mean",
@@ -139,7 +139,7 @@ const CASES: Case[] = [
     q: "what does review due mean",
     route: "glossary",
     term: "GLO-014",
-    why: "AskGov's own freshness label (FR-64)",
+    why: "SuperAsk's own freshness label (FR-64)",
   },
   {
     q: "what is the difference between a sangkat and a khum",

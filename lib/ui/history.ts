@@ -23,8 +23,8 @@
 
 import type { AskResponse } from "@/lib/types";
 
-const KEY = "askgov.history.v1";
-const LEGACY_KEY = "superask.history.v1";
+const KEY = "superask.history.v1";
+const LEGACY_KEY = "askgov.history.v1";
 
 /** Keep the list short: it is a convenience, not an archive. */
 const MAX_CONVERSATIONS = 20;

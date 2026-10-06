@@ -81,7 +81,7 @@ export async function POST(request: Request) {
         tier: 3,
         lang: "en",
         answer:
-          "AskGov could not process that request. A DG Support officer can help you continue.",
+          "SuperAsk could not process that request. A DG Support officer can help you continue.",
         citations: [],
         escalate: true,
       },

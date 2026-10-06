@@ -8,7 +8,7 @@
  * provider (FR-74, R-15).
  *
  * Visual language matches the marketing surface: white chrome, deep brand
- * accents, AskGov logo lockup.
+ * accents, SuperAsk logo lockup.
  */
 
 import { Check, Menu, ShieldCheck, X } from "lucide-react";
@@ -16,7 +16,7 @@ import { T, BRAND_BAR_HEIGHT } from "@/lib/ui/theme";
 import { SUGGESTIONS, UI } from "@/lib/ui/copy";
 import { SUPPORT_BOT, SUPPORT_HANDLE } from "@/lib/ui/support";
 import { useSiteLang } from "@/lib/ui/site-lang";
-import { AskGovLogo } from "@/components/site";
+import { SuperAskLogo } from "@/components/site";
 import { AnswerBlock } from "./AnswerBlock";
 import { Composer } from "./Composer";
 import { DiagnosticPanel } from "./DiagnosticPanel";
@@ -107,7 +107,7 @@ export function Chat({ coverage }: { coverage: Coverage[] }) {
             {sidebar ? <X size={18} aria-hidden /> : <Menu size={18} aria-hidden />}
           </button>
 
-          <AskGovLogo href="/" size="sm" />
+          <SuperAskLogo href="/" size="sm" />
 
           <div className="ml-auto flex items-center gap-2">
             <button

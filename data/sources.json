@@ -593,7 +593,7 @@
       "maxPages": 60,
       "politenessDelayMs": 2000,
       "enabled": true,
-      "notes": "Divorce, court procedure, criminal records - named as a priority source for AskGov."
+      "notes": "Divorce, court procedure, criminal records - named as a priority source for SuperAsk."
     },
     {
       "id": "SRC-032",
@@ -1038,7 +1038,7 @@
       "maxPages": 60,
       "politenessDelayMs": 2000,
       "enabled": true,
-      "notes": "Candidate domain - 'where is my police station' is a named AskGov query type."
+      "notes": "Candidate domain - 'where is my police station' is a named SuperAsk query type."
     },
     {
       "id": "SRC-055",
@@ -1446,7 +1446,7 @@
       "maxPages": 60,
       "politenessDelayMs": 2000,
       "enabled": true,
-      "notes": "Official news wire (article URLs of form /post/detail/<id>). Best single feed for keeping AskGov current."
+      "notes": "Official news wire (article URLs of form /post/detail/<id>). Best single feed for keeping SuperAsk current."
     },
     {
       "id": "SRC-076",
@@ -1466,7 +1466,7 @@
       "maxPages": 60,
       "politenessDelayMs": 2000,
       "enabled": true,
-      "notes": "National API/data-exchange layer. Membership portal at registration.camdx.gov.kh. Likely source of live APIs for AskGov."
+      "notes": "National API/data-exchange layer. Membership portal at registration.camdx.gov.kh. Likely source of live APIs for SuperAsk."
     },
     {
       "id": "SRC-077",
@@ -1635,7 +1635,7 @@
       "maxPages": 60,
       "politenessDelayMs": 2000,
       "enabled": true,
-      "notes": "Candidate domain - if live, this is the single highest-value structured source for AskGov."
+      "notes": "Candidate domain - if live, this is the single highest-value structured source for SuperAsk."
     },
     {
       "id": "SRC-086",
@@ -1652,7 +1652,7 @@
       "maxPages": 60,
       "politenessDelayMs": 2000,
       "enabled": true,
-      "notes": "Named in AskGov project notes as an intended data source."
+      "notes": "Named in SuperAsk project notes as an intended data source."
     },
     {
       "id": "SRC-087",
@@ -2545,7 +2545,7 @@
       "politenessDelayMs": 2000,
       "enabled": true,
       "accessNote": "status=waf-blocked — the host answers automated clients with a WAF rejection page carrying HTTP 200. The crawler detects and reports this rather than recording it; getting real access is a Section 2.6 institutional matter, not a crawler setting.",
-      "notes": "National public-service information portal; the closest existing analogue to AskGov's corpus and a priority acquisition target. Homepage observed 2026-09-07; ownership from site banner (Ministry of Civil Service + Council for Administrative Reform). NOT CRAWLABLE: WAF rejects automated fetches and returns HTTP 200 with a 266-byte 'Request Rejected' page, so status code alone is misleading (FR-48); robots.txt also blocked, so NFR-15 delays cannot be read; TLS certificate CN=www.preyveng.gov.kh. Obtain access via the owning institution (Mode B, section 2.6)."
+      "notes": "National public-service information portal; the closest existing analogue to SuperAsk's corpus and a priority acquisition target. Homepage observed 2026-09-07; ownership from site banner (Ministry of Civil Service + Council for Administrative Reform). NOT CRAWLABLE: WAF rejects automated fetches and returns HTTP 200 with a 266-byte 'Request Rejected' page, so status code alone is misleading (FR-48); robots.txt also blocked, so NFR-15 delays cannot be read; TLS certificate CN=www.preyveng.gov.kh. Obtain access via the owning institution (Mode B, section 2.6)."
     },
     {
       "id": "SRC-132",

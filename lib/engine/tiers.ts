@@ -268,7 +268,7 @@ async function executeAsk(req: AskRequest, id: string): Promise<AskResponse> {
     // Terminology, before refusing (section 6.1). The corpus holds procedures,
     // not definitions, so "what does prakas mean" lands here rather than in
     // retrieval — and the off-domain copy below promises exactly that question
-    // as something AskGov can answer. Placing the glossary here rather than at
+    // as something SuperAsk can answer. Placing the glossary here rather than at
     // Tier 1 means it can only ever convert a refusal into an answer, never
     // displace a retrieved one. See lib/engine/glossary.ts.
     const term = matchGlossary(question, lang);
@@ -316,7 +316,7 @@ async function executeAsk(req: AskRequest, id: string): Promise<AskResponse> {
       baseDiagnostics({
         tier: 3,
         ...retrievalDiag,
-        // Not a policy refusal: AskGov is allowed to answer this, it simply has
+        // Not a policy refusal: SuperAsk is allowed to answer this, it simply has
         // no source that covers it. Usually a content coverage gap.
         refusalReason:
           candidates.length === 0
@@ -400,7 +400,7 @@ async function executeAsk(req: AskRequest, id: string): Promise<AskResponse> {
   // off-domain screen makes above applies here — a rule that holds only when the
   // configured model family happens to comply is not a rule.
   //
-  // Gated on topical.onTopic because the copy asserts that AskGov HAS a source
+  // Gated on topical.onTopic because the copy asserts that SuperAsk HAS a source
   // setting out the rule. When retrieval only found something adjacent, that
   // claim would be false, and the ordinary path below already downgrades and
   // captions an off-topic source honestly.
@@ -478,7 +478,7 @@ async function executeAsk(req: AskRequest, id: string): Promise<AskResponse> {
       "Why is there a late penalty" retrieves MPWT-DL-008 — which states the
       penalty, its rate, and when it starts — and the model escalates because the
       source gives the rule and not the REASON for it. The citizen was then told
-      "AskGov has no approved government document covering this" and handed
+      "SuperAsk has no approved government document covering this" and handed
       general-knowledge speculation ("it may encourage people to complete the
       procedure on time"). The notice was false: an approved source covers late
       penalties. Substituting invented rationale for a published rule is the
@@ -596,8 +596,8 @@ async function executeAsk(req: AskRequest, id: string): Promise<AskResponse> {
   const caveat = topical.onTopic
     ? ""
     : (lang === "km"
-        ? `\n\n⚠️ ចម្លើយនេះជាឯកសារជិតបំផុតដែល AskGov រកឃើញ ប៉ុន្តែវាប្រហែលជាមិនឆ្លើយសំណួររបស់អ្នកដោយផ្ទាល់ទេ។ ឯកសារនេះមិនបាននិយាយអំពី៖ ${topical.missing.slice(0, 6).join(" ")}`
-        : `\n\n⚠️ This is the closest approved source AskGov found, but it may not answer what you asked. The source says nothing about: ${topical.missing.slice(0, 6).join(", ")}`);
+        ? `\n\n⚠️ ចម្លើយនេះជាឯកសារជិតបំផុតដែល SuperAsk រកឃើញ ប៉ុន្តែវាប្រហែលជាមិនឆ្លើយសំណួររបស់អ្នកដោយផ្ទាល់ទេ។ ឯកសារនេះមិនបាននិយាយអំពី៖ ${topical.missing.slice(0, 6).join(" ")}`
+        : `\n\n⚠️ This is the closest approved source SuperAsk found, but it may not answer what you asked. The source says nothing about: ${topical.missing.slice(0, 6).join(", ")}`);
 
   const answer =
     (anyStale ? `${outcome.answer}\n\n${STALE_NOTICE[lang]}` : outcome.answer) +

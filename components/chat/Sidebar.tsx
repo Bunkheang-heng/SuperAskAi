@@ -18,7 +18,7 @@ import type { Lang } from "@/lib/types";
 import { T, BRAND_BAR_HEIGHT } from "@/lib/ui/theme";
 import { SUGGESTIONS, UI } from "@/lib/ui/copy";
 import type { Conversation } from "@/lib/ui/history";
-import { AskGovLogo } from "@/components/site";
+import { SuperAskLogo } from "@/components/site";
 
 /** Section label. Repeated three times here; the sizing is the shared part. */
 function Label({ children }: { children: React.ReactNode }) {
@@ -75,7 +75,7 @@ export function Sidebar({
           borderBottom: `1px solid ${T.line}`,
         }}
       >
-        <AskGovLogo href="/" size="sm" />
+        <SuperAskLogo href="/" size="sm" />
       </div>
 
       <div

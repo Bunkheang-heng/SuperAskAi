@@ -165,7 +165,7 @@ describe("audit writers redact before storage", () => {
   });
 
   it("recordAnswer records `unverified` separately from an empty citation list", async () => {
-    // A refusal also has no citations. A reviewer asking what AskGov has told
+    // A refusal also has no citations. A reviewer asking what SuperAsk has told
     // citizens without a source must be able to filter on exactly this.
     const { recordAnswer } = await import("@/lib/log/audit");
     await recordAnswer("what is the rule", {

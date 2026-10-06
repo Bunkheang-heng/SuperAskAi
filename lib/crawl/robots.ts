@@ -77,7 +77,7 @@ function patternToRegex(pattern: string): RegExp {
 /**
  * Parse robots.txt into the group that applies to us.
  *
- * A specific `User-agent: AskGovBot` group wins over `User-agent: *` outright —
+ * A specific `User-agent: SuperAskBot` group wins over `User-agent: *` outright —
  * that is the whole point of naming the crawler honestly. If an operator writes
  * a rule for us, it must beat the wildcard.
  */

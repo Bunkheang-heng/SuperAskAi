@@ -34,7 +34,7 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const UA =
-  "AskGovBot/0.1 (" +
+  "SuperAskBot/0.1 (" +
   (process.env.MONITOR_CONTACT ?? "content-ops@localhost") +
   ") DGC content ingestion";
 
@@ -267,7 +267,7 @@ async function main() {
     _comment:
       "MACHINE-INGESTED from cambodiaip.gov.kh via the WordPress REST API. Not steward-approved: every chunk carries stewardApproved:false. §10.5 requires human approval before fees, deadlines, required documents, eligibility or procedure steps are published to citizens.",
     _sourceNote:
-      "The Department of Intellectual Property Rights does NOT currently publish the trademark registration procedure. /en/trademark-registration/ exists but contains only the placeholder 'អត្ថបទកំពុងកែសម្រួល។' (this article is being edited). AskGov therefore cannot answer 'how do I register a trademark' from this source, and should not pretend otherwise.",
+      "The Department of Intellectual Property Rights does NOT currently publish the trademark registration procedure. /en/trademark-registration/ exists but contains only the placeholder 'អត្ថបទកំពុងកែសម្រួល។' (this article is being edited). SuperAsk therefore cannot answer 'how do I register a trademark' from this source, and should not pretend otherwise.",
     _ingestedAt: new Date().toISOString(),
     ministry: MINISTRY,
     ministryKm: MINISTRY_KM,

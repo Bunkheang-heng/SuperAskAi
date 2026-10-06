@@ -1,6 +1,6 @@
 {
-  "_comment": "Official terminology, explained in plain language (section 6.1). Served verbatim as Tier 1 — human-approved text, no generation, nothing to fabricate. This is the content behind the promise the off-domain refusal makes: AskGov cannot translate or answer general knowledge, but it CAN say what a word in a government document means. Without these entries that promise pointed at a question the service then refused.",
-  "_scopeNote": "Terminology only — the words a citizen meets in a legal instrument or in AskGov's own citation block. NOT service objects. 'Birth certificate' and 'family book' are deliberately absent: those have real procedures in the corpus and belong to retrieval, and a definition served in place of a procedure is a worse answer than the one retrieval gives.",
+  "_comment": "Official terminology, explained in plain language (section 6.1). Served verbatim as Tier 1 — human-approved text, no generation, nothing to fabricate. This is the content behind the promise the off-domain refusal makes: SuperAsk cannot translate or answer general knowledge, but it CAN say what a word in a government document means. Without these entries that promise pointed at a question the service then refused.",
+  "_scopeNote": "Terminology only — the words a citizen meets in a legal instrument or in SuperAsk's own citation block. NOT service objects. 'Birth certificate' and 'family book' are deliberately absent: those have real procedures in the corpus and belong to retrieval, and a definition served in place of a procedure is a worse answer than the one retrieval gives.",
   "_reviewNote": "PROTOTYPE CONTENT. Definitions describe the Cambodian normative hierarchy in general terms and state no fee, deadline, or office. They still require sign-off by a ministry content steward, and the Khmer text requires review by a Khmer-speaking content officer, before any release.",
   "terms": [
     {
@@ -107,8 +107,8 @@
         "សេចក្តីណែនាំ"
       ],
       "definition": {
-        "en": "An administrative notice or instruction is an announcement from an institution about how it is operating — a change of office hours, a new counter, a temporary arrangement.\n\nIt is the lowest-ranking document AskGov cites and it is also the one most likely to change without warning, so a notice that is past its review date should be confirmed with the office before you rely on it.",
-        "km": "«សេចក្តីជូនដំណឹង» គឺជាការប្រកាសពីស្ថាប័នអំពីរបៀបដែលខ្លួនកំពុងដំណើរការ — ការប្តូរម៉ោងធ្វើការ បញ្ជរថ្មី ឬការរៀបចំបណ្តោះអាសន្ន។\n\nវាជាឯកសារដែលមានឋានៈទាបជាងគេក្នុងចំណោមឯកសារដែល AskGov យោង ហើយក៏ជាឯកសារដែលងាយប្តូរបំផុតដែរ។ ដូច្នេះ សេចក្តីជូនដំណឹងដែលហួសកាលបរិច្ឆេទត្រួតពិនិត្យ គួរតែផ្ទៀងផ្ទាត់ជាមួយការិយាល័យជាមុនសិន។"
+        "en": "An administrative notice or instruction is an announcement from an institution about how it is operating — a change of office hours, a new counter, a temporary arrangement.\n\nIt is the lowest-ranking document SuperAsk cites and it is also the one most likely to change without warning, so a notice that is past its review date should be confirmed with the office before you rely on it.",
+        "km": "«សេចក្តីជូនដំណឹង» គឺជាការប្រកាសពីស្ថាប័នអំពីរបៀបដែលខ្លួនកំពុងដំណើរការ — ការប្តូរម៉ោងធ្វើការ បញ្ជរថ្មី ឬការរៀបចំបណ្តោះអាសន្ន។\n\nវាជាឯកសារដែលមានឋានៈទាបជាងគេក្នុងចំណោមឯកសារដែល SuperAsk យោង ហើយក៏ជាឯកសារដែលងាយប្តូរបំផុតដែរ។ ដូច្នេះ សេចក្តីជូនដំណឹងដែលហួសកាលបរិច្ឆេទត្រួតពិនិត្យ គួរតែផ្ទៀងផ្ទាត់ជាមួយការិយាល័យជាមុនសិន។"
       }
     },
     {
@@ -124,8 +124,8 @@
         "រាជកិច្ច"
       ],
       "definition": {
-        "en": "The Official Gazette (រាជកិច្ច, Reachkech) is the official publication in which adopted legal instruments are printed. Publication is how a text becomes publicly knowable rather than an internal document.\n\nWhen AskGov links a source, the Gazette reference is what lets you check the original wording for yourself rather than taking the answer on trust.",
-        "km": "«រាជកិច្ច» គឺជាការផ្សាយជាផ្លូវការដែលបោះពុម្ពលិខិតបទដ្ឋានដែលបានអនុម័ត។ ការផ្សាយគឺជាមធ្យោបាយដែលធ្វើឱ្យអត្ថបទក្លាយជាឯកសារសាធារណៈ មិនមែនជាឯកសារផ្ទៃក្នុងទៀតឡើយ។\n\nនៅពេល AskGov ភ្ជាប់តំណឯកសារយោង សេចក្តីយោងរាជកិច្ចគឺជាអ្វីដែលអនុញ្ញាតឱ្យអ្នកពិនិត្យអត្ថបទដើមដោយខ្លួនឯង ជាជាងជឿទុកចិត្តលើចម្លើយ។"
+        "en": "The Official Gazette (រាជកិច្ច, Reachkech) is the official publication in which adopted legal instruments are printed. Publication is how a text becomes publicly knowable rather than an internal document.\n\nWhen SuperAsk links a source, the Gazette reference is what lets you check the original wording for yourself rather than taking the answer on trust.",
+        "km": "«រាជកិច្ច» គឺជាការផ្សាយជាផ្លូវការដែលបោះពុម្ពលិខិតបទដ្ឋានដែលបានអនុម័ត។ ការផ្សាយគឺជាមធ្យោបាយដែលធ្វើឱ្យអត្ថបទក្លាយជាឯកសារសាធារណៈ មិនមែនជាឯកសារផ្ទៃក្នុងទៀតឡើយ។\n\nនៅពេល SuperAsk ភ្ជាប់តំណឯកសារយោង សេចក្តីយោងរាជកិច្ចគឺជាអ្វីដែលអនុញ្ញាតឱ្យអ្នកពិនិត្យអត្ថបទដើមដោយខ្លួនឯង ជាជាងជឿទុកចិត្តលើចម្លើយ។"
       }
     },
     {
@@ -135,8 +135,8 @@
       "term": { "en": "Article", "km": "មាត្រា" },
       "match": ["article", "matra", "មាត្រា"],
       "definition": {
-        "en": "An article (មាត្រា, matra) is one numbered provision inside a legal instrument. It is the smallest unit a rule is cited to.\n\nThis is why AskGov cites \"Article 12\" and not just the document: the instrument may run to many pages, and the article number is what lets an officer turn to the exact provision an answer rests on.",
-        "km": "«មាត្រា» គឺជាបទប្បញ្ញត្តិមួយដែលមានលេខរៀងនៅក្នុងលិខិតបទដ្ឋាន។ វាជាឯកតាតូចបំផុតដែលវិធានមួយត្រូវយោងទៅ។\n\nនេះជាមូលហេតុដែល AskGov យោង «មាត្រា ១២» មិនត្រឹមតែឈ្មោះឯកសារ៖ លិខិតមួយអាចមានច្រើនទំព័រ ហើយលេខមាត្រាគឺជាអ្វីដែលអនុញ្ញាតឱ្យមន្ត្រីបើកទៅបទប្បញ្ញត្តិជាក់លាក់ដែលចម្លើយផ្អែកលើ។"
+        "en": "An article (មាត្រា, matra) is one numbered provision inside a legal instrument. It is the smallest unit a rule is cited to.\n\nThis is why SuperAsk cites \"Article 12\" and not just the document: the instrument may run to many pages, and the article number is what lets an officer turn to the exact provision an answer rests on.",
+        "km": "«មាត្រា» គឺជាបទប្បញ្ញត្តិមួយដែលមានលេខរៀងនៅក្នុងលិខិតបទដ្ឋាន។ វាជាឯកតាតូចបំផុតដែលវិធានមួយត្រូវយោងទៅ។\n\nនេះជាមូលហេតុដែល SuperAsk យោង «មាត្រា ១២» មិនត្រឹមតែឈ្មោះឯកសារ៖ លិខិតមួយអាចមានច្រើនទំព័រ ហើយលេខមាត្រាគឺជាអ្វីដែលអនុញ្ញាតឱ្យមន្ត្រីបើកទៅបទប្បញ្ញត្តិជាក់លាក់ដែលចម្លើយផ្អែកលើ។"
       }
     },
     {
@@ -247,8 +247,8 @@
         "កាលបរិច្ឆេទត្រួតពិនិត្យ"
       ],
       "definition": {
-        "en": "Three different dates appear on every source AskGov shows, and they mean different things:\n\n• Effective — the date the rule itself started to apply. A property of the law.\n• Verified — the date a person last checked this text against the official source. A property of AskGov's record, not of the law.\n• Review due — the date after which that check is considered out of date.\n\nSo \"Past review date\" does not mean the rule has changed. It means nobody has confirmed recently that it has not. That is why an answer carrying it also tells you to confirm with the responsible office.",
-        "km": "កាលបរិច្ឆេទបីផ្សេងគ្នាបង្ហាញនៅលើឯកសារយោងនីមួយៗ ហើយវាមានន័យខុសគ្នា៖\n\n• «ចូលជាធរមាន» — ថ្ងៃដែលវិធានចាប់ផ្តើមអនុវត្ត។ ជាលក្ខណៈរបស់ច្បាប់។\n• «ផ្ទៀងផ្ទាត់» — ថ្ងៃចុងក្រោយដែលមនុស្សបានពិនិត្យអត្ថបទនេះធៀបនឹងឯកសារដើម។ ជាលក្ខណៈរបស់កំណត់ត្រា AskGov មិនមែនរបស់ច្បាប់។\n• «កំណត់ត្រួតពិនិត្យ» — ថ្ងៃដែលបន្ទាប់ពីនោះ ការពិនិត្យត្រូវចាត់ទុកថាហួសសម័យ។\n\nដូច្នេះ «ហួសកាលបរិច្ឆេទត្រួតពិនិត្យ» មិនមានន័យថាវិធានបានផ្លាស់ប្តូរទេ។ វាមានន័យថាគ្មាននរណាបានបញ្ជាក់ថ្មីៗថាវាមិនបានផ្លាស់ប្តូរ។ ដោយហេតុនេះ ចម្លើយដែលមានស្លាកនោះ ក៏ណែនាំឱ្យអ្នកផ្ទៀងផ្ទាត់ជាមួយការិយាល័យទទួលបន្ទុកដែរ។"
+        "en": "Three different dates appear on every source SuperAsk shows, and they mean different things:\n\n• Effective — the date the rule itself started to apply. A property of the law.\n• Verified — the date a person last checked this text against the official source. A property of SuperAsk's record, not of the law.\n• Review due — the date after which that check is considered out of date.\n\nSo \"Past review date\" does not mean the rule has changed. It means nobody has confirmed recently that it has not. That is why an answer carrying it also tells you to confirm with the responsible office.",
+        "km": "កាលបរិច្ឆេទបីផ្សេងគ្នាបង្ហាញនៅលើឯកសារយោងនីមួយៗ ហើយវាមានន័យខុសគ្នា៖\n\n• «ចូលជាធរមាន» — ថ្ងៃដែលវិធានចាប់ផ្តើមអនុវត្ត។ ជាលក្ខណៈរបស់ច្បាប់។\n• «ផ្ទៀងផ្ទាត់» — ថ្ងៃចុងក្រោយដែលមនុស្សបានពិនិត្យអត្ថបទនេះធៀបនឹងឯកសារដើម។ ជាលក្ខណៈរបស់កំណត់ត្រា SuperAsk មិនមែនរបស់ច្បាប់។\n• «កំណត់ត្រួតពិនិត្យ» — ថ្ងៃដែលបន្ទាប់ពីនោះ ការពិនិត្យត្រូវចាត់ទុកថាហួសសម័យ។\n\nដូច្នេះ «ហួសកាលបរិច្ឆេទត្រួតពិនិត្យ» មិនមានន័យថាវិធានបានផ្លាស់ប្តូរទេ។ វាមានន័យថាគ្មាននរណាបានបញ្ជាក់ថ្មីៗថាវាមិនបានផ្លាស់ប្តូរ។ ដោយហេតុនេះ ចម្លើយដែលមានស្លាកនោះ ក៏ណែនាំឱ្យអ្នកផ្ទៀងផ្ទាត់ជាមួយការិយាល័យទទួលបន្ទុកដែរ។"
       }
     }
   ]

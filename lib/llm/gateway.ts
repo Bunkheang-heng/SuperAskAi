@@ -10,7 +10,7 @@
  *
  * ── RESIDENCY WARNING ──────────────────────────────────────────────────────
  * This is external hosting, outside Cambodia, and it is a *third party* between
- * AskGov and the model vendor. It carries the same NFR-11 exemption limits as
+ * SuperAsk and the model vendor. It carries the same NFR-11 exemption limits as
  * the direct Anthropic path (R-14): closed pilot with DGC and ministry staff
  * only, lapsing at public release. It reports its residency honestly so the
  * diagnostic panel flags it and the audit log records it. Do not present this

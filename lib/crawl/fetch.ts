@@ -4,7 +4,7 @@
  * ── THIS CRAWLER HITS GOVERNMENT INFRASTRUCTURE ────────────────────────────
  * Forty-three ministry and agency sites, weekly, from a service that is meant
  * to be a good citizen of the same government. Several are small deployments
- * that will not have been sized for an automated client. Getting AskGov's
+ * that will not have been sized for an automated client. Getting SuperAsk's
  * crawler blocked — or worse, having it degrade a ministry site — costs the
  * platform the institutional relationships the entire project depends on.
  *
@@ -28,7 +28,7 @@
  * with MONITOR_CONTACT once a real mailbox exists.
  */
 const CONTACT = process.env.MONITOR_CONTACT ?? "content-ops@localhost";
-export const USER_AGENT = `AskGovBot/0.1 (${CONTACT}) content monitoring`;
+export const USER_AGENT = `SuperAskBot/0.1 (${CONTACT}) content monitoring`;
 
 /** Floor on the gap between two requests to one host, even if robots allows faster. */
 export const MIN_HOST_DELAY_MS = Number(process.env.MONITOR_MIN_DELAY_MS ?? "2000");

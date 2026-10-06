@@ -31,8 +31,8 @@ const NO_KHMER_TEXT = {
 };
 
 const NOT_FOUND = {
-  en: "AskGov has no approved source covering this question. An officer can help you.",
-  km: "AskGov មិនមានឯកសារយោងដែលបានអនុម័តសម្រាប់សំណួរនេះទេ។ មន្ត្រីអាចជួយអ្នកបាន។",
+  en: "SuperAsk has no approved source covering this question. An officer can help you.",
+  km: "SuperAsk មិនមានឯកសារយោងដែលបានអនុម័តសម្រាប់សំណួរនេះទេ។ មន្ត្រីអាចជួយអ្នកបាន។",
 };
 
 export function createExtractiveProvider(reason?: string): LlmProvider {

@@ -31,3 +31,4 @@ data/crawl/last-report.json
 Thumbs.db
 .vscode/
 .idea/
+.vercel

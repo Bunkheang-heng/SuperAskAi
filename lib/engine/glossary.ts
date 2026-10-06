@@ -33,7 +33,7 @@
  * Running it last gives a property worth stating plainly: the glossary can only
  * ever convert a refusal into an answer. It cannot displace a retrieved one. A
  * false positive costs a definition where the citizen would otherwise have got
- * "AskGov has no source for this" — which is not a good outcome, but it is not
+ * "SuperAsk has no source for this" — which is not a good outcome, but it is not
  * a harmful one, and it is strictly better than the refusal it replaced.
  */
 

@@ -16,8 +16,8 @@ import type { StoredTurn } from "@/lib/ui/history";
  * right now, is not acceptable.
  */
 
-const KEY = "askgov.history.v1";
-const LEGACY_KEY = "superask.history.v1";
+const KEY = "superask.history.v1";
+const LEGACY_KEY = "askgov.history.v1";
 
 class MemoryStorage {
   private map = new Map<string, string>();

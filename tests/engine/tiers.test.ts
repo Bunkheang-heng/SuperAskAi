@@ -245,7 +245,7 @@ describe("Tier 2 — grounded answer over retrieved sources", () => {
           { role: "user", text: "what is the capital of france" },
           {
             role: "assistant",
-            text: "AskGov only answers questions about Cambodian government service procedures — the steps, required documents, official fees, timelines, and which office handles a case.",
+            text: "SuperAsk only answers questions about Cambodian government service procedures — the steps, required documents, official fees, timelines, and which office handles a case.",
           },
         ],
       }),
@@ -267,12 +267,12 @@ describe("Tier 2 — grounded answer over retrieved sources", () => {
           { role: "user", text: "who is elon musk?" },
           {
             role: "assistant",
-            text: "AskGov only answers questions about Cambodian government service procedures — the steps, required documents, official fees, timelines, and which office handles a case.",
+            text: "SuperAsk only answers questions about Cambodian government service procedures — the steps, required documents, official fees, timelines, and which office handles a case.",
           },
           { role: "user", text: "what is law" },
           {
             role: "assistant",
-            text: "AskGov only answers questions about Cambodian government service procedures — the steps, required documents, official fees, timelines, and which office handles a case.",
+            text: "SuperAsk only answers questions about Cambodian government service procedures — the steps, required documents, official fees, timelines, and which office handles a case.",
           },
         ],
       }),
@@ -290,7 +290,7 @@ describe("Tier 2 — grounded answer over retrieved sources", () => {
           { role: "user", text: "what is the capital of france" },
           {
             role: "assistant",
-            text: "AskGov only answers questions about Cambodian government service procedures",
+            text: "SuperAsk only answers questions about Cambodian government service procedures",
           },
         ],
       }),

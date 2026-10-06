@@ -79,7 +79,7 @@ export interface AuditRecord {
    * The answer came from the model's general knowledge rather than an approved
    * source (GENERAL_FALLBACK_ENABLED). Recorded as its own field because
    * "citedIds is empty" is also true of refusals, and a reviewer asking "what
-   * has AskGov told citizens without a source behind it" needs to be able to
+   * has SuperAsk told citizens without a source behind it" needs to be able to
    * filter on exactly that.
    */
   unverified: boolean;

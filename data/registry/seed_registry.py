@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-AskGov seed registry of Cambodian government web properties.
+SuperAsk seed registry of Cambodian government web properties.
 
 PROVENANCE CODES (column `source_evidence`):
   GDT-LINKS  = official directory at https://www.tax.gov.kh/en/links (General Dept. of Taxation,
@@ -28,7 +28,7 @@ SEED = [
  "Phnom Penh", "Phnom Penh",
  "SEARCH", "search", 1,
  "National public-service information portal; indexes procedures by ministry, by group and in full - the "
- "closest existing analogue to AskGov's own corpus and a priority acquisition target. Homepage observed "
+ "closest existing analogue to SuperAsk's own corpus and a priority acquisition target. Homepage observed "
  "2026-09-07; ownership read from the site banner (Ministry of Civil Service + Council for Administrative "
  "Reform). CANNOT CURRENTLY BE MONITORED: a WAF rejects automated fetches, and it answers HTTP 200 with a "
  "266-byte 'Request Rejected' page rather than an error status, so a crawler that trusts the status code will "
@@ -130,7 +130,7 @@ SEED = [
  "GDT-LINKS", "directory", 1, "HQ: 62 Monivong Blvd. Establishing official sites for all 25 provincial information departments."),
 ("Ministry of Justice", "ក្រសួងយុត្តិធម៌", "MOJ", "moj.gov.kh",
  "Ministry", "Ministry", "National", "Royal Government of Cambodia", N, "Phnom Penh", "Phnom Penh",
- "GDT-LINKS", "directory", 1, "Divorce, court procedure, criminal records - named as a priority source for AskGov."),
+ "GDT-LINKS", "directory", 1, "Divorce, court procedure, criminal records - named as a priority source for SuperAsk."),
 ("Ministry of Post and Telecommunications", "ក្រសួងប្រៃសណីយ៍ និងទូរគមនាគមន៍", "MPTC", "mptc.gov.kh",
  "Ministry", "Ministry", "National", "Royal Government of Cambodia", N, "Phnom Penh", "Phnom Penh",
  "GDT-LINKS", "directory", 1, "HQ: 13 Monivong Blvd, Phnom Penh 12201."),
@@ -209,7 +209,7 @@ SEED = [
  "CONVENTION", "unconfirmed", 1, "Candidate domain - national ID card procedures."),
 ("Cambodian National Police", "នគរបាលជាតិកម្ពុជា", "CNP", "police.gov.kh",
  "Agency", "Law Enforcement", "National", "Ministry of Interior", "Ministry of Interior", "Phnom Penh", "Phnom Penh",
- "CONVENTION", "unconfirmed", 1, "Candidate domain - 'where is my police station' is a named AskGov query type."),
+ "CONVENTION", "unconfirmed", 1, "Candidate domain - 'where is my police station' is a named SuperAsk query type."),
 
 # ---------------------------------------------------------------- Councils / Committees / Regulators
 ("Council for the Development of Cambodia", "ក្រុមប្រឹក្សាអភិវឌ្ឍន៍កម្ពុជា", "CDC", "cdc.gov.kh",
@@ -276,12 +276,12 @@ SEED = [
  "CONVENTION", "unconfirmed", 3, "Candidate domain - verify."),
 ("Agence Kampuchea Presse", "សារព័ត៌មានកម្ពុជា", "AKP", "akp.gov.kh",
  "Agency", "State News Agency", "National", "Ministry of Information", "Ministry of Information", "Phnom Penh", "Phnom Penh",
- "SEARCH", "search", 1, "Official news wire (article URLs of form /post/detail/<id>). Best single feed for keeping AskGov current."),
+ "SEARCH", "search", 1, "Official news wire (article URLs of form /post/detail/<id>). Best single feed for keeping SuperAsk current."),
 
 # ---------------------------------------------------------------- Digital platforms / services
 ("Cambodia Data Exchange", "វេទិកាផ្លាស់ប្តូរទិន្នន័យកម្ពុជា", "CamDX", "camdx.gov.kh",
  "Digital Platform", "Data Exchange", "National", "Ministry of Economy and Finance", "Ministry of Economy and Finance", "Phnom Penh", "Phnom Penh",
- "SEARCH", "search", 1, "National API/data-exchange layer. Membership portal at registration.camdx.gov.kh. Likely source of live APIs for AskGov."),
+ "SEARCH", "search", 1, "National API/data-exchange layer. Membership portal at registration.camdx.gov.kh. Likely source of live APIs for SuperAsk."),
 ("CamDigiKey", "កាមឌីជីខី", "CamDigiKey", "camdigikey.gov.kh",
  "Digital Platform", "Identity / eKYC", "National", "Ministry of Economy and Finance", "Ministry of Economy and Finance", "Phnom Penh", "Phnom Penh",
  "SEARCH", "search", 1, "National SSO / eKYC. Open KYC APIs; OAuth 2.0 for web, Deeplink for mobile."),
@@ -314,7 +314,7 @@ SEED = [
  "every endpoint probed anonymously (/public/stinl/product-types, /public/setting/get_form_options, "
  "/user/service/list) answers HTTP 200 with {\"status\":\"fail\"} - the portal is transactional and "
  "login-walled, like owp.tax.gov.kh. NO PUBLIC CONTENT TO CRAWL: it holds application forms behind "
- "authentication, not the service descriptions AskGov answers from. Registered so it is monitored for the "
+ "authentication, not the service descriptions SuperAsk answers from. Registered so it is monitored for the "
  "day a public catalogue endpoint appears; the crawler detects the catch-all and stops after a few requests "
  "(lib/monitor/soft-block.ts). Service descriptions for these licences live on misti.gov.kh instead."),
 ("Cambodia National Single Window", N, "CNSW", "cnsw.gov.kh",
@@ -322,10 +322,10 @@ SEED = [
  "CONVENTION", "unconfirmed", 3, "Candidate domain - verify."),
 ("Cambodia Open Data Portal", N, N, "data.gov.kh",
  "Portal", "Open Data", "National", "Royal Government of Cambodia", N, "Phnom Penh", "Phnom Penh",
- "CONVENTION", "unconfirmed", 1, "Candidate domain - if live, this is the single highest-value structured source for AskGov."),
+ "CONVENTION", "unconfirmed", 1, "Candidate domain - if live, this is the single highest-value structured source for SuperAsk."),
 ("Government Service Portal", N, N, "go.gov.kh",
  "Portal", "Service Portal", "National", "Royal Government of Cambodia", N, "Phnom Penh", "Phnom Penh",
- "SEARCH", "search", 1, "Named in AskGov project notes as an intended data source."),
+ "SEARCH", "search", 1, "Named in SuperAsk project notes as an intended data source."),
 ("Sarika", "សារិកា", "Sarika", "sarika.gov.kh",
  "Digital Platform", "AI Service", "National", "Ministry of Post and Telecommunications", "Ministry of Post and Telecommunications", "Phnom Penh", "Phnom Penh",
  "CONVENTION", "unconfirmed", 2, "Khmer speech AI platform (DGC). Confirm public domain internally."),

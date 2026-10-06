@@ -4,39 +4,39 @@
    Brand palette. Three colours, everything else neutral or state.
    --------------------------------------------------------------------------- */
 :root {
-  --ag-sky: #26a1da;
-  --ag-sky-deep: #1b87bb;
-  --ag-sky-wash: #eaf6fc;
-  --ag-sky-line: #bfe2f4;
+  --sa-sky: #26a1da;
+  --sa-sky-deep: #1b87bb;
+  --sa-sky-wash: #eaf6fc;
+  --sa-sky-line: #bfe2f4;
 
-  --ag-deep: #025094;
-  --ag-deep-hover: #01427b;
-  --ag-deep-wash: #edf3f9;
+  --sa-deep: #025094;
+  --sa-deep-hover: #01427b;
+  --sa-deep-wash: #edf3f9;
 
-  --ag-paper: #ffffff;
-  --ag-page: #f4f8fb;
+  --sa-paper: #ffffff;
+  --sa-page: #f4f8fb;
 
-  --ag-ink: #0b2237;
-  --ag-ink-soft: #4e657c;
-  --ag-ink-faint: #8399ac;
+  --sa-ink: #0b2237;
+  --sa-ink-soft: #4e657c;
+  --sa-ink-faint: #8399ac;
 
-  --ag-line: #dde7ef;
-  --ag-line-soft: #edf2f7;
+  --sa-line: #dde7ef;
+  --sa-line-soft: #edf2f7;
 
-  --ag-green: #0f7b55;
-  /* Notice — replaces the former amber. --ag-notice is the brand #4295F5 for
-     borders, icons, and fills; --ag-notice-text is the same hue darkened to
+  --sa-green: #0f7b55;
+  /* Notice — replaces the former amber. --sa-notice is the brand #4295F5 for
+     borders, icons, and fills; --sa-notice-text is the same hue darkened to
      clear 4.5:1 on white, because every label using it is below the size at
      which WCAG AA accepts a 3:1 ratio. */
-  --ag-notice: #4295f5;
-  --ag-notice-text: #1a5fbf;
-  --ag-notice-wash: #eef5fe;
-  --ag-notice-line: #c7defb;
-  --ag-red: #a32121;
+  --sa-notice: #4295f5;
+  --sa-notice-text: #1a5fbf;
+  --sa-notice-wash: #eef5fe;
+  --sa-notice-line: #c7defb;
+  --sa-red: #a32121;
 
-  --ag-font: "Kantumruy Pro", "Inter", system-ui, -apple-system, "Segoe UI",
+  --sa-font: "Kantumruy Pro", "Inter", system-ui, -apple-system, "Segoe UI",
     sans-serif;
-  --ag-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --sa-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 
 html,
@@ -45,9 +45,9 @@ body {
 }
 
 body {
-  background: var(--ag-page);
-  color: var(--ag-ink);
-  font-family: var(--ag-font);
+  background: var(--sa-page);
+  color: var(--sa-ink);
+  font-family: var(--sa-font);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -82,7 +82,7 @@ h3 {
 }
 
 .ag-mono {
-  font-family: var(--ag-mono);
+  font-family: var(--sa-mono);
   font-variant-ligatures: none;
 }
 
@@ -96,7 +96,7 @@ h3 {
 }
 
 *:focus-visible {
-  outline: 2px solid var(--ag-sky);
+  outline: 2px solid var(--sa-sky);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -121,7 +121,7 @@ h3 {
   left: 8px;
   top: 8px;
   padding: 8px 14px;
-  background: var(--ag-deep);
+  background: var(--sa-deep);
   color: #fff;
   border-radius: 6px;
   font-size: 13px;
@@ -131,7 +131,7 @@ h3 {
 
 .ag-scroll {
   scrollbar-width: thin;
-  scrollbar-color: var(--ag-line) transparent;
+  scrollbar-color: var(--sa-line) transparent;
 }
 
 .ag-scroll::-webkit-scrollbar {
@@ -140,7 +140,7 @@ h3 {
 }
 
 .ag-scroll::-webkit-scrollbar-thumb {
-  background: var(--ag-line);
+  background: var(--sa-line);
   border-radius: 5px;
 }
 
@@ -236,7 +236,7 @@ h3 {
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: var(--ag-ink-faint);
+  background: var(--sa-ink-faint);
   animation: chat-dot 1s ease-in-out infinite;
 }
 
@@ -267,7 +267,7 @@ h3 {
   height: 0.95em;
   margin-left: 1px;
   vertical-align: text-bottom;
-  background: var(--ag-sky);
+  background: var(--sa-sky);
   animation: chat-caret 0.85s step-end infinite;
 }
 

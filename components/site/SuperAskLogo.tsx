@@ -50,10 +50,10 @@ function Mark({
 }
 
 /**
- * Brand lockup: icon.svg shield mark + AskGov wordmark.
+ * Brand lockup: icon.svg shield mark + SuperAsk wordmark.
  * `onDark` flips the mark for deep brand bars (sidebar / chat header).
  */
-export function AskGovLogo({
+export function SuperAskLogo({
   href = "/",
   size = "md",
   showWordmark = true,
@@ -68,7 +68,7 @@ export function AskGovLogo({
   asLink?: boolean;
 }) {
   const s = SIZE[size];
-  const wordColor = tone === "onDark" ? "#fff" : "var(--ag-deep)";
+  const wordColor = tone === "onDark" ? "#fff" : "var(--sa-deep)";
 
   const inner = (
     <>
@@ -83,7 +83,7 @@ export function AskGovLogo({
             letterSpacing: "-0.02em",
           }}
         >
-          AskGov
+          SuperAsk
         </span>
       )}
     </>
@@ -94,14 +94,14 @@ export function AskGovLogo({
 
   if (!asLink) {
     return (
-      <span className={className} style={style} aria-label="AskGov">
+      <span className={className} style={style} aria-label="SuperAsk">
         {inner}
       </span>
     );
   }
 
   return (
-    <Link href={href} aria-label="AskGov" className={className} style={style}>
+    <Link href={href} aria-label="SuperAsk" className={className} style={style}>
       {inner}
     </Link>
   );

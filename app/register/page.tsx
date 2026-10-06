@@ -51,8 +51,8 @@ function RegisterForm({ lang }: { lang: Lang }) {
   }
 
   const fieldStyle = {
-    borderColor: "var(--ag-line)",
-    color: "var(--ag-ink)",
+    borderColor: "var(--sa-line)",
+    color: "var(--sa-ink)",
     background: "#fff",
   } as const;
 
@@ -60,11 +60,11 @@ function RegisterForm({ lang }: { lang: Lang }) {
     <div className="mx-auto flex w-full max-w-md flex-col px-4 py-12 sm:py-16">
       <h1
         className="text-[1.45rem] font-bold leading-snug sm:text-[1.65rem]"
-        style={{ color: "var(--ag-ink)" }}
+        style={{ color: "var(--sa-ink)" }}
       >
         {t(MARKETING.registerHeadline, lang)}
       </h1>
-      <p className="mt-3 text-[14px]" style={{ color: "var(--ag-ink-soft)" }}>
+      <p className="mt-3 text-[14px]" style={{ color: "var(--sa-ink-soft)" }}>
         {t(MARKETING.registerHint, lang)}
       </p>
 
@@ -72,7 +72,7 @@ function RegisterForm({ lang }: { lang: Lang }) {
         <label className="flex flex-col gap-1.5">
           <span
             className="text-[13px] font-medium"
-            style={{ color: "var(--ag-ink)" }}
+            style={{ color: "var(--sa-ink)" }}
           >
             {t(MARKETING.nameLabel, lang)}
           </span>
@@ -90,7 +90,7 @@ function RegisterForm({ lang }: { lang: Lang }) {
         <label className="flex flex-col gap-1.5">
           <span
             className="text-[13px] font-medium"
-            style={{ color: "var(--ag-ink)" }}
+            style={{ color: "var(--sa-ink)" }}
           >
             {t(MARKETING.emailLabel, lang)}
           </span>
@@ -108,7 +108,7 @@ function RegisterForm({ lang }: { lang: Lang }) {
         <label className="flex flex-col gap-1.5">
           <span
             className="text-[13px] font-medium"
-            style={{ color: "var(--ag-ink)" }}
+            style={{ color: "var(--sa-ink)" }}
           >
             {t(MARKETING.passwordLabel, lang)}
           </span>
@@ -126,7 +126,7 @@ function RegisterForm({ lang }: { lang: Lang }) {
         <label className="flex flex-col gap-1.5">
           <span
             className="text-[13px] font-medium"
-            style={{ color: "var(--ag-ink)" }}
+            style={{ color: "var(--sa-ink)" }}
           >
             {t(MARKETING.confirmLabel, lang)}
           </span>
@@ -142,7 +142,7 @@ function RegisterForm({ lang }: { lang: Lang }) {
         </label>
 
         {error && (
-          <p className="text-[13px]" style={{ color: "var(--ag-red)" }} role="alert">
+          <p className="text-[13px]" style={{ color: "var(--sa-red)" }} role="alert">
             {error}
           </p>
         )}
@@ -151,7 +151,7 @@ function RegisterForm({ lang }: { lang: Lang }) {
           type="submit"
           disabled={busy}
           className="ag-press mt-1 inline-flex h-12 items-center justify-center rounded-md text-[15px] font-semibold text-white disabled:opacity-70"
-          style={{ background: "var(--ag-deep)" }}
+          style={{ background: "var(--sa-deep)" }}
         >
           {t(MARKETING.register, lang)}
         </button>
@@ -159,13 +159,13 @@ function RegisterForm({ lang }: { lang: Lang }) {
 
       <p
         className="mt-6 text-center text-[14px]"
-        style={{ color: "var(--ag-ink-soft)" }}
+        style={{ color: "var(--sa-ink-soft)" }}
       >
         {t(MARKETING.hasAccount, lang)}{" "}
         <Link
           href="/login"
           className="font-semibold underline-offset-2 hover:underline"
-          style={{ color: "var(--ag-deep)" }}
+          style={{ color: "var(--sa-deep)" }}
         >
           {t(MARKETING.login, lang)}
         </Link>
@@ -174,7 +174,7 @@ function RegisterForm({ lang }: { lang: Lang }) {
       <Link
         href="/chat"
         className="mt-4 text-center text-[13px] underline-offset-2 hover:underline"
-        style={{ color: "var(--ag-ink-soft)" }}
+        style={{ color: "var(--sa-ink-soft)" }}
       >
         {t(MARKETING.continueGuest, lang)}
       </Link>

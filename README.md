@@ -1,6 +1,6 @@
-# AskGov — citizen interface and answer engine
+# SuperAsk — citizen interface and answer engine
 
-Phase 0 build of the citizen-facing assistant specified in `AskGov-PRD-v0.2.md`.
+Phase 0 build of the citizen-facing assistant specified in `SuperAsk-PRD-v0.2.md`.
 Web, Next.js App Router, TypeScript.
 
 > **Prototype. All knowledge base content is sample content and is not
@@ -37,6 +37,63 @@ npm run rationale-check  # "why does this rule exist" when no source gives a rea
 
 ---
 
+## Project coordination and progress report
+
+Status of the SuperAsk Phase 0 prototype as implemented in this repository
+(web + Telegram, sample knowledge base only).
+
+### Issues encountered and how they were tackled
+
+| Issue | How it was tackled |
+|---|---|
+| Telegram Mini App showed “refused to connect” | Site sent `X-Frame-Options: DENY`, which blocked Telegram Desktop embedding. `/chat` now allows Telegram `frame-ancestors` and no longer denies framing. |
+| Vercel production deploys blocked by git-author policy | Hobby team rejected CLI deploys when the local git author was not a project member. Deployed via a clean prebuilt upload without git metadata. |
+| Public `/icon.svg` conflicted with App Router `app/icon.svg` | Removed the duplicate under `public/`. |
+| Brand / channel consistency (SuperAsk vs older names, EN default) | Unified landing, chat, and Telegram copy around SuperAsk; English as default site language with Khmer toggle. |
+| Bot secrets in source control | `TELEGRAM_BOT_TOKEN` / webhook secret kept in `.env` and Vercel env only; webhook registration via `scripts/telegram-webhook.ts`. |
+
+### What use cases have been implemented?
+
+1. **Citizen Q&A (web)** — Users open SuperAsk, ask about government services in English or Khmer, and get an answer with citations.
+2. **Citizen Q&A (Telegram text)** — Same ask engine via a Telegram bot: type a question, get a reply in chat.
+3. **Telegram Mini App** — Open the full SuperAsk chat UI inside Telegram, or keep chatting by text.
+4. **Bilingual citizen surface** — Landing + chat support EN/KM; replies follow the user’s language.
+5. **Grounded answers with guardrails** — Retrieval over a sample KB, source citations, confidence checks, and escalation when the system should not answer alone.
+6. **Feedback / escalation / audit** — Feedback and escalate actions; append-only audit logs with PII redaction.
+7. **Marketing / onboarding shell** — Landing page plus login/register screens (session is prototype-only, not real identity).
+
+### What is already functional, what is currently being tackled?
+
+**Already functional**
+
+- Landing page and web chat (`/chat`)
+- Ask API + RAG pipeline (normalize → retrieve → generate → verify)
+- Telegram bot webhook (text answers) + Mini App entry points (keyboard + menu button)
+- Production deploy on Vercel with Telegram webhook configured
+- Citations, basic escalation deep-link, feedback/audit APIs
+- Health check and local eval/CI checks (`npm run check`)
+
+**Currently being tackled / next**
+
+- Real authentication (login/register are UI / `localStorage` stubs)
+- Stronger retrieval (dense/rerank pieces are lightweight stand-ins, not full neural models)
+- Broader, steward-approved knowledge base (sample ministries only today)
+- Closing the loop with DG Support / officer handover (escalation is only half-wired)
+- Content portal / ingest / RBAC (not built yet)
+- More reliable Telegram multi-turn history across serverless cold starts
+
+### Other relevant project management activities
+
+1. **Phased delivery** — Ship a usable Phase 0 prototype (web + Telegram) before portal/ops features.
+2. **Channel dual-mode design** — Citizens can text the bot or use the Mini App; both share one ask engine.
+3. **Deployment and ops setup** — Vercel hosting, env secrets for Telegram, webhook registration scripts, `/api/health`.
+4. **Quality gates** — Typecheck, tests, and eval harnesses in CI so retrieval/guardrail changes do not silently regress.
+5. **Risk and honesty controls** — Sample KB only; no invented fees; refuse/escalate when confidence is low; PII redaction in logs.
+6. **Cross-surface coordination** — Same brand and UX direction across landing, web chat, and Telegram.
+7. **Content governance line** — Crawl/monitor never auto-publishes into the answerable KB (steward approval gap is intentional; see `data/README.md`).
+
+---
+
 ## What is built
 
 | PRD area | Status |
@@ -54,7 +111,7 @@ npm run rationale-check  # "why does this rule exist" when no source gives a rea
 
 ### Why an answer was withheld
 
-When AskGov declines, the trace panel shows a `withheld` reason. Two different
+When SuperAsk declines, the trace panel shows a `withheld` reason. Two different
 mechanisms produce a refusal and they need different responses, so they are
 prefixed rather than lumped together:
 
@@ -62,7 +119,7 @@ prefixed rather than lumped together:
 |---|---|---|
 | `policy:<kind>` | The §12 refusal policy fired, before retrieval. `emergency`, `legal_advice`, `personal_case`, `prediction`, `land_dispute`, `tax_computation`, `political`, `complaint_routing` | Nothing — working as governed. Changing it is a governance decision (OD-07) |
 | `scope:not_a_service_question` | Not a government-service question at all — translation, general knowledge, chit-chat. Refused **without** an escalation offer | Nothing. Sending someone to an officer because they asked for the weather wastes the officer's time and theirs |
-| `retrieval:below_floor` | Nothing scored above `RETRIEVAL_MIN_SCORE`. AskGov is *allowed* to answer; it has no source that covers the question | Usually a **content coverage gap** — add the content. If the source clearly exists and should have matched, it is a retrieval problem (R-07) |
+| `retrieval:below_floor` | Nothing scored above `RETRIEVAL_MIN_SCORE`. SuperAsk is *allowed* to answer; it has no source that covers the question | Usually a **content coverage gap** — add the content. If the source clearly exists and should have matched, it is a retrieval problem (R-07) |
 | `retrieval:no_candidates` | Retrieval returned nothing at all | Same, more clear-cut |
 | `verification:failed` | An answer was written, then suppressed by the FR-15 gate for an unsupported claim | Check `unsupported claims` in the trace. Either the model invented a figure, or the source phrases it in a form the extractor misses |
 | `moderation:<kind>` | NFR-04 output moderation caught the finished answer | Review the grounding prompt |
@@ -281,7 +338,7 @@ queue that cries wolf weekly is a review queue nobody opens.
 So `/robots.txt` is now sniffed rather than parsed on faith — a body with no
 directives in it is not permission — and a WAF page there **fails closed**, on
 the same reasoning as a 403. These hosts are up and serving citizens; they are
-declining `AskGovBot` specifically. That is an access conversation with the
+declining `SuperAskBot` specifically. That is an access conversation with the
 owning institution (§2.6), not a crawler setting, and deliberately not something
 this crawler routes around: a browser `User-Agent` gets through, and spoofing
 one to defeat another institution's access control is not a decision a crawler
@@ -326,7 +383,7 @@ problem can reach you. The default is a placeholder.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `MONITOR_CONTACT` | `content-ops@askgov.kh` | Contact in the User-Agent. **Change this.** |
+| `MONITOR_CONTACT` | `content-ops@superask.kh` | Contact in the User-Agent. **Change this.** |
 | `MONITOR_MIN_DELAY_MS` | `2000` | Floor between requests to one host |
 | `MONITOR_CONCURRENCY` | `6` | Hosts in flight at once |
 | `MONITOR_TIMEOUT_MS` | `20000` | Per-request timeout |
@@ -374,7 +431,7 @@ Nothing outside `lib/llm/` contains model-specific logic.
 **Currently configured: `gateway`.** One credential fronts many model families,
 which is what §10.6 condition 4 needs for benchmarking candidates against the
 Khmer golden set — swapping the model under test is one environment variable.
-It is also a *third party* between AskGov and the model vendor, so it carries
+It is also a *third party* between SuperAsk and the model vendor, so it carries
 the same NFR-11 limits as the direct vendor API and reports its residency
 honestly. Do not present it as domestic.
 
@@ -663,17 +720,17 @@ Running at `http://206.189.88.178` on a DigitalOcean droplet (Ubuntu 24.04,
 only and is never reachable from outside.
 
 ```
-internet → nginx :80 → 127.0.0.1:3000 (askgov.service, user askgov)
+internet → nginx :80 → 127.0.0.1:3000 (superask.service, user superask)
 ```
 
 | Control | Where | Why |
 |---|---|---|
-| `limit_req` 12 r/min on `/api/`, 120 r/min site | `/etc/nginx/conf.d/askgov-limits.conf` | Every `/api/ask` is a paid model call. Unlimited public access is an open tap on the gateway credit. A citizen asks a question every few seconds; a scraper does not. |
-| App bound to `127.0.0.1` | `askgov.service` | Port 3000 is unreachable publicly, so the rate limits and headers cannot be bypassed |
+| `limit_req` 12 r/min on `/api/`, 120 r/min site | `/etc/nginx/conf.d/superask-limits.conf` | Every `/api/ask` is a paid model call. Unlimited public access is an open tap on the gateway credit. A citizen asks a question every few seconds; a scraper does not. |
+| App bound to `127.0.0.1` | `superask.service` | Port 3000 is unreachable publicly, so the rate limits and headers cannot be bypassed |
 | `/api/health` → localhost only | nginx `location = /api/health` | It names the provider, the model and the gateway base URL. No client calls it |
-| `DIAGNOSTICS_ENABLED=false` | `/opt/askgov/.env.local` | FR-72/73 — the answer trace is for DGC and ministry users, not citizens |
-| `.env.local` mode 600, owned by `askgov` | droplet | R-15 / FR-74 — the credential is readable only by the service account |
-| Unprivileged user + systemd sandboxing | `askgov.service` | `ProtectSystem=strict`, `NoNewPrivileges`, `PrivateDevices`; the audit log is the only writable path |
+| `DIAGNOSTICS_ENABLED=false` | `/opt/superask/.env.local` | FR-72/73 — the answer trace is for DGC and ministry users, not citizens |
+| `.env.local` mode 600, owned by `superask` | droplet | R-15 / FR-74 — the credential is readable only by the service account |
+| Unprivileged user + systemd sandboxing | `superask.service` | `ProtectSystem=strict`, `NoNewPrivileges`, `PrivateDevices`; the audit log is the only writable path |
 | `X-Powered-By` stripped, `server_tokens off` | nginx + `next.config.ts` | Do not hand a scanner the stack |
 | `robots.txt` disallows `/api/` | nginx | A crawler walking the API costs a model call per hit |
 | ufw: 22, 80, 443 only · key-only SSH · fail2ban | droplet | Standard host hardening |
@@ -687,11 +744,11 @@ run `certbot --nginx`, and treat the current address as a demo, not a pilot.
 Operations:
 
 ```
-systemctl status askgov          # service state
-journalctl -u askgov -f          # application log
+systemctl status superask          # service state
+journalctl -u superask -f          # application log
 curl -s localhost/api/health     # provider, model, corpus (localhost only)
 ```
 
-Redeploy: rsync the tree to `/opt/askgov` excluding `node_modules`, `.next`,
+Redeploy: rsync the tree to `/opt/superask` excluding `node_modules`, `.next`,
 `var` and `.env.local`, then `npm ci && npm run build && systemctl restart
-askgov`.
+superask`.

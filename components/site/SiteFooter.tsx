@@ -4,7 +4,7 @@ export function SiteFooter({ lang }: { lang: Lang }) {
   return (
     <footer
       className="mt-auto"
-      style={{ background: "var(--ag-deep)", color: "#fff" }}
+      style={{ background: "var(--sa-deep)", color: "#fff" }}
     >
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-3">
         <div>

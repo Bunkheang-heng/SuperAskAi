@@ -1,0 +1,4 @@
+# Keep local secrets out of CLI uploads (Vercel env vars are the source of truth).
+.env
+.env.*
+!.env.example

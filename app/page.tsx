@@ -12,7 +12,7 @@ import {
   Shield,
   ShieldCheck,
 } from "lucide-react";
-import { AskGovLogo, MarketingShell } from "@/components/site";
+import { SuperAskLogo, MarketingShell } from "@/components/site";
 import { MARKETING, t, type Lang } from "@/lib/ui/marketing";
 
 const FEATURE_ICONS = [
@@ -122,17 +122,17 @@ function HeroPreview({ lang }: { lang: Lang }) {
     >
       <div
         className="flex items-center gap-2 border-b px-4 py-3"
-        style={{ borderColor: "var(--ag-line)", background: "var(--ag-page)" }}
+        style={{ borderColor: "var(--sa-line)", background: "var(--sa-page)" }}
       >
         <span
           className="h-2 w-2 rounded-full"
-          style={{ background: "var(--ag-sky)" }}
+          style={{ background: "var(--sa-sky)" }}
         />
         <span
           className="text-[12px] font-medium"
-          style={{ color: "var(--ag-ink-soft)" }}
+          style={{ color: "var(--sa-ink-soft)" }}
         >
-          AskGov
+          SuperAsk
         </span>
       </div>
 
@@ -141,7 +141,7 @@ function HeroPreview({ lang }: { lang: Lang }) {
           <div className="chat-bubble-in flex justify-end">
             <p
               className="max-w-[85%] rounded-2xl rounded-br-md px-3.5 py-2.5 text-[13px] leading-snug text-white"
-              style={{ background: "var(--ag-deep)" }}
+              style={{ background: "var(--sa-deep)" }}
             >
               {t(MARKETING.previewQuestion, lang)}
             </p>
@@ -153,7 +153,7 @@ function HeroPreview({ lang }: { lang: Lang }) {
             <div
               className="inline-flex items-center gap-1.5 rounded-2xl rounded-bl-md border px-3.5 py-3"
               style={{
-                borderColor: "var(--ag-line)",
+                borderColor: "var(--sa-line)",
                 background: "#fff",
               }}
             >
@@ -168,27 +168,27 @@ function HeroPreview({ lang }: { lang: Lang }) {
           <div
             className="chat-bubble-in rounded-2xl rounded-bl-md border px-3.5 py-3"
             style={{
-              borderColor: "var(--ag-line)",
+              borderColor: "var(--sa-line)",
               background: "#fff",
             }}
           >
             <div className="mb-2 flex items-center gap-1.5">
               <span
                 className="inline-flex h-5 w-5 items-center justify-center rounded"
-                style={{ background: "var(--ag-deep)" }}
+                style={{ background: "var(--sa-deep)" }}
               >
                 <ShieldCheck size={11} color="#fff" strokeWidth={2.5} />
               </span>
               <span
                 className="text-[10px] font-semibold uppercase tracking-[0.08em]"
-                style={{ color: "var(--ag-ink-faint)" }}
+                style={{ color: "var(--sa-ink-faint)" }}
               >
-                AskGov
+                SuperAsk
               </span>
             </div>
             <p
               className="text-[13px] leading-snug"
-              style={{ color: "var(--ag-ink)" }}
+              style={{ color: "var(--sa-ink)" }}
             >
               {streamed}
               {showCaret && <span className="chat-caret" />}
@@ -197,8 +197,8 @@ function HeroPreview({ lang }: { lang: Lang }) {
               <p
                 className="chat-bubble-in mt-2.5 border-t pt-2 text-[11px]"
                 style={{
-                  borderColor: "var(--ag-line-soft)",
-                  color: "var(--ag-sky-deep)",
+                  borderColor: "var(--sa-line-soft)",
+                  color: "var(--sa-sky-deep)",
                 }}
               >
                 {t(MARKETING.previewSource, lang)}
@@ -217,7 +217,7 @@ function LandingBody({ lang }: { lang: Lang }) {
       {/* Hero — text left, visualization right */}
       <section
         className="relative flex min-h-[calc(100dvh-3.5rem)] flex-col overflow-hidden"
-        style={{ background: "var(--ag-deep)" }}
+        style={{ background: "var(--sa-deep)" }}
       >
         <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-12 sm:px-6 lg:py-16">
           <div className="grid flex-1 items-center gap-10 lg:grid-cols-2 lg:gap-14">
@@ -238,7 +238,7 @@ function LandingBody({ lang }: { lang: Lang }) {
                 <Link
                   href="/register"
                   className="ag-press inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-white px-7 text-[15px] font-semibold"
-                  style={{ color: "var(--ag-deep)" }}
+                  style={{ color: "var(--sa-deep)" }}
                 >
                   {t(MARKETING.start, lang)}
                   <ArrowRight size={16} strokeWidth={2.25} />
@@ -284,13 +284,13 @@ function LandingBody({ lang }: { lang: Lang }) {
           <div className="mx-auto max-w-2xl text-center">
             <p
               className="mb-3 text-[12px] font-semibold uppercase tracking-[0.14em]"
-              style={{ color: "var(--ag-sky-deep)" }}
+              style={{ color: "var(--sa-sky-deep)" }}
             >
-              AskGov
+              SuperAsk
             </p>
             <h2
               className="text-[1.45rem] font-bold sm:text-[1.85rem]"
-              style={{ color: "var(--ag-ink)" }}
+              style={{ color: "var(--sa-ink)" }}
             >
               {t(MARKETING.featuresTitle, lang)}
             </h2>
@@ -304,7 +304,7 @@ function LandingBody({ lang }: { lang: Lang }) {
                   key={feature.title.en}
                   className="rounded-2xl border p-5 sm:p-6"
                   style={{
-                    borderColor: "var(--ag-line)",
+                    borderColor: "var(--sa-line)",
                     background: "#fff",
                   }}
                 >
@@ -312,21 +312,21 @@ function LandingBody({ lang }: { lang: Lang }) {
                     className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl"
                     style={{
                       background:
-                        "linear-gradient(145deg, var(--ag-sky-wash), var(--ag-deep-wash))",
-                      color: "var(--ag-deep)",
+                        "linear-gradient(145deg, var(--sa-sky-wash), var(--sa-deep-wash))",
+                      color: "var(--sa-deep)",
                     }}
                   >
                     <Icon size={22} strokeWidth={1.75} />
                   </div>
                   <h3
                     className="text-[16px] font-semibold"
-                    style={{ color: "var(--ag-ink)" }}
+                    style={{ color: "var(--sa-ink)" }}
                   >
                     {t(feature.title, lang)}
                   </h3>
                   <p
                     className="mt-2 text-[14px] leading-relaxed"
-                    style={{ color: "var(--ag-ink-soft)" }}
+                    style={{ color: "var(--sa-ink-soft)" }}
                   >
                     {t(feature.body, lang)}
                   </p>
@@ -340,19 +340,19 @@ function LandingBody({ lang }: { lang: Lang }) {
       {/* How it works — sequence, not marketing fluff */}
       <section
         className="relative overflow-hidden px-4 py-20 sm:px-6 sm:py-24"
-        style={{ background: "var(--ag-page)" }}
+        style={{ background: "var(--sa-page)" }}
       >
         <div className="mx-auto max-w-5xl">
           <div className="mx-auto max-w-2xl text-center">
             <h2
               className="text-[1.45rem] font-bold sm:text-[1.85rem]"
-              style={{ color: "var(--ag-ink)" }}
+              style={{ color: "var(--sa-ink)" }}
             >
               {t(MARKETING.howTitle, lang)}
             </h2>
             <p
               className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed"
-              style={{ color: "var(--ag-ink-soft)" }}
+              style={{ color: "var(--sa-ink-soft)" }}
             >
               {t(MARKETING.howBody, lang)}
             </p>
@@ -362,7 +362,7 @@ function LandingBody({ lang }: { lang: Lang }) {
             {/* connector line on desktop */}
             <div
               className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-5 hidden h-px sm:block"
-              style={{ background: "var(--ag-sky-line)" }}
+              style={{ background: "var(--sa-sky-line)" }}
               aria-hidden
             />
             {MARKETING.steps.map((step, i) => (
@@ -373,8 +373,8 @@ function LandingBody({ lang }: { lang: Lang }) {
                 <span
                   className="relative z-[1] inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[14px] font-bold text-white shadow-md"
                   style={{
-                    background: "var(--ag-deep)",
-                    boxShadow: "0 0 0 4px var(--ag-page)",
+                    background: "var(--sa-deep)",
+                    boxShadow: "0 0 0 4px var(--sa-page)",
                   }}
                 >
                   {i + 1}
@@ -382,13 +382,13 @@ function LandingBody({ lang }: { lang: Lang }) {
                 <div>
                   <h3
                     className="text-[15px] font-semibold"
-                    style={{ color: "var(--ag-ink)" }}
+                    style={{ color: "var(--sa-ink)" }}
                   >
                     {t(step.title, lang)}
                   </h3>
                   <p
                     className="mt-1 text-[13px] leading-relaxed"
-                    style={{ color: "var(--ag-ink-soft)" }}
+                    style={{ color: "var(--sa-ink-soft)" }}
                   >
                     {t(step.body, lang)}
                   </p>
@@ -401,7 +401,7 @@ function LandingBody({ lang }: { lang: Lang }) {
             <Link
               href="/register"
               className="ag-press inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-7 text-[14px] font-semibold text-white"
-              style={{ background: "var(--ag-deep)" }}
+              style={{ background: "var(--sa-deep)" }}
             >
               {t(MARKETING.start, lang)}
               <ArrowRight size={15} strokeWidth={2.25} />
@@ -416,20 +416,20 @@ function LandingBody({ lang }: { lang: Lang }) {
           className="mx-auto flex max-w-3xl flex-col items-center rounded-3xl px-6 py-12 text-center sm:px-12"
           style={{
             background:
-              "linear-gradient(160deg, var(--ag-deep-wash) 0%, var(--ag-sky-wash) 100%)",
-            border: "1px solid var(--ag-sky-line)",
+              "linear-gradient(160deg, var(--sa-deep-wash) 0%, var(--sa-sky-wash) 100%)",
+            border: "1px solid var(--sa-sky-line)",
           }}
         >
-          <AskGovLogo href="/" size="md" asLink={false} />
+          <SuperAskLogo href="/" size="md" asLink={false} />
           <h2
             className="mt-6 text-[1.3rem] font-bold sm:text-[1.55rem]"
-            style={{ color: "var(--ag-deep)" }}
+            style={{ color: "var(--sa-deep)" }}
           >
             {t(MARKETING.trustTitle, lang)}
           </h2>
           <p
             className="mx-auto mt-3 max-w-lg text-[14px] leading-relaxed"
-            style={{ color: "var(--ag-ink-soft)" }}
+            style={{ color: "var(--sa-ink-soft)" }}
           >
             {t(MARKETING.trustBody, lang)}
           </p>
@@ -439,7 +439,7 @@ function LandingBody({ lang }: { lang: Lang }) {
       {/* Bottom CTA */}
       <section
         className="px-4 py-20 text-center sm:px-6 sm:py-24"
-        style={{ background: "var(--ag-deep)" }}
+        style={{ background: "var(--sa-deep)" }}
       >
         <h2 className="text-[1.45rem] font-bold text-white sm:text-[1.9rem]">
           {t(MARKETING.ctaTitle, lang)}
@@ -448,7 +448,7 @@ function LandingBody({ lang }: { lang: Lang }) {
           <Link
             href="/chat"
             className="ag-press inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-white px-8 text-[15px] font-semibold"
-            style={{ color: "var(--ag-deep)" }}
+            style={{ color: "var(--sa-deep)" }}
           >
             {t(MARKETING.askNow, lang)}
             <ArrowRight size={16} strokeWidth={2.25} />

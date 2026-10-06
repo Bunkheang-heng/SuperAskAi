@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Register (or remove) the weekly AskGov content-monitoring crawl.
+  Register (or remove) the weekly SuperAsk content-monitoring crawl.
 
 .DESCRIPTION
   Creates a per-user Windows scheduled task that runs `npm run crawl:weekly`
@@ -32,7 +32,7 @@
 
 [CmdletBinding()]
 param(
-    [string]$TaskName = "AskGov content monitoring (weekly)",
+    [string]$TaskName = "SuperAsk content monitoring (weekly)",
     [ValidateSet("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")]
     [string]$DayOfWeek = "Sunday",
     [string]$At = "02:00",
@@ -87,7 +87,7 @@ Register-ScheduledTask `
     -Action $action `
     -Trigger $trigger `
     -Settings $settings `
-    -Description "Weekly AskGov crawl of Cambodian government sites. Raises change signals to var/review-queue.jsonl for steward review (FR-47, FR-49). Publishes nothing." `
+    -Description "Weekly SuperAsk crawl of Cambodian government sites. Raises change signals to var/review-queue.jsonl for steward review (FR-47, FR-49). Publishes nothing." `
     -Force | Out-Null
 
 Write-Output ""

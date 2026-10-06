@@ -54,7 +54,7 @@ export interface Source {
    * A known access obstacle that does not stop this source being monitored.
    *
    * Deliberately not a reason to disable. A host behind a WAF is still a
-   * source AskGov wants; the crawler now recognises the refusal (soft-block.ts)
+   * source SuperAsk wants; the crawler now recognises the refusal (soft-block.ts)
    * instead of recording it, so monitoring costs one request and reports the
    * true state — and starts working by itself the day access is granted.
    */

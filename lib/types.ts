@@ -147,7 +147,7 @@ export interface Diagnostics {
    *                       audit log can separate unsourced answers from sourced
    *                       ones without parsing the answer text.
    *
-   * "policy:" means AskGov is not allowed to answer, "scope:" means there was
+   * "policy:" means SuperAsk is not allowed to answer, "scope:" means there was
    * nothing of its kind to answer. Everything else means it could not — usually
    * a content coverage gap, not a policy decision.
    *

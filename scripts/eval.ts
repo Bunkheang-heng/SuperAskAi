@@ -165,7 +165,7 @@ function sweep() {
 const recall8 = at8 / total;
 const refusalPrecision = refused / golden.negatives.length;
 
-console.log("\nAskGov — retrieval and refusal evaluation");
+console.log("\nSuperAsk — retrieval and refusal evaluation");
 console.log("=".repeat(62));
 console.log(`Golden positives : ${total}`);
 console.log(`Golden negatives : ${golden.negatives.length}`);

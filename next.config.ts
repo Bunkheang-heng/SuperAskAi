@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+];
+
 const nextConfig: NextConfig = {
   // The knowledge base is read from disk at request time in the Node runtime.
   // Keep it out of the client bundle.
@@ -10,12 +15,45 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   async headers() {
     return [
+      // Telegram Mini App — must be embeddable (no X-Frame-Options: DENY).
       {
-        source: "/(.*)",
+        source: "/chat",
         headers: [
-          { key: "X-Content-Type-Options", value: "nosniff" },
+          ...securityHeaders,
+          {
+            key: "Content-Security-Policy",
+            value:
+              "frame-ancestors 'self' https://web.telegram.org https://telegram.org https://*.telegram.org;",
+          },
+        ],
+      },
+      // Everything else stays unframed.
+      {
+        source: "/",
+        headers: [
+          ...securityHeaders,
           { key: "X-Frame-Options", value: "DENY" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        ],
+      },
+      {
+        source: "/login",
+        headers: [
+          ...securityHeaders,
+          { key: "X-Frame-Options", value: "DENY" },
+        ],
+      },
+      {
+        source: "/register",
+        headers: [
+          ...securityHeaders,
+          { key: "X-Frame-Options", value: "DENY" },
+        ],
+      },
+      {
+        source: "/api/:path*",
+        headers: [
+          ...securityHeaders,
+          { key: "X-Frame-Options", value: "DENY" },
         ],
       },
     ];

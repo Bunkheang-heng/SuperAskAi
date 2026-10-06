@@ -10,7 +10,7 @@ import {
 
 /**
  * The refusal policy is a governance document (§12 preamble, OD-07). These
- * tests are the executable form of it: a change to what AskGov refuses should
+ * tests are the executable form of it: a change to what SuperAsk refuses should
  * fail here first and be reviewed as policy, not discovered in production.
  */
 
@@ -306,7 +306,7 @@ describe("isOffDomain", () => {
 describe("inScopeHistory — refused turns cannot rewrite the next question", () => {
   const refusal = {
     role: "assistant" as const,
-    text: "AskGov only answers questions about Cambodian government service procedures",
+    text: "SuperAsk only answers questions about Cambodian government service procedures",
   };
 
   it("drops a short celebrity question that was already refused", () => {

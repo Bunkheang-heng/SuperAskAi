@@ -192,7 +192,7 @@ function summarise(results: VerificationResult[], written: number) {
     );
     for (const r of wafBlocked) console.log(`  ${r.host}`);
     console.log(
-      `  These hosts are up and serving citizens; they decline AskGovBot. Not a\n` +
+      `  These hosts are up and serving citizens; they decline SuperAskBot. Not a\n` +
         `  crawler defect and not fixable by retrying — raise access with the owning\n` +
         `  institution (section 2.6).`,
     );

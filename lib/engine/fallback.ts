@@ -59,7 +59,7 @@ export async function tryGeneralFallback(
     The scope screens belong here rather than at each call site, because they
     were at one call site and not the other and both leaked immediately:
     "what is the capital of France" came back as "Paris is the capital of
-    France" — AskGov answering as a general assistant, which §6.1 says it is
+    France" — SuperAsk answering as a general assistant, which §6.1 says it is
     not — and a trademark lookup got an invented office location and search
     fee in place of the §6.2 copy that names the real public registers.
 

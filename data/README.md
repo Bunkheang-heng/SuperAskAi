@@ -1,7 +1,13 @@
 # `data/` — the data source folder
 
-Everything AskGov's answers can come from, and everything it watches, lives
+Everything SuperAsk's answers can come from, and everything it watches, lives
 here. One place to look for "where does this content come from".
+
+> **Progress note:** Phase 0 serves answers only from the sample approved corpus
+> below (`kb/`, `curated.json`, `glossary.json`). Crawl output is monitored for
+> stewards but is **not** answerable yet. For the full use-case / status write-up,
+> see [Project coordination and progress report](../README.md#project-coordination-and-progress-report)
+> in the root README.
 
 ```
 data/
@@ -34,7 +40,7 @@ and nothing else — there is no function in it that can write to `kb/`.
 
 That gap is FR-49 and §10.4: monitored content must not reach a citizen without
 steward approval. It is deliberate, and it is also why **adding a site to
-`sources.json` does not make AskGov able to answer questions about it.** The
+`sources.json` does not make SuperAsk able to answer questions about it.** The
 crawler tells you a page changed. Turning a page into an answerable, cited chunk
 is the §8.6 ingestion pipeline, which is not built yet.
 

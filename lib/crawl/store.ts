@@ -28,7 +28,7 @@ import type { ChangeSignal, SourceSnapshot, CrawlReport } from "./types";
  *
  * data/ is the data-source folder: the registry of monitored sites, the raw
  * copies fetched from them, the change signals derived from those, and the
- * approved corpus. One place to look for "where does AskGov's content come
+ * approved corpus. One place to look for "where does SuperAsk's content come
  * from".
  *
  * â”€â”€ THE ONE LINE THAT MATTERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -82,7 +82,7 @@ export function retainRaw(
       full,
       // A provenance header, so the file is self-describing if it is ever read
       // outside this system.
-      `<!-- AskGov monitor Â· source=${sourceId} Â· url=${url} Â· fetched=${new Date().toISOString()} Â· sha256=${rawHash} -->\n${body}`,
+      `<!-- SuperAsk monitor Â· source=${sourceId} Â· url=${url} Â· fetched=${new Date().toISOString()} Â· sha256=${rawHash} -->\n${body}`,
       "utf8",
     );
   }
@@ -103,7 +103,7 @@ export function readRaw(rawPath: string): string | null {
   const full = join(process.cwd(), rawPath);
   if (!existsSync(full)) return null;
   try {
-    return readFileSync(full, "utf8").replace(/^<!-- AskGov monitor[^>]*-->\n/, "");
+    return readFileSync(full, "utf8").replace(/^<!-- SuperAsk monitor[^>]*-->\n/, "");
   } catch {
     return null;
   }

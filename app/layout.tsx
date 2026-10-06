@@ -2,10 +2,10 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AskGov",
+  title: "SuperAsk",
   description:
     "Ask about Cambodian government services. Every answer shows the official source it came from.",
-  applicationName: "AskGov",
+  applicationName: "SuperAsk",
   authors: [{ name: "Digital Government Committee" }],
   robots: { index: false, follow: false },
 };

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Build the AskGov government-website deliverables from seed_registry.py."""
+"""Build the SuperAsk government-website deliverables from seed_registry.py."""
 import json, csv, datetime, os
 import pandas as pd
 from seed_registry import SEED, PROVINCES, UNIVERSITIES, HOSPITALS
@@ -152,7 +152,7 @@ assert df["organization_name"].duplicated().sum() == 0, "duplicate organization 
 # seed_*, and its last probe result under verify_* (written back by
 # scripts/crawl.ts --mode=verify). Prior verify_* values are carried forward by
 # id so regenerating the registry never discards probe history — set
-# ASKGOV_MASTER_IN to point at the file in the repo when OUT is elsewhere.
+# SUPERASK_MASTER_IN to point at the file in the repo when OUT is elsewhere.
 
 # Hosts confirmed to be client-rendered SPAs: a static fetch returns an empty shell.
 SPA_HOSTS = {"apps.customs.gov.kh", "digitalip.cambodiaip.gov.kh"}
@@ -164,7 +164,7 @@ VERIFY_COLUMNS = ["verify_" + c for c in (
     "checkedAt","error",
 )]
 
-MASTER_IN = os.environ.get("ASKGOV_MASTER_IN", f"{OUT}/websites_master.csv")
+MASTER_IN = os.environ.get("SUPERASK_MASTER_IN", f"{OUT}/websites_master.csv")
 prior = {}
 if os.path.exists(MASTER_IN):
     with open(MASTER_IN, encoding="utf-8-sig", newline="") as f:
@@ -224,7 +224,7 @@ def esc(v):
     return "'" + str(v).replace("'", "''") + "'"
 
 with open(f"{OUT}/government_websites.sql", "w", encoding="utf-8") as f:
-    f.write("-- AskGov: Cambodian government website registry\n")
+    f.write("-- SuperAsk: Cambodian government website registry\n")
     f.write(f"-- Generated {TODAY}. Crawl-derived columns are NULL until enrich_crawler.py runs.\n\n")
     f.write("BEGIN;\nDROP TABLE IF EXISTS government_websites CASCADE;\n")
     f.write("CREATE TABLE government_websites (\n")
@@ -273,7 +273,7 @@ with open(f"{OUT}/sitemap_index.csv", "w", newline="", encoding="utf-8-sig") as 
 with open(f"{OUT}/robots_index.csv", "w", newline="", encoding="utf-8-sig") as f:
     w = csv.writer(f)
     w.writerow(["id","domain","robots_url","http_status","exists","crawl_delay",
-                "disallow_count","sitemap_directives","allows_askgov_ua","fetched_at"])
+                "disallow_count","sitemap_directives","allows_superask_ua","fetched_at"])
     for _, r in df.iterrows():
         host = (r["subdomain"] + "." + r["domain"]).strip(".")
         w.writerow([r["id"], host, f"https://{host}/robots.txt", "", "", "", "", "", "", ""])
@@ -320,7 +320,7 @@ ws.auto_filter.ref = ws.dimensions
 # legend sheet
 lg = wb.create_sheet("README")
 legend = [
-    ["AskGov - Cambodian Government Website Registry", ""],
+    ["SuperAsk - Cambodian Government Website Registry", ""],
     ["Generated", TODAY],
     ["", ""],
     ["HOW TO READ THIS FILE", ""],
@@ -360,14 +360,14 @@ def table(series, k, v):
     out += [f"| {i} | {n} |" for i, n in series.items()]
     return "\n".join(out)
 
-stats = f"""# AskGov - Crawl Statistics and Data-Quality Report
+stats = f"""# SuperAsk - Crawl Statistics and Data-Quality Report
 
 Generated: {TODAY}
 
 ## 1. What this dataset is
 
 {len(df)} organization records covering Cambodian government web properties, assembled as the
-seed layer for the AskGov RAG pipeline. Every record carries an explicit provenance code so
+seed layer for the SuperAsk RAG pipeline. Every record carries an explicit provenance code so
 downstream ingestion can gate on confidence rather than treating all rows as equal.
 
 ## 2. What this dataset is NOT (read before ingesting)
@@ -450,7 +450,7 @@ sampled and most sub-national and internal systems are not indexed at all. The p
 
 ## 7. RAG-specific guidance
 
-- **Priority 1 sites carry the citizen-facing answers** AskGov actually needs: MoI (civil
+- **Priority 1 sites carry the citizen-facing answers** SuperAsk actually needs: MoI (civil
   registration, ID), MoJ (divorce, courts), MPWT (licences), MLMUPC (land), MoSVY (social
   protection), NSSF (benefits), GDT (tax). Crawl these to full depth first.
 - **`tax.gov.kh` is the best-structured corpus on the list** - it segments its own legal

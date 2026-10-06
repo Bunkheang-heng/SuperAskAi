@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { User } from "lucide-react";
-import { AskGovLogo } from "./AskGovLogo";
+import { SuperAskLogo } from "./SuperAskLogo";
 import { MARKETING, t, type Lang } from "@/lib/ui/marketing";
 
 export function SiteHeader({
@@ -19,12 +19,12 @@ export function SiteHeader({
       className="sticky top-0 z-40 border-b backdrop-blur-md"
       style={{
         background: "rgba(255,255,255,0.92)",
-        borderColor: "var(--ag-line)",
+        borderColor: "var(--sa-line)",
         boxShadow: "0 1px 0 rgba(2,80,148,0.04)",
       }}
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <AskGovLogo size="sm" />
+        <SuperAskLogo size="sm" />
 
         <div className="flex items-center gap-2">
           <button
@@ -32,8 +32,8 @@ export function SiteHeader({
             onClick={() => onLangChange(lang === "km" ? "en" : "km")}
             className="ag-press inline-flex h-9 items-center gap-1.5 rounded-md border px-2.5 text-[13px] font-medium"
             style={{
-              borderColor: "var(--ag-line)",
-              color: "var(--ag-ink)",
+              borderColor: "var(--sa-line)",
+              color: "var(--sa-ink)",
               background: "#fff",
             }}
             aria-label={lang === "km" ? "Switch to English" : "ប្តូរទៅភាសាខ្មែរ"}
@@ -46,14 +46,14 @@ export function SiteHeader({
               <Link
                 href="/login"
                 className="ag-press hidden h-9 items-center rounded-md px-3 text-[13px] font-medium sm:inline-flex"
-                style={{ color: "var(--ag-deep)" }}
+                style={{ color: "var(--sa-deep)" }}
               >
                 {t(MARKETING.login, lang)}
               </Link>
               <Link
                 href="/login"
                 className="ag-press inline-flex h-9 w-9 items-center justify-center rounded-md text-white sm:hidden"
-                style={{ background: "var(--ag-deep)" }}
+                style={{ background: "var(--sa-deep)" }}
                 aria-label={t(MARKETING.login, lang)}
               >
                 <User size={18} strokeWidth={2} />
@@ -61,7 +61,7 @@ export function SiteHeader({
               <Link
                 href="/register"
                 className="ag-press hidden h-9 items-center rounded-md px-3.5 text-[13px] font-medium text-white sm:inline-flex"
-                style={{ background: "var(--ag-deep)" }}
+                style={{ background: "var(--sa-deep)" }}
               >
                 {t(MARKETING.register, lang)}
               </Link>

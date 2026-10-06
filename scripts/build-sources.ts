@@ -103,9 +103,9 @@ const sources: OutSource[] = full.map((r) => {
   // costs a single request per run and stops before the seed is even fetched.
   //
   // So the source stays ENABLED and monitored. Disabling it would have made
-  // AskGov's registry quietly disagree with reality: the site is a priority-1
+  // SuperAsk's registry quietly disagree with reality: the site is a priority-1
   // acquisition target, and the moment the owning institution allowlists
-  // AskGovBot the crawler must pick it up without anyone remembering to flip a
+  // SuperAskBot the crawler must pick it up without anyone remembering to flip a
   // flag. A run reports it as refused every week, which is the honest state.
   const wafBlocked = (r.status || "").trim() === "waf-blocked";
 
