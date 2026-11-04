@@ -147,7 +147,7 @@ export function AnswerText({ text }: { text: string }) {
                 marginTop: 16,
                 padding: "10px 12px",
                 borderLeft: `3px solid ${T.notice}`,
-                background: "rgba(66,149,245,0.06)",
+                background: T.noticeWash,
                 borderRadius: 4,
                 fontSize: 13.5,
                 lineHeight: 1.85,

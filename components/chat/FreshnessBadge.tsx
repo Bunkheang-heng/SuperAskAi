@@ -16,7 +16,7 @@ import { UI } from "@/lib/ui/copy";
 const STYLES: Record<Freshness, { fg: string; bg: string; border: string }> = {
   fresh: { fg: T.green, bg: T.greenWash, border: "#BFE3D4" },
   due: { fg: T.noticeText, bg: T.noticeWash, border: T.noticeLine },
-  stale: { fg: T.red, bg: T.redWash, border: "#EFC9C9" },
+  stale: { fg: T.red, bg: T.redWash, border: T.redLine },
 };
 
 export function FreshnessBadge({

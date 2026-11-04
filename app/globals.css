@@ -1,41 +1,48 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Brand palette. Three colours, everything else neutral or state.
+   Brand palette — blue → teal, following the SuperAsk Figma.
+   Mirrors lib/ui/theme.ts; keep the two in step.
    --------------------------------------------------------------------------- */
 :root {
-  --sa-sky: #26a1da;
-  --sa-sky-deep: #1b87bb;
-  --sa-sky-wash: #eaf6fc;
-  --sa-sky-line: #bfe2f4;
+  --sa-sky: #046ec5;
+  --sa-sky-deep: #035a9f;
+  --sa-sky-wash: #eff6ff;
+  --sa-sky-line: #bbdffc;
 
-  --sa-deep: #025094;
-  --sa-deep-hover: #01427b;
-  --sa-deep-wash: #edf3f9;
+  --sa-deep: #046ec5;
+  --sa-deep-hover: #035a9f;
+  --sa-deep-wash: #f0f9ff;
+
+  --sa-teal: #64e8c7;
+  --sa-teal-text: #0a7d63;
+
+  --sa-slate: #1e2939;
+  --sa-night: #030712;
 
   --sa-paper: #ffffff;
-  --sa-page: #f4f8fb;
+  --sa-page: #f8fafc;
+  --sa-mist: #fafbfc;
 
-  --sa-ink: #0b2237;
-  --sa-ink-soft: #4e657c;
-  --sa-ink-faint: #8399ac;
+  --sa-ink: #101828;
+  --sa-ink-soft: #4a5565;
+  --sa-ink-faint: #99a1af;
 
-  --sa-line: #dde7ef;
-  --sa-line-soft: #edf2f7;
+  --sa-line: #e8edf2;
+  --sa-line-soft: #f1f5f9;
 
-  --sa-green: #0f7b55;
-  /* Notice — replaces the former amber. --sa-notice is the brand #4295F5 for
-     borders, icons, and fills; --sa-notice-text is the same hue darkened to
-     clear 4.5:1 on white, because every label using it is below the size at
-     which WCAG AA accepts a 3:1 ratio. */
-  --sa-notice: #4295f5;
-  --sa-notice-text: #1a5fbf;
-  --sa-notice-wash: #eef5fe;
-  --sa-notice-line: #c7defb;
-  --sa-red: #a32121;
+  --sa-green: #0a7d63;
+  --sa-notice: #f79009;
+  --sa-notice-text: #b54708;
+  --sa-notice-wash: #fffaeb;
+  --sa-notice-line: #fedf89;
+  --sa-red: #d92d20;
 
-  --sa-font: "Kantumruy Pro", "Inter", system-ui, -apple-system, "Segoe UI",
+  --sa-gradient: linear-gradient(135deg, #046ec5, #64e8c7);
+
+  --sa-font: "Inter", "Noto Sans Khmer", system-ui, -apple-system, "Segoe UI",
     sans-serif;
+  --sa-khmer: "Noto Sans Khmer", "Inter", system-ui, sans-serif;
   --sa-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 
@@ -45,7 +52,7 @@ body {
 }
 
 body {
-  background: var(--sa-page);
+  background: var(--sa-paper);
   color: var(--sa-ink);
   font-family: var(--sa-font);
   -webkit-font-smoothing: antialiased;
@@ -284,3 +291,72 @@ h3 {
 /* NFR-15: low bandwidth. No web-font blocking, no background images, no
    gradients that force a repaint on scroll. Fonts load `swap` so text is
    readable before the webfont arrives. */
+
+/* ---------------------------------------------------------------------------
+   Brand gradient text — the accent word in every section heading.
+   --------------------------------------------------------------------------- */
+.grad-text {
+  background: linear-gradient(90deg, #046ec5 0%, #64e8c7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.grad-text-dark {
+  background: linear-gradient(90deg, #ffffff 0%, #bbdffc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.font-km {
+  font-family: var(--sa-khmer);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Section anchors land below the sticky 64px nav. */
+section[id] {
+  scroll-margin-top: 72px;
+}
+
+/* Typing indicator in the chat. */
+.sa-bounce {
+  animation: sa-bounce 1.2s infinite;
+}
+
+@keyframes sa-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Lift-on-hover cards (topic chips, channel cards). Transform + shadow only. */
+.sa-lift {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.sa-lift:hover {
+  transform: translateY(-2px);
+  border-color: #bbdffc;
+  box-shadow: 0 4px 20px rgba(4, 110, 197, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sa-lift:hover {
+    transform: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
