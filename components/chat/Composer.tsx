@@ -17,7 +17,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp } from "lucide-react";
+import { Send } from "lucide-react";
 import type { Lang } from "@/lib/types";
 import { T } from "@/lib/ui/theme";
 import { UI } from "@/lib/ui/copy";
@@ -69,18 +69,19 @@ export function Composer({
 
   return (
     <div
-      className="shrink-0 px-4 pb-5 pt-3 sm:px-6"
+      className="shrink-0 px-4 pb-4 pt-3 sm:px-5"
       style={{
         background: T.paper,
-        borderTop: `1px solid ${T.line}`,
+        borderTop: "1px solid #D8E1EA",
+        boxShadow: "0 -1px 4px rgba(0,0,0,0.04)",
       }}
     >
       <div className="mx-auto" style={{ maxWidth: 760 }}>
         <div
-          className="flex items-end gap-2 rounded-xl py-2 pl-4 pr-2 transition-all"
+          className="flex items-end gap-2.5 rounded-xl py-2 pl-3.5 pr-2 transition-all"
           style={{
             background: T.page,
-            border: `1px solid ${focused ? T.sky : T.line}`,
+            border: `1.5px solid ${focused ? T.skyLine : T.line}`,
             boxShadow: focused ? T.ringSky : "none",
           }}
         >
@@ -114,7 +115,7 @@ export function Composer({
             style={{
               width: 36,
               height: 36,
-              background: canSend ? T.deep : T.lineSoft,
+              background: canSend ? T.deep : T.line,
               color: canSend ? "#fff" : T.inkFaint,
               cursor: canSend ? "pointer" : "not-allowed",
             }}
@@ -126,7 +127,7 @@ export function Composer({
             }}
             aria-label={UI.send[lang]}
           >
-            <ArrowUp size={17} aria-hidden />
+            <Send size={16} aria-hidden />
           </button>
         </div>
 
@@ -135,7 +136,7 @@ export function Composer({
             fontSize: 11,
             color: T.inkFaint,
             textAlign: "center",
-            marginTop: 10,
+            marginTop: 8,
             lineHeight: 1.6,
           }}
         >

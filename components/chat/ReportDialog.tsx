@@ -68,8 +68,8 @@ export function ReportDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(11, 34, 55, 0.45)" }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-[2px]"
+      style={{ background: "rgba(16, 24, 40, 0.50)" }}
       onClick={onClose}
       role="presentation"
     >

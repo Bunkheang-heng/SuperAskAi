@@ -31,7 +31,7 @@ function LoginForm({ lang }: { lang: Lang }) {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col px-4 py-12 sm:py-16">
+    <div className="flex w-full flex-col px-6 py-9 sm:px-9 sm:py-10">
       <h1
         className="text-[1.45rem] font-bold leading-snug sm:text-[1.65rem]"
         style={{ color: "var(--sa-ink)" }}
@@ -59,11 +59,11 @@ function LoginForm({ lang }: { lang: Lang }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t(MARKETING.emailPlaceholder, lang)}
-            className="h-12 rounded-md border px-3.5 text-[15px]"
+            className="h-12 rounded-lg border px-3.5 text-[15px] transition-all outline-none focus:border-[var(--sa-sky)] focus:ring-2 focus:ring-[#046EC5]/15"
             style={{
               borderColor: "var(--sa-line)",
               color: "var(--sa-ink)",
-              background: "#fff",
+              background: "var(--sa-page)",
             }}
           />
         </label>
@@ -81,11 +81,11 @@ function LoginForm({ lang }: { lang: Lang }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder={t(MARKETING.passwordPlaceholder, lang)}
-            className="h-12 rounded-md border px-3.5 text-[15px]"
+            className="h-12 rounded-lg border px-3.5 text-[15px] transition-all outline-none focus:border-[var(--sa-sky)] focus:ring-2 focus:ring-[#046EC5]/15"
             style={{
               borderColor: "var(--sa-line)",
               color: "var(--sa-ink)",
-              background: "#fff",
+              background: "var(--sa-page)",
             }}
           />
         </label>
@@ -99,8 +99,8 @@ function LoginForm({ lang }: { lang: Lang }) {
         <button
           type="submit"
           disabled={busy}
-          className="ag-press mt-1 inline-flex h-12 items-center justify-center rounded-md text-[15px] font-semibold text-white disabled:opacity-70"
-          style={{ background: "var(--sa-deep)" }}
+          className="ag-press mt-2 inline-flex h-12 items-center justify-center rounded-lg text-[15px] font-semibold text-white shadow-md shadow-[#046EC5]/20 transition-all hover:opacity-95 disabled:opacity-70"
+          style={{ background: "var(--sa-gradient)" }}
         >
           {t(MARKETING.login, lang)}
         </button>

@@ -1,35 +1,33 @@
 "use client";
 
 /**
- * Sidebar: brand, reset, suggested questions (FR-68), and recent conversations.
+ * Sidebar: recent conversations and popular procedures (FR-68), on the
+ * Figma's dark slate panel.
  *
  * ── WHAT IS DELIBERATELY NOT HERE ──────────────────────────────────────────
  * The provider card — model name, hosting, residency — used to sit at the
  * bottom of this panel. It has been removed from the citizen interface. It was
- * operator instrumentation: a citizen cannot act on "claude-haiku-4-5", and a
- * bare "Outside Cambodia" with no context reads as a warning about their own
- * data rather than as the deployment note it was. Operators have not lost it —
- * GET /api/health still reports provider, hosting and residency, which is the
- * correct surface for a compliance property of a running instance (NFR-11).
+ * operator instrumentation: a citizen cannot act on a model name, and a bare
+ * "Outside Cambodia" reads as a warning about their own data. Operators still
+ * get it from GET /api/health (NFR-11).
  */
 
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import type { Lang } from "@/lib/types";
-import { T, BRAND_BAR_HEIGHT } from "@/lib/ui/theme";
-import { SUGGESTIONS, UI } from "@/lib/ui/copy";
+import { UI } from "@/lib/ui/copy";
+import { TOPICS } from "@/lib/ui/landing";
 import type { Conversation } from "@/lib/ui/history";
-import { SuperAskLogo } from "@/components/site";
 
-/** Section label. Repeated three times here; the sizing is the shared part. */
 function Label({ children }: { children: React.ReactNode }) {
   return (
     <span
-      className="ag-mono"
       style={{
-        fontSize: 9.5,
-        letterSpacing: "0.09em",
-        color: T.inkFaint,
+        fontSize: 10,
+        fontWeight: 700,
+        color: "rgba(255,255,255,0.45)",
         textTransform: "uppercase",
+        letterSpacing: "0.12em",
+        lineHeight: 1.6,
       }}
     >
       {children}
@@ -39,160 +37,66 @@ function Label({ children }: { children: React.ReactNode }) {
 
 export function Sidebar({
   lang,
-  onReset,
   onSuggestion,
-  showSuggestions,
   history,
   activeId,
   onOpenConversation,
   onDeleteConversation,
   onClearHistory,
+  className = "",
 }: {
   lang: Lang;
-  onReset: () => void;
   onSuggestion: (q: string) => void;
-  showSuggestions: boolean;
   history: Conversation[];
   activeId: string;
   onOpenConversation: (id: string) => void;
   onDeleteConversation: (id: string) => void;
   onClearHistory: () => void;
+  className?: string;
 }) {
   return (
     <aside
-      className="hidden shrink-0 flex-col md:flex"
-      style={{
-        width: 280,
-        background: T.paper,
-        borderRight: `1px solid ${T.line}`,
-      }}
+      className={`ag-scroll flex shrink-0 flex-col overflow-y-auto ${className}`}
+      style={{ width: 232, background: "#1E2939" }}
     >
-      <div
-        className="flex shrink-0 items-center px-5"
-        style={{
-          height: BRAND_BAR_HEIGHT,
-          background: T.paper,
-          borderBottom: `1px solid ${T.line}`,
-        }}
-      >
-        <SuperAskLogo href="/" size="sm" />
-      </div>
-
-      <div
-        className="px-5 pt-3"
-        style={{ fontSize: 12, color: T.inkFaint, lineHeight: 1.5 }}
-      >
-        {UI.brandSub[lang]}
-      </div>
-
-      <div className="px-4 pt-4">
-        <button
-          onClick={onReset}
-          className="ag-press flex w-full items-center gap-2 rounded-lg px-3 py-2.5 transition-all"
-          style={{
-            border: `1px solid ${T.line}`,
-            fontSize: 13,
-            fontWeight: 600,
-            color: T.paper,
-            background: T.deep,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = T.deepHover;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = T.deep;
-          }}
-        >
-          <Plus size={15} aria-hidden /> {UI.newQuestion[lang]}
-        </button>
-      </div>
-
-      {/* FR-68: suggested questions where no conversation is in progress. */}
-      {showSuggestions && (
-        <div className="mt-7 px-4">
-          <div className="px-1">
-            <Label>{UI.tryAsking[lang]}</Label>
-          </div>
-          <div className="mt-2 flex flex-col gap-0.5">
-            {SUGGESTIONS.map((s) => (
-              <button
-                key={s.en}
-                onClick={() => onSuggestion(lang === "km" ? s.km : s.en)}
-                className={`rounded-lg px-3 py-2 text-left transition-colors ${lang === "km" ? "km" : ""}`}
-                style={{ fontSize: 12.5, color: T.inkSoft, lineHeight: 1.75 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = T.skyWash;
-                  e.currentTarget.style.color = T.deep;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.color = T.inkSoft;
-                }}
-              >
-                {lang === "km" ? s.km : s.en}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Recent conversations. Device-local — see lib/ui/history.ts. */}
       {history.length > 0 && (
-        <div className="mt-7 flex min-h-0 flex-1 flex-col px-4 pb-4">
-          <div className="mb-2 flex items-baseline justify-between gap-2 px-1">
+        <div className="px-4 pb-3.5 pt-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="mb-2.5 flex items-baseline justify-between gap-2 px-0.5">
             <Label>{UI.history[lang]}</Label>
             <button
               onClick={() => {
                 if (window.confirm(UI.clearHistoryConfirm[lang])) onClearHistory();
               }}
-              className="ag-mono transition-colors"
-              style={{ fontSize: 10, color: T.inkFaint }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = T.deep)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = T.inkFaint)}
+              className="transition-colors hover:text-white"
+              style={{ fontSize: 10.5, color: "rgba(255,255,255,0.45)" }}
             >
               {UI.clearHistory[lang]}
             </button>
           </div>
 
-          <div className="ag-scroll -mx-1 flex-1 overflow-y-auto px-1">
+          <div className="flex flex-col gap-0.5">
             {history.map((c) => {
               const active = c.id === activeId;
               return (
                 <div
                   key={c.id}
-                  className="group relative flex items-center gap-1 rounded-lg transition-colors"
-                  style={{
-                    background: active ? T.skyWash : "transparent",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!active) e.currentTarget.style.background = T.lineSoft;
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!active) e.currentTarget.style.background = "transparent";
-                  }}
+                  className="group relative flex items-center rounded-lg transition-colors hover:bg-white/[0.08]"
+                  style={{ background: active ? "rgba(255,255,255,0.10)" : undefined }}
                 >
-                  {/* Active marker: a rule, not a border, so the row does not
-                      shift by a pixel when it becomes active. */}
                   {active && (
                     <span
                       aria-hidden
-                      style={{
-                        position: "absolute",
-                        left: 0,
-                        top: 6,
-                        bottom: 6,
-                        width: 2.5,
-                        borderRadius: 2,
-                        background: T.sky,
-                      }}
+                      className="absolute left-0 rounded-sm"
+                      style={{ top: 7, bottom: 7, width: 2.5, background: "#64E8C7" }}
                     />
                   )}
                   <button
                     onClick={() => onOpenConversation(c.id)}
                     className="km flex-1 truncate px-2.5 py-2 text-left"
                     style={{
-                      fontSize: 12.5,
-                      color: active ? T.deep : T.inkSoft,
+                      fontSize: 13,
+                      color: active ? "#fff" : "rgba(255,255,255,0.7)",
                       fontWeight: active ? 600 : 400,
                       lineHeight: 1.5,
                     }}
@@ -203,7 +107,7 @@ export function Sidebar({
                   <button
                     onClick={() => onDeleteConversation(c.id)}
                     className="mr-1 shrink-0 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
-                    style={{ color: T.inkFaint }}
+                    style={{ color: "rgba(255,255,255,0.5)" }}
                     aria-label={`${UI.deleteOne[lang]}: ${c.title}`}
                     title={UI.deleteOne[lang]}
                   >
@@ -215,6 +119,27 @@ export function Sidebar({
           </div>
         </div>
       )}
+
+      {/* FR-68: suggested procedures, always one tap away. */}
+      <div className="px-4 pb-5 pt-4">
+        <div className="mb-2.5 px-0.5">
+          <Label>{UI.popular[lang]}</Label>
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {TOPICS.map((t) => (
+            <button
+              key={t.en}
+              onClick={() => onSuggestion(t.ask[lang])}
+              className="rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-white/[0.08]"
+            >
+              <div className="font-km" style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.88)", lineHeight: 1.7 }}>
+                {t.km}
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", lineHeight: 1.4 }}>{t.en}</div>
+            </button>
+          ))}
+        </div>
+      </div>
     </aside>
   );
 }

@@ -93,6 +93,8 @@ export function useConversation() {
     lastUser && lastUser.role === "user" ? detectLang(lastUser.text) : "en";
 
   useEffect(() => {
+    // Nothing to follow yet — leave the empty state at the top.
+    if (turns.length === 0 && !busyHere) return;
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [turns, busyHere]);
 

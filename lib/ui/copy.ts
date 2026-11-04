@@ -63,8 +63,8 @@ export const UI = {
   } satisfies Copy,
 
   placeholder: {
-    en: "Ask your question",
-    km: "សួរសំណួររបស់អ្នក",
+    en: "Ask about a procedure, e.g. how do I renew my driving licence?",
+    km: "សួរអំពីនីតិវិធី ឧ. តើខ្ញុំបន្តប័ណ្ណបើកបរដោយរបៀបណា?",
   } satisfies Copy,
 
   send: { en: "Send", km: "ផ្ញើ" } satisfies Copy,
@@ -195,6 +195,30 @@ export const UI = {
     en: "Internal view — DGC and ministry users only. Not shown to citizens.",
     km: "ទិដ្ឋភាពខាងក្នុង — សម្រាប់តែអ្នកប្រើ DGC និងក្រសួង។",
   } satisfies Copy,
+
+  /* ── Chat chrome (Figma) ─────────────────────────────────────────────── */
+
+  newChat: { en: "New chat", km: "ការសន្ទនាថ្មី" } satisfies Copy,
+  beta: { en: "Beta", km: "បេតា" } satisfies Copy,
+  web: { en: "Web", km: "គេហទំព័រ" } satisfies Copy,
+  popular: { en: "Popular procedures", km: "នីតិវិធីពេញនិយម" } satisfies Copy,
+
+  /** Empty state headline, split so the accent word takes the gradient. */
+  emptyTitle: {
+    en: ["What do you need to get ", "done", "?"],
+    km: ["តើអ្នកត្រូវការធ្វើ", "អ្វី", "?"],
+  } satisfies Record<Lang, [string, string, string]>,
+  emptyBody: {
+    en: "Ask in Khmer or English. Every answer comes from a verified official source.",
+    km: "សួរជាភាសាខ្មែរ ឬអង់គ្លេស។ ចម្លើយនីមួយៗមកពីប្រភពផ្លូវការដែលបានផ្ទៀងផ្ទាត់។",
+  } satisfies Copy,
+
+  official: { en: "Official", km: "ផ្លូវការ" } satisfies Copy,
+  verifiedSource: { en: "Verified source", km: "ប្រភពបានផ្ទៀងផ្ទាត់" } satisfies Copy,
+  helpful: { en: "Was this helpful?", km: "តើវាមានប្រយោជន៍ទេ?" } satisfies Copy,
+  yes: { en: "Yes", km: "បាទ/ចាស" } satisfies Copy,
+  no: { en: "No", km: "ទេ" } satisfies Copy,
+  thanks: { en: "Thanks for the feedback", km: "សូមអរគុណសម្រាប់មតិ" } satisfies Copy,
 
   toggleSidebar: { en: "Toggle sidebar", km: "បិទបើករបារចំហៀង" } satisfies Copy,
   skipToComposer: {

@@ -35,6 +35,9 @@ export default defineConfig({
         // without catching a defect.
         "lib/ui/theme.ts",
         "lib/ui/marketing.ts",
+        "lib/ui/landing.ts",
+        // Public channel links: env lookups with fallbacks, no logic.
+        "lib/ui/channels.ts",
         // Prototype localStorage UI stubs (real auth lands later).
         "lib/ui/auth-session.ts",
         "lib/ui/site-lang.ts",
